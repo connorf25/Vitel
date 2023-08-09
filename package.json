@@ -1,0 +1,47 @@
+{
+  "name": "@momsfriendlydevco/vitel",
+  "version": "1.0.0",
+  "description": "Various, pickable Vite modules and components",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "vite",
+    "components"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./lib/vitel.js",
+    "./components/*": "./components/*.js",
+    "./services/*": "./services/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MomsFriendlyDevCo/vitel.git"
+  },
+  "author": "Matt Carter <matt@mfdc.biz>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MomsFriendlyDevCo/vitel/issues"
+  },
+  "homepage": "https://github.com/MomsFriendlyDevCo/vitel#readme",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=16.14.0"
+  },
+  "devDependencies": {
+    "@momsfriendlydevco/eslint-config": "^1.0.5",
+    "eslint": "^8.46.0"
+  },
+  "eslintConfig": {
+    "extends": "@momsfriendlydevco",
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 13,
+      "sourceType": "module"
+    }
+  }
+}
