@@ -162,7 +162,7 @@ export default {
 
 <template>
 	<div
-		v-tooltip="dateDisplay"
+		v-tooltip="dateDisplay != dateFormatted && dateFormatted"
 		class="date"
 	>
 		{{dateDisplay}}

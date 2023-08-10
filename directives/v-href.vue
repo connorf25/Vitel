@@ -29,45 +29,60 @@
 */
 export default {
 	created(el, binding) {
-		let settings = {
-			stop: true,
-			prevent: true,
-			method: 'push',
-			class: 'v-href',
-			...(typeof binding.value == 'string' ? {path: binding.value} : binding.value),
-		};
-
-		// Process modifiers into settings
-		if (binding.modifiers.window) settings.target = '_blank';
-		if (binding.modifiers.nostop) settings.stop = false;
-		if (binding.modifiers.replace) settings.method = 'replace';
-
-		if (!settings.path) return; // Nothing to bind to - URL will presumably be provided in update cycle
-
-		settings.destination = typeof settings.path == 'string' // Determine what to pass to router
-			? {path: settings.path}
-			: settings.path;
-
-		if (!el.classList.contains(settings.class)) {
-			el.addEventListener('click', clickListener.bind(settings));
-			el.classList.add(settings.class);
-
-			if (typeof settings.destination.path == 'string' && el.tagName == 'A') { // Add href to link also to handle middle clicking
-				el.href = settings.destination.path;
-			}
-		}
+		bindVHref(el, binding);
+	},
+	updated(el, binding) {
+		bindVHref(el, binding);
 	},
 }
+
+/**
+* Actual worker for the v-href directive
+* @param {DOMElement} el DOM element to bind against
+* @param {Object} binding Vue binding object to process
+*/
+let bindVHref = function vHrefBind(el, binding) {
+	let settings = {
+		stop: true,
+		prevent: true,
+		method: 'push',
+		class: 'v-href',
+		...(typeof binding.value == 'string' ? {path: binding.value} : binding.value),
+	};
+
+	// Process modifiers into settings
+	if (binding.modifiers.window) settings.target = '_blank';
+	if (binding.modifiers.nostop) settings.stop = false;
+	if (binding.modifiers.replace) settings.method = 'replace';
+
+	if (!settings.path) return; // Nothing to bind to - URL will presumably be provided in update cycle
+
+	settings.destination = typeof settings.path == 'string' // Determine what to pass to router
+		? {path: settings.path}
+		: settings.path;
+
+	if (el.classList.contains(settings.class)) { // Already bound? Assume link update lifecycle
+		el.removeEventListener('click', clickListener);
+	} else { // Bind for first time
+		el.classList.add(settings.class);
+	}
+
+	el.addEventListener('click', clickListener.bind(settings));
+	if (typeof settings.destination.path == 'string' && el.tagName == 'A') { // Add href to link also to handle middle clicking
+		el.href = settings.destination.path;
+	}
+};
+
 
 /**
 * Click handler for v-href bound items
 * @context The settings object passed to v-href
 * @param {Event} e The click event to respond to
 */
-let clickListener = function(e) {
+let clickListener = function vHrefClick(e) {
 	if (this.stop) e.stopPropagation();
 	if (this.prevent) e.preventDefault();
-	console.log('NAV', this.method, this.destination);
+	console.info('v-href navigate', this.method, this.destination);
 	app.services.$router[this.method](this.destination);
 }
 </script>
