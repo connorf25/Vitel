@@ -1,7 +1,7 @@
 {
   "name": "@momsfriendlydevco/vitel",
   "version": "1.0.0",
-  "description": "Various, pickable Vite modules and components",
+  "description": "Various, pickable Vue / Vite modules and components",
   "scripts": {
     "build": "storybook build --output-dir=docs",
     "dev": "storybook dev -p 6006",
@@ -19,14 +19,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MomsFriendlyDevCo/vitel.git"
+    "url": "git+https://github.com/MomsFriendlyDevCo/Vitel.git"
   },
   "author": "Matt Carter <matt@mfdc.biz>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MomsFriendlyDevCo/vitel/issues"
+    "url": "https://github.com/MomsFriendlyDevCo/Vitel/issues"
   },
-  "homepage": "https://github.com/MomsFriendlyDevCo/vitel#readme",
+  "homepage": "https://github.com/MomsFriendlyDevCo/Vitel#readme",
   "engineStrict": true,
   "engines": {
     "node": ">=16.14.0"
