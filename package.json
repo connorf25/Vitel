@@ -15,6 +15,7 @@
   "exports": {
     ".": "./lib/vitel.js",
     "./components/*": "./components/*.vue",
+    "./directives/*": "./directives/*.vue",
     "./services/*": "./services/*.vue"
   },
   "repository": {

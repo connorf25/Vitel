@@ -2,6 +2,7 @@
 const config = {
 	stories: [
 		'../components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+		'../directives/**/*.stories.@(js|jsx|mjs|ts|tsx)',
 		'../services/**/*.stories.@(js|jsx|mjs|ts|tsx)',
 	],
 	addons: [
