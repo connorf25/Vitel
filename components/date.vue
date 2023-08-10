@@ -1,17 +1,20 @@
 <script>
+/* eslint-disable vue/return-in-computed-property */
+
 /**
 * Simple date view which displays a relative time, if its practical
 *
 * @param {String|Date|Number} value Date to parse + display
 * @param {String} [display='auto'] How to display the value. ENUM: 'auto', 'relative', 'date'
 * @param {String} [locale] The locale to use when rendering formatted dates, defaults to the `navigator.language`
-* @param {String} [localeDateStyle='short'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
-* @param {String} [localeTimeStyle='full'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
+* @param {String} [localeDateStyle='medium'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
+* @param {String} [localeTimeStyle='short'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
 * @param {String} [timezone] Which timezone the provided date is relative to, defaults to parsing the timezone from the Intl options
 * @param {Number} [relativeCutoff] Time in milliseconds, beyond which we render full dates rather than relative times
 * @param {Array<Object>} [relativeUnits] Table of units broken down from least -> most to parse relative times
 * @param {String} [relativeUnitNow='just now'] How to refer to current dates
-* @param {String} [relativeUnitTimes] How to refer to times in the past and future
+* @param {String} [relativeUnitPast='ago'] Suffix to use for dates in the past
+* @param {String} [relativeUnitFuture='ago'] Suffix to use for dates in the future
 */
 export default {
 	props: {
@@ -22,6 +25,7 @@ export default {
 		display: {
 			type: String,
 			required: true,
+			default: 'auto',
 			validator: v => ['auto', 'relative', 'date'].includes(v),
 		},
 		locale: {
@@ -32,13 +36,13 @@ export default {
 		localeDateStyle: {
 			type: String,
 			required: true,
-			default: 'short',
+			default: 'medium',
 			validator: v => ['full', 'long', 'medium', 'short'].includes(v),
 		},
 		localeTimeStyle: {
 			type: String,
 			required: true,
-			default: 'long',
+			default: 'short',
 			validator: v => ['full', 'long', 'medium', 'short'].includes(v),
 		},
 		timezone: {
@@ -68,11 +72,15 @@ export default {
 			required: true,
 			default: 'just now',
 		},
-		relativeUnitTimes: {
-			type: Array,
+		relativeUnitPast: {
+			type: String,
 			required: true,
-			default: ()=> ['ago', 'from now'],
-			validator: v => v.length == 2,
+			default: 'ago',
+		},
+		relativeUnitFuture: {
+			type: String,
+			required: true,
+			default: 'from now',
 		},
 	},
 	computed: {
@@ -80,18 +88,18 @@ export default {
 		* Return a human readable date based on the input `$props.value`
 		* @returns {String} The human readable version of the date
 		*/
-		dateString() {
+		dateDisplay() {
 			let diff = Math.abs(Date.now() - this.valueParsed.getTime());
-			console.log('DIFF IS', {
-				diffTarget: Date.now(),
-				diffValue: this.valueParsed.getTime(),
-				diff,
-			});
-
-			if (diff <= this.relativeCutoff) { // Use relative display
-				return this.relativeDate;
-			} else { // Use Intl formatter
-				return this.formattedDate;
+			if (this.display == 'auto') {
+				if (diff <= this.relativeCutoff) { // Use relative display
+					return this.dateRelative;
+				} else { // Use Intl formatter
+					return this.dateFormatted;
+				}
+			} else if (this.display == 'relative') {
+				return this.dateRelative;
+			} else {
+				return this.dateFormatted;
 			}
 		},
 
@@ -114,8 +122,7 @@ export default {
 		* @see https://github.com/brams-dev/friendly-time/blob/master/index.js
 		* @returns {String} Relative time string from/to today
 		*/
-		relativeDate() {
-			/* eslint-ignore vue/return-in-computed-property */
+		dateRelative() {
 			let diff = Date.now() - this.valueParsed.getTime();
 
 			let future = diff < 0;
@@ -123,7 +130,7 @@ export default {
 
 			if (!future && diff < 10000) return this.relativeUnitNow;
 
-			var suffix = future ? ' ' + this.relativeUnitTimes[1] : ' ' + this.relativeUnitTimes[0];
+			let suffix = future ? ' ' + this.relativeUnitFuture : ' ' + this.relativeUnitPast;
 			for (let i = 0; i < this.relativeUnits.length; i++) {
 				let unit = this.relativeUnits[i];
 
@@ -142,7 +149,7 @@ export default {
 		*
 		* @returns {String} Formatted date using available options
 		*/
-		formattedDate() {
+		dateFormatted() {
 			return new Intl.DateTimeFormat(this.locale, {
 				dateStyle: this.localeDateStyle,
 				timeStyle: this.localeTimeStyle,
@@ -154,7 +161,10 @@ export default {
 </script>
 
 <template>
-	<div class="date">
-		{{dateString}}
+	<div
+		v-tooltip="dateDisplay"
+		class="date"
+	>
+		{{dateDisplay}}
 	</div>
 </template>
