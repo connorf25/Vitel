@@ -14,8 +14,8 @@
   "type": "module",
   "exports": {
     ".": "./lib/vitel.js",
-    "./components/*": "./components/*.js",
-    "./services/*": "./services/*.js"
+    "./components/*": "./components/*.vue",
+    "./services/*": "./services/*.vue"
   },
   "repository": {
     "type": "git",
