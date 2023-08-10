@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Various, pickable Vue / Vite modules and components",
   "scripts": {
-    "build": "storybook build --output-dir=docs",
+    "build-storybook": "storybook build",
     "dev": "storybook dev -p 6006",
     "lint": "eslint ."
   },
