@@ -1,4 +1,3 @@
-import {vueDefaults} from '../.storybook/utils.js';
 import DateComponent from './date.vue';
 
 export default {
@@ -31,21 +30,18 @@ export default {
 
 export const RelativeValue = {
 	args: {
-		...vueDefaults(DateComponent),
 		value: new Date(Date.now() - (1000 * 60 * 2)), //~ Now - 2m
 	},
 }
 
 export const DateValue = {
 	args: {
-		...vueDefaults(DateComponent),
 		value: new Date('2023-01-23T10:00:23'),
 	},
 }
 
 export const StringValue = {
 	args: {
-		...vueDefaults(DateComponent),
 		value: '2023-02-27T12:13:45',
 	},
 }

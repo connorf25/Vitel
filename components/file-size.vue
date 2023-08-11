@@ -16,7 +16,6 @@ export default {
 		},
 		locale: {
 			type: String,
-			required: true,
 			default: ()=> navigator.language,
 		},
 		units: {
@@ -53,7 +52,6 @@ export default {
 
 			if (unit) {
 				value = (value / unit.min);
-				console.log('Mutate value to', value);
 			} else {
 				unit = this.units[0];
 			}

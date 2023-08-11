@@ -1,4 +1,3 @@
-import {vueDefaults} from '../.storybook/utils.js';
 import FileSize from './file-size.vue';
 
 export default {
@@ -26,7 +25,6 @@ export default {
 
 export const SimpleNumbers = {
 	args: {
-		...vueDefaults(FileSize),
 		value: 1234567890,
 	},
 }

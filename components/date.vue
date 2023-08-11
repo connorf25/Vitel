@@ -24,30 +24,25 @@ export default {
 		},
 		display: {
 			type: String,
-			required: true,
 			default: 'auto',
 			validator: v => ['auto', 'relative', 'date'].includes(v),
 		},
 		locale: {
 			type: String,
-			required: true,
 			default: ()=> navigator.language,
 		},
 		localeDateStyle: {
 			type: String,
-			required: true,
 			default: 'medium',
 			validator: v => ['full', 'long', 'medium', 'short'].includes(v),
 		},
 		localeTimeStyle: {
 			type: String,
-			required: true,
 			default: 'short',
 			validator: v => ['full', 'long', 'medium', 'short'].includes(v),
 		},
 		timezone: {
 			type: String,
-			required: true,
 			default: ()=> Intl.DateTimeFormat().resolvedOptions().timeZone,
 		},
 		relativeCutoff: {
@@ -56,7 +51,6 @@ export default {
 		},
 		relativeUnits: {
 			type: Array,
-			required: true,
 			default: ()=> [
 				{name: ' second', value: 1000, max: 50, single: 'a second' },
 				{name: ' minute', value: 60000, max: 50, single: 'a minute' },
@@ -69,17 +63,14 @@ export default {
 		},
 		relativeUnitNow: {
 			type: String,
-			required: true,
 			default: 'just now',
 		},
 		relativeUnitPast: {
 			type: String,
-			required: true,
 			default: 'ago',
 		},
 		relativeUnitFuture: {
 			type: String,
-			required: true,
 			default: 'from now',
 		},
 	},
