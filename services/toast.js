@@ -1,4 +1,3 @@
-<script>
 import Vue3Toasity, {toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -21,10 +20,6 @@ export default function(app) {
 		});
 	}
 
-
-	$toast.toast = function notifyToast(text, options) {
-		toast(text, options);
-	}
 
 	/**
 	* Bind each method against given options
@@ -49,6 +44,59 @@ export default function(app) {
 
 
 	/**
+	* Create a toast which shows a loading progress spinner
+	* @param {String} text The text to display
+	* @param {Object} [options] Additional options
+	* @returns {String} The toast ID associated with the created item
+	*/
+	$toast.loading = toast.loading.bind(toast);
+
+
+	/**
+	* Update an existing toast by its ID
+	* @param {String} id The toast ID to update (returned by the toast creation function)
+	* @param {String} [text] The text to update to
+	* @param {Object} [options] Additional options to update
+	*/
+	$toast.update = function toastUpdate(id, text, options) {
+		// Argument mangling {{{
+		if (typeof text == 'object') { // Omitted text
+			[text, options] = [null, text];
+		}
+		// }}}
+		toast.update(id, {
+			...(text && {render: text}),
+			...options,
+		});
+	}
+
+
+	/**
+	* Utility function to mark a pending toast as disamissable but not immediately remove it
+	* This inherits the ability to close on click + a timeout
+	* @param {String} id The toast ID to mark as closable
+	* @param {Object} [options] Additional update options to merge with the toasts settings (works the same was as `update()`
+	*/
+	$toast.closable = function toastClosable(id, options) {
+		toast.update(id, {
+			autoClose: true,
+			closeOnClick: true,
+			closeButton: true,
+			...options,
+		});
+	}
+
+
+	/*
+	* Immediately remove a toast by its ID
+	* @param {String} id The toast ID to dismiss
+	*/
+	$toast.close = function toastClose(id) {
+		toast.remove(id);
+	}
+
+
+	/**
 	* Wrap a promise in a notification
 	* @param {String} text The toast message to show
 	* @param {Object} [options] Additional options for the toast
@@ -67,23 +115,17 @@ export default function(app) {
 			...options,
 		});
 		promise
-			.then(res => toast.update(toastId, {
+			.then(res => toast.closable(toastId, {
 				...(typeof res == 'string' && {
 					render: res,
 				}),
-				autoClose: true,
-				closeOnClick: true,
-				closeButton: true,
 				isLoading: false,
 				type: 'success',
 			}))
-			.catch(res => toast.update(toastId, {
+			.catch(res => toast.closable(toastId, {
 				...(res?.toString && {
 					render: res.toString(),
 				}),
-				autoClose: true,
-				closeOnClick: true,
-				closeButton: true,
 				isLoading: false,
 				type: 'error',
 			}))
@@ -96,4 +138,3 @@ export default function(app) {
 
 	$toast.init();
 }
-</script>

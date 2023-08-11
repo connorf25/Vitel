@@ -16,7 +16,7 @@
     ".": "./lib/vitel.js",
     "./components/*": "./components/*.vue",
     "./directives/*": "./directives/*.vue",
-    "./services/*": "./services/*.vue"
+    "./services/*": "./services/*.js"
   },
   "repository": {
     "type": "git",
