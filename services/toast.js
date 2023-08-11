@@ -15,6 +15,9 @@ export default function(app) {
 	$toast.init = function notifyInit() {
 		app.use(Vue3Toasity, {
 			hideProgressBar: true,
+			progressStyle: {
+				background: 'var(--bs-primary)',
+			},
 			position: toast.POSITION.BOTTOM_RIGHT,
 			theme: 'auto',
 		});
@@ -66,6 +69,7 @@ export default function(app) {
 		// }}}
 		toast.update(id, {
 			...(text && {render: text}),
+			...(options.progress && {hideProgressBar: false}), // Re-enable progress bar when we're setting some kind of progress
 			...options,
 		});
 	}

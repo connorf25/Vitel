@@ -44,6 +44,9 @@ export default {
 				<div class="list-group">
 					<a @click="toastId = $toast.loading('Foo')" class="list-group-item list-group-item-action">let toastId = $toast.loading('Foo')</a>
 					<a @click="$toast.update(toastId, 'Bar')" class="list-group-item list-group-item-action">$toast.update(toastId, 'Bar')</a>
+					<a @click="$toast.update(toastId, {progress: 0.25})" class="list-group-item list-group-item-action">$toast.update(toastId, {progress: 0.25})</a>
+					<a @click="$toast.update(toastId, {progress: 0.5})" class="list-group-item list-group-item-action">$toast.update(toastId, {progress: 0.5})</a>
+					<a @click="$toast.update(toastId, {progress: 1})" class="list-group-item list-group-item-action">$toast.update(toastId, {progress: 1})</a>
 					<a @click="$toast.update(toastId, 'Baz', {isLoading: false, type: 'warning'})" class="list-group-item list-group-item-action">$toast.update(toastId, 'Baz', {isLoading: false, type: 'warning'})</a>
 					<a @click="$toast.update(toastId, {isLoading: false, type: 'success'})" class="list-group-item list-group-item-action">$toast.update(toastId, {isLoading: false, type: 'success'})</a>
 					<a @click="$toast.closable(toastId)" class="list-group-item list-group-item-action">$toast.closable(toastId)</a>
