@@ -1,4 +1,6 @@
 /** @type { import('@storybook/vue3').Preview } */
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+
 const preview = {
 	parameters: {
 		actions: { argTypesRegex: '^on[A-Z].*' },
