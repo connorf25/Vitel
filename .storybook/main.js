@@ -1,30 +1,24 @@
 /** @type { import('@storybook/vue3-vite').StorybookConfig } */
 const config = {
-	stories: [
-		'../components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-		'../directives/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-		'../services/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-	],
 	addons: [
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
 		'@storybook/addon-interactions',
-		{
-			name: '@storybook/addon-styling',
-			options: {
-				sass: {
-					// Require your Sass preprocessor here
-					implementation: require('sass'),
-				},
-			},
-		},
+		// '@storybook/addon-styling',
 	],
+	docs: {
+		autodocs: 'tag',
+	},
 	framework: {
 		name: '@storybook/vue3-vite',
 		options: {},
 	},
-	docs: {
-		autodocs: 'tag',
-	},
+	stories: [
+		'../components/**/*.stories.js',
+		'../directives/**/*.stories.js',
+		'../filters/**/*.stories.js',
+		'../services/**/*.stories.js',
+	],
+	staticDirs: ['../public'],
 };
 export default config;
