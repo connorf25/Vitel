@@ -118,15 +118,16 @@ export default function(app) {
 			closeButton: false,
 			...options,
 		});
-		promise
-			.then(res => toast.closable(toastId, {
+
+		return promise
+			.then(res => $toast.closable(toastId, {
 				...(typeof res == 'string' && {
 					render: res,
 				}),
 				isLoading: false,
 				type: 'success',
 			}))
-			.catch(res => toast.closable(toastId, {
+			.catch(res => $toast.closable(toastId, {
 				...(res?.toString && {
 					render: res.toString(),
 				}),
