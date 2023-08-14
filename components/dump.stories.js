@@ -1,7 +1,7 @@
 import Dump from './dump.vue';
 
 export default {
-	title: 'Debugging/Dump',
+	title: 'Components/Dump',
 	component: Dump,
 	tags: ['autodocs'],
 }
