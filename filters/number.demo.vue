@@ -4,13 +4,13 @@ import number from './number.js';
 /**
 * Demo for the Number filter function
 * @param {Array<String>} value The value to format
-* @param {String} [locale='en-AU'] Locale to format to
+* @param {String} [locale=Intl.DateTimeFormat().resolvedOptions().locale] Locale to format to
 * @param {Boolean|String} [currency=false] Either enable currency mode (defaults to `'AUD'`) or specify a three letter upper-case currency format to use
 */
 export default {
 	props: {
 		value: Number,
-		locale: {type: String, default: 'en-AU'},
+		locale: String,
 		currency: {type: [Boolean, String], default: false},
 	},
 	computed: {
