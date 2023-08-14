@@ -10,11 +10,11 @@
 * @param {String} [localeDateStyle='medium'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
 * @param {String} [localeTimeStyle='short'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
 * @param {String} [timezone] Which timezone the provided date is relative to, defaults to parsing the timezone from the Intl options
-* @param {Number} [relativeCutoff] Time in milliseconds, beyond which we render full dates rather than relative times
+* @param {Number} [relativeCutoff=24h] Time in milliseconds, beyond which we render full dates rather than relative times, defaults to 24 hours
 * @param {Array<Object>} [relativeUnits] Table of units broken down from least -> most to parse relative times
 * @param {String} [relativeUnitNow='just now'] How to refer to current dates
 * @param {String} [relativeUnitPast='ago'] Suffix to use for dates in the past
-* @param {String} [relativeUnitFuture='ago'] Suffix to use for dates in the future
+* @param {String} [relativeUnitFuture='from now'] Suffix to use for dates in the future
 */
 export default {
 	props: {
@@ -144,7 +144,7 @@ export default {
 			return new Intl.DateTimeFormat(this.locale, {
 				dateStyle: this.localeDateStyle,
 				timeStyle: this.localeTimeStyle,
-				timeZone: 'Australia/Sydney'
+				timeZone: this.timezone,
 			}).format(this.valueParsed);
 		},
 	},
