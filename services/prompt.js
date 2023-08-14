@@ -39,13 +39,19 @@ export default function(app) {
 	* Requires `<prompt-handler/>` (`./services/prompt-handler.vue`) to be installed as a component somewhere in the root DOM of the body object
 	*
 	* @param {Object} options Options object to create the dialog from
-	* @param {String} [options.id] Optional ID to identify this dialog, must be DOM compatible. Allocated automatically if omitted
 	* @param {String} [options.title] Dialog title to display
 	* @param {String} [options.body] Simple body text to display
+	* @param {String|Object} [options.component] Vue component name or definition to display after the body text
+	* @param {Object} [options.componentProps] Property values to pass when initializing the component
+	* @param {Object} [options.componentEvents] Event mappings to pass when initializing the component
+	* @param {Boolean} [options.stack=false] Allow model stacking. If false all other models are closed before showing this one
+	*
 	* @param {Boolean} [options.keyboard=true] Whether keyboard interaction should be allowed to dismiss the dialog
 	* @param {Boolean} [options.backdrop=true] Show a faded backdrop behind the model
+	*
 	* @param {String} [options.dialogClose='reject'] Operation to perform when the dialog is dismissed via close or keyboard interaction. ENUM: 'resolve', 'reject'
-	* @param {Boolean} [options.stack=false] Allow model stacking. If false all other models are closed before showing this one
+	*
+	* @param {String} [options.id] Optional ID to identify this dialog, must be DOM compatible. Allocated automatically if omitted
 	* @param {BootstrapModel} [options.modelEl] The DOM element representing the mode, allocated during creation
 	* @param {DOMElement} [options.modelBS] The Bootstrap Model instance, allocated during creation
 	* @param {Promise} [options.promise] Pending promise representing this model instance, allocated during creation
@@ -59,6 +65,9 @@ export default function(app) {
 			id: null, // FIXME: Auto-allocated ID for this prompt, needed when stacking
 			title: 'Question',
 			body: '',
+			isHtml: false,
+			component: null,
+			componentProps: {},
 			keyboard: true,
 			backdrop: true,
 			dialogClose: 'reject',
@@ -77,7 +86,7 @@ export default function(app) {
 					$prompt.debug('.dialog()', 'Closing all dialogs due to no-stacking option');
 
 					// Close all dialogs from highest to lowest, waiting on each
-					return $prompt.stack.toReversed.reduce((acc, dialog) => {
+					return $prompt.stack.toReversed().reduce((acc, dialog) => {
 						$prompt.dialog('Close (no-stacking)', dialog.id);
 						return $prompt.close(false, 'CLOSE-NOSTACKING');
 					}, Promise.resolve())

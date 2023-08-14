@@ -1,9 +1,16 @@
 <script>
+import Dynamic from '../components/dynamic.vue';
+
+/* eslint-disable vue/no-v-html, vue/attributes-order */
+
 /**
 * Prompt handler for the $prompt service
 * This component should be installed somewhere close the root of the DOM tree so it gets z-index presidence
 */
 export default {
+	components: {
+		Dynamic,
+	},
 	methods: {
 		/**
 		* Push a dialog onto the model stack
@@ -19,13 +26,20 @@ export default {
 			await this.$nextTick();
 
 			dialog.modelEl = document.body.querySelector(`#prompt-handler #${dialog.id}`);
+			// Bind closing the model to the $prompt.close handler - ideally any successful promises will be resolved BEFORE this happens
+			dialog.modelEl.addEventListener('hidden.bs.modal', ()=> this.$prompt.close(dialog.dialogClose == 'resolve', 'CLOSE'));
+
 			dialog.modelBS = new window.bootstrap.Modal(dialog.modelEl, {
 				backdrop: dialog.backdrop,
 				keyboard: dialog.keyboard,
 				focus: true,
 			});
 
-			dialog.modelBS.show();
+			// Trigger show + wait for DOM to update then return resolved promise
+			return new Promise(resolve => {
+				dialog.modelEl.addEventListener('shown.bs.modal', ()=> resolve());
+				dialog.modelBS.show();
+			});
 		},
 
 
@@ -87,7 +101,15 @@ export default {
 							/>
 						</div>
 						<div class="modal-body">
-							{{prompt.body}}
+							<div v-if="prompt.isHtml" v-html="prompt.body"/>
+							<div v-else v-text="prompt.body"/>
+
+							<dynamic
+								v-if="prompt.component"
+								:component="prompt.component"
+								:props="prompt.componentProps"
+								:events="prompt.componentEvents"
+							/>
 						</div>
 						<div class="modal-footer">
 							FIXME: Footer

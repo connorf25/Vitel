@@ -1,7 +1,11 @@
 // Load service
 import {setup} from "@storybook/vue3";
 import PromptService from './prompt.js';
-setup(app => PromptService(app));
+import Placeholder from '../components/placeholder.vue';
+setup(app => {
+	PromptService(app);
+	app.component('Placeholder', Placeholder); // eslint-disable-line vue/multi-word-component-names
+});
 
 // Load Debug UI
 import PromptDemo from './prompt.demo.vue';
