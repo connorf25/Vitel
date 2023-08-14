@@ -23,6 +23,17 @@ export default function(app) {
 
 
 	/**
+	* Generic debug function
+	* Overload this with something that shows output if needed
+	* @param {*} [msg...] Output message to display
+	*/
+	$prompt.debug = function promptDebug(...msg) { // eslint-disable-line no-unused-vars
+		// Uncomment the following line to show debugging information
+		// console.info('$prompt', ...msg);
+	}
+
+
+	/**
 	* Display a modal dialog with various customizations
 	* This is the main $prompt worker - all the other $prompt.* functions are really just wrappers for this function
 	* Requires `<prompt-handler/>` (`./services/prompt-handler.vue`) to be installed as a component somewhere in the root DOM of the body object
@@ -60,7 +71,19 @@ export default function(app) {
 			...options,
 		};
 
-		return $prompt.handler.push(settings)
+		return Promise.resolve()
+			.then(()=> {
+				if (!settings.stack) { // Close all existing dialogs first
+					$prompt.debug('.dialog()', 'Closing all dialogs due to no-stacking option');
+
+					// Close all dialogs from highest to lowest, waiting on each
+					return $prompt.stack.toReversed.reduce((acc, dialog) => {
+						$prompt.dialog('Close (no-stacking)', dialog.id);
+						return $prompt.close(false, 'CLOSE-NOSTACKING');
+					}, Promise.resolve())
+				}
+			})
+			.then(()=> $prompt.handler.push(settings))
 			.then(()=> settings.promise = new Promise((resolve, reject) => {
 				settings.promiseResolve = resolve;
 				settings.promiseReject = reject;
@@ -75,7 +98,7 @@ export default function(app) {
 	* @returns {Promise} A promise which resolves when the dialog has closed
 	*/
 	$prompt.close = function promptClose(success = true, payload) {
-		console.info('$prompt.close', {success, payload});
+		$prompt.debug('.close()', {success, payload});
 		return $prompt.handler.pop(success, payload);
 	}
 
