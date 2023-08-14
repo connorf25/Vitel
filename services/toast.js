@@ -3,10 +3,9 @@ import 'vue3-toastify/dist/index.css';
 
 
 /**
-* Global $events service
-* This module is really just a wrapped version of eventemitter3
+* Global $toast service
 *
-* Available on all Vue models as `vm.$events`
+* Available on all Vue models as `vm.$toast`
 */
 export default function(app) {
 	let $toast = {};
