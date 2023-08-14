@@ -2,7 +2,7 @@
 import list from './list.js';
 
 /**
-* Demo for the list filter function
+* Demo for the List filter function
 * @param {Array<String>} value The value to format
 * @param {String} [pick] Optional field within a collection to pick the text value from if the input is a collection
 * @param {Number} [max=0] Maximum number of items before truncating
