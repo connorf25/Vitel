@@ -1,11 +1,13 @@
 // Load service
 import {setup} from "@storybook/vue3";
-import PromptService from './prompt.js';
 import Placeholder from '../components/placeholder.vue';
+import Prompt from './prompt.vue';
+import Service from './service.js';
+
 setup(app => {
-	PromptService(app);
 	app.component('Placeholder', Placeholder); // eslint-disable-line vue/multi-word-component-names
-});
+	Service(Prompt, {app})
+})
 
 // Load Debug UI
 import PromptDemo from './prompt.demo.vue';
@@ -16,5 +18,5 @@ export default {
 	argTypes: {},
 }
 
-export const Prompt = {
+export const Example = {
 }

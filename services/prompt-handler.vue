@@ -51,6 +51,7 @@ export default {
 		*/
 		pop(success = true, payload) {
 			let dialog = this.$prompt.stack.pop();
+			if (!dialog) return; // Overpoped the stack - probably because two things called close() at the same time
 
 			// Close UI element in background
 			dialog.modelBS.hide();

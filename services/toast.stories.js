@@ -1,7 +1,9 @@
 // Load service
 import {setup} from "@storybook/vue3";
-import ToastService from './toast.js';
-setup(app => ToastService(app));
+import Toast from './toast.vue';
+import Service from './service.js';
+
+setup(app => Service(Toast, {app}))
 
 // Load Debug UI
 import ToastDemo from './toast.demo.vue';
@@ -12,5 +14,5 @@ export default {
 	argTypes: {},
 }
 
-export const Toast = {
+export const Example = {
 }

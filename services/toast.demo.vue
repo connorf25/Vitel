@@ -7,7 +7,7 @@ export default {
 		testNotifyPromise(isOk = true) {
 			let myPromise = new Promise((resolve, reject) => {
 				setTimeout(()=> { // Queue on next tick to avoid myPromise not being ready yet
-					this.$toast.promise('Waiting 3 seconds...', myPromise)
+					this.$toast.promisify('Waiting 3 seconds...', myPromise)
 				});
 				setTimeout(()=> isOk ? resolve('Yey!') : reject('Oops!'), 3000);
 			});
