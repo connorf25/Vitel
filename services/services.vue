@@ -1,5 +1,5 @@
 <script>
-import Service from './service.js';
+import Service from '../lib/service.js';
 
 export default {
 	name: '$services',
@@ -39,6 +39,16 @@ export default {
 					...settings,
 				}))
 		},
+
+
+		/**
+		* Wait for all named services to signal they are ready
+		* A ready state is the execution of any and all init() functions and setting `{ready:true}` for each
+		* @param {String} service... Service names to wait for
+		*/
+		waitReady(...services) {
+			return services.map(service => this.services[service].promise());
+		}
 	},
 }
 </script>

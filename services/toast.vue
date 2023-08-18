@@ -1,4 +1,5 @@
 <script>
+import {getCurrentInstance} from "vue"
 import Vue3Toasity, {toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -8,12 +9,19 @@ import 'vue3-toastify/dist/index.css';
 */
 export default {
 	name: '$toast',
+	props: {
+		/**
+		* Main VueApp instance to decorate
+		* @type {VueApp}
+		*/
+		app: {type: Object, required: true},
+	},
 	methods: {
 		/**
 		* Boot the toast functionality, setting defaults
 		*/
 		init() {
-			app.use(Vue3Toasity, {
+			this.app.use(Vue3Toasity, {
 				hideProgressBar: true,
 				progressStyle: {
 					background: 'var(--bs-primary)',
@@ -21,6 +29,29 @@ export default {
 				position: toast.POSITION.BOTTOM_RIGHT,
 				theme: 'auto',
 			});
+
+
+			/**
+			* Bind each method against given options
+			* e.g. `this.create` -> `toast(text, {type: 'default'})`
+			*
+			* @param {String} text The toast message to show
+			* @param {Object} [options] Additional options to mutate behaviour
+			* @see https://vue3-toastify.js-bridge.com/api/toast.html
+			*/
+			Object.entries({
+				create: {type: 'default'},
+				success: {type: 'success'},
+				warn: {type: 'warning'},
+				warning: {type: 'warning'},
+				error: {type: 'error'},
+			}).forEach(([method, methodOptions]) =>
+				this[method] = (text, options) => toast(text, {
+					...methodOptions,
+					...options,
+				})
+			);
+			console.log('BIND TOAST INIT DONE');
 		},
 
 
@@ -115,28 +146,6 @@ export default {
 					type: 'error',
 				}))
 		},
-	},
-	created() {
-		/**
-		* Bind each method against given options
-		* e.g. `this.create` -> `toast(text, {type: 'default'})`
-		*
-		* @param {String} text The toast message to show
-		* @param {Object} [options] Additional options to mutate behaviour
-		* @see https://vue3-toastify.js-bridge.com/api/toast.html
-		*/
-		Object.entries({
-			create: {type: 'default'},
-			success: {type: 'success'},
-			warn: {type: 'warning'},
-			warning: {type: 'warning'},
-			error: {type: 'error'},
-		}).forEach(([method, methodOptions]) =>
-			this[method] = (text, options) => toast(text, {
-				...methodOptions,
-				...options,
-			})
-		);
 	},
 }
 </script>

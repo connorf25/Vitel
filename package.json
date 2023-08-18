@@ -12,12 +12,16 @@
     "components"
   ],
   "type": "module",
+  "imports": {
+    "#vitel": "./lib/vitel.js"
+  },
   "exports": {
     ".": "./lib/vitel.js",
     "./components/*": "./components/*.vue",
     "./directives/*": "./directives/*.vue",
     "./filters/*": "./filters/*.js",
-    "./services/*": "./services/*.js"
+    "./service": "./lib/service.js",
+    "./services/*": "./services/*.vue"
   },
   "repository": {
     "type": "git",
