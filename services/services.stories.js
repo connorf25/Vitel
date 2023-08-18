@@ -1,10 +1,13 @@
 // Load service
 import {setup} from "@storybook/vue3";
 import Toast from './toast.vue';
-import Service from './service.js';
+import Vitel from '#vitel';
 
-// Will auto load $service
-setup(app => Service(Toast, {app}))
+// Will auto load $service when we load $toast
+setup(app => {
+	app.use(Vitel);
+	app.service('$toast', Toast);
+});
 
 // Load Debug UI
 import ServiceDemo from './services.demo.vue';

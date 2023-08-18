@@ -1,9 +1,12 @@
 // Load service
 import {setup} from "@storybook/vue3";
 import Toast from './toast.vue';
-import Service from './service.js';
+import Vitel from '#vitel';
 
-setup(app => Service(Toast, {app}))
+setup(app => {
+	app.use(Vitel);
+	app.service('$toast', Toast);
+});
 
 // Load Debug UI
 import ToastDemo from './toast.demo.vue';

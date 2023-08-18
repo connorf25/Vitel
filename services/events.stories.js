@@ -1,9 +1,12 @@
 // Load service
 import {setup} from "@storybook/vue3";
 import Events from './events.vue';
-import Service from './service.js';
+import Vitel from '#vitel';
 
-setup(app => Service(Events, {app}))
+setup(app => {
+	app.use(Vitel);
+	app.service('$events', Events);
+});
 
 // Load Debug UI
 import EventsDemo from './events.demo.vue';
