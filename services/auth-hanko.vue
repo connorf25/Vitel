@@ -103,47 +103,34 @@ export default {
 		user: null,
 	}},
 	props: {
+		/**
+		* Main VueApp instance to decorate
+		* @type {VueApp}
+		*/
+		app: {type: Object, required: true},
+
+
+		/**
+		* Hanko site URL to verify against
+		* @type {String}
+		*/
 		accountUrl: {type: String, required: true},
+
+
+		/**
+		* If set, bypass Hanko auth and assume this as the logged in email addres
+		* @type {String}
+		*/
 		bypassEmail: {type: String, requried: true},
-		app: Object,
+
+
+		/**
+		* If `bypassEmail` is set assume this as the user ID
+		* @type {String}
+		*/
+		bypassId: {type: String, default: '00000000-0000-dead-beef-000000000000'},
 	},
 	methods: {
-		/**
-		* Init process which connects to Hanko and retrieves the user info
-		* Use `vm.this.promise()` to wait for this eventually resolving
-		* @returns {Promise} A promise which resolves when the operation has completed
-		*/
-		init() {
-			this.ready = false;
-			this.state = 'loading';
-			this.hasPasskeys = false;
-			return Promise.resolve()
-				.then(()=> this.$services.load(EventsService))
-				.then(()=> {
-					if (!import.meta.env.PROD && this.bypassEmail) {
-						// Bypass Hanko - this should only occur on local dev instances
-						return this.refresh();
-					} else {
-						return hankoRegister(this.accountUrl, {
-							translations: {en: hankoLangEn},
-							fallbackLanguage: 'en',
-							storageKey: 'auth',
-						})
-						.then(({hanko}) => this.hanko = hanko)
-						// Setup event listeners {{{
-						.then(()=> {
-							this.hanko.onUserLoggedOut(this.refresh);
-							this.hanko.onSessionExpired(this.refresh);
-							this.hanko.onUserDeleted(this.refresh);
-							this.hanko.onSessionCreated(this.refresh);
-							return this.refresh();
-						})
-						// }}}
-					}
-				})
-		},
-
-
 		/**
 		* Reloads local state from this.hanko
 		* This is an internal function to be called whenever Hanko messages that its state has changed
@@ -151,11 +138,11 @@ export default {
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		refresh() {
-			if (!import.meta.env.PROD && this.bypassEmail) { // Bypass hanko on dev instances
+			if (!this.bypassEmail) { // Bypass hanko on dev instances
 				this.isLoggedIn = true;
 				this.state = 'user';
 				this.user = {
-					id: '00000000-0000-dead-beef-000000000000', // UUID-a-like for basic auth trickery
+					id: this.bypassId, // UUID-a-like for basic auth trickery
 					email: this.bypassEmail,
 				};
 				app.services.$events.emit('$hanko:change');
@@ -167,12 +154,12 @@ export default {
 						this.user = res;
 						this.hasPasskeys = true;
 					})
-					.then(()=> app.services.$events.emit('$hanko:change'))
+					.then(()=> this.$events.emit('$hanko:change'))
 			} else {
 				this.isLoggedIn = false;
 				this.state = 'guest';
 				this.user = null;
-				app.services.$events.emit('$hanko:change');
+				this.$events.emit('$hanko:change');
 			}
 		},
 
@@ -214,6 +201,31 @@ export default {
 					}
 				})
 		},
+	},
+	created() {
+		return this.$services.load(EventsService)
+			.then(()=> {
+				if (this.bypassEmail) {
+					// Bypass Hanko - this should only occur on local dev instances
+					return this.refresh();
+				} else {
+					return hankoRegister(this.accountUrl, {
+						translations: {en: hankoLangEn},
+						fallbackLanguage: 'en',
+						storageKey: 'auth',
+					})
+					.then(({hanko}) => this.hanko = hanko)
+					// Setup event listeners {{{
+					.then(()=> {
+						this.hanko.onUserLoggedOut(this.refresh);
+						this.hanko.onSessionExpired(this.refresh);
+						this.hanko.onUserDeleted(this.refresh);
+						this.hanko.onSessionCreated(this.refresh);
+						return this.refresh();
+					})
+					// }}}
+				}
+			})
 	},
 }
 </script>

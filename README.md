@@ -85,15 +85,33 @@ Services
 Naming convention: `$myService`
 Services are very similar to standard Vue Components except that:
 
-* Services need wrapping in the `@momsfriendlydevco/vitel/services/service` handler to provide...
-* Services do not have any template or render function - they are "headless"
+* Services need loading with `app.service(NAME, SPEC, OPTIONS)` or wrapping in the `@momsfriendlydevco/vitel/service` function
+* Services are "headless" - they do not have any template or render function
 * They are singleton instances - only one of each service exists within your app at any time (by default anyway)
 * They are setup against every component automatically as `$serviceName`
-* If a service requires an initalization sequence (i.e. an `init()` method) `ready` (a boolean) and `promise` (a function which returns when the init has completed) are also automatically provided
+* If a service requires an async `created()` lifecycle sequence, `ready` (a boolean) and `promise()` (a function which returns when the created process has completed) are also automatically provided
 
 Services can be imported from the `@momsfriendlydevco/vitel/services/*` path.
 
-**Example:**
+**Example using the Vitel extender (recommended)**
+```javasript
+// Vue App creation preamble
+import {createApp} from 'vue'
+import App from './App.vue';
+let app = createApp(App);
+
+// Install Vitel against our app to provide `app.service`
+import Vitel from '@momsfriendlydevco/vitel';
+app.use(Vitel);
+
+// Import the $toast service
+import Toast from '@momsfriendlydevco/vitel/services/toast';
+app.service('$toast', Toast, {
+    // options, if any
+});
+```
+
+**Example using the Service Wrapper**
 ```javasript
 // Vue App creation preamble
 import {createApp} from 'vue'

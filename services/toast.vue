@@ -18,44 +18,6 @@ export default {
 	},
 	methods: {
 		/**
-		* Boot the toast functionality, setting defaults
-		*/
-		init() {
-			this.app.use(Vue3Toasity, {
-				hideProgressBar: true,
-				progressStyle: {
-					background: 'var(--bs-primary)',
-				},
-				position: toast.POSITION.BOTTOM_RIGHT,
-				theme: 'auto',
-			});
-
-
-			/**
-			* Bind each method against given options
-			* e.g. `this.create` -> `toast(text, {type: 'default'})`
-			*
-			* @param {String} text The toast message to show
-			* @param {Object} [options] Additional options to mutate behaviour
-			* @see https://vue3-toastify.js-bridge.com/api/toast.html
-			*/
-			Object.entries({
-				create: {type: 'default'},
-				success: {type: 'success'},
-				warn: {type: 'warning'},
-				warning: {type: 'warning'},
-				error: {type: 'error'},
-			}).forEach(([method, methodOptions]) =>
-				this[method] = (text, options) => toast(text, {
-					...methodOptions,
-					...options,
-				})
-			);
-			console.log('BIND TOAST INIT DONE');
-		},
-
-
-		/**
 		* Create a toast which shows a loading progress spinner
 		* @param {String} text The text to display
 		* @param {Object} [options] Additional options
@@ -146,6 +108,38 @@ export default {
 					type: 'error',
 				}))
 		},
+	},
+	created() {
+		this.app.use(Vue3Toasity, {
+			hideProgressBar: true,
+			progressStyle: {
+				background: 'var(--bs-primary)',
+			},
+			position: toast.POSITION.BOTTOM_RIGHT,
+			theme: 'auto',
+		});
+
+
+		/**
+		* Bind each method against given options
+		* e.g. `this.create` -> `toast(text, {type: 'default'})`
+		*
+		* @param {String} text The toast message to show
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @see https://vue3-toastify.js-bridge.com/api/toast.html
+		*/
+		Object.entries({
+			create: {type: 'default'},
+			success: {type: 'success'},
+			warn: {type: 'warning'},
+			warning: {type: 'warning'},
+			error: {type: 'error'},
+		}).forEach(([method, methodOptions]) =>
+			this[method] = (text, options) => toast(text, {
+				...methodOptions,
+				...options,
+			})
+		);
 	},
 }
 </script>

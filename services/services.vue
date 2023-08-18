@@ -19,7 +19,8 @@ export default {
 	},
 	methods: {
 		/**
-		* Lazily load a service
+		* Load a service from a spec
+		*
 		* @param {String|Object} service The name of the service to load or the Vue component spec
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @returns {Promise} A promise which resolves when the service has loaded
@@ -43,12 +44,14 @@ export default {
 
 		/**
 		* Wait for all named services to signal they are ready
+		* This function assumes all named services are all loaded before being called - so use `load()` if this may not be the case
+		*
 		* A ready state is the execution of any and all init() functions and setting `{ready:true}` for each
 		* @param {String} service... Service names to wait for
 		*/
 		waitReady(...services) {
 			return services.map(service => this.services[service].promise());
-		}
+		},
 	},
 }
 </script>
