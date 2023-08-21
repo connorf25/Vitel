@@ -1,5 +1,10 @@
 <script>
+import Events from './events.vue'; // eslint-disable-line no-unused-vars
+
 export default {
+	data() { return {
+		Events, // Stubs to dynamically load for the demo
+	}},
 	computed: {
 		servicesState() {
 			return {
@@ -19,6 +24,14 @@ export default {
 			<div class="card-header">$services.services</div>
 			<div class="card-body">
 				<pre>$service: {{servicesState}}</pre>
+			</div>
+		</div>
+		<div class="card mb-2">
+			<div class="card-header">$services.require() for loading other services</div>
+			<div class="card-body">
+				<div class="list-group">
+					<a @click="$services.require(Events)" class="list-group-item list-group-item-action">$services.require(Events)</a>
+				</div>
 			</div>
 		</div>
 	</div>
