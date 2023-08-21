@@ -1,19 +1,28 @@
 <script>
-import EventEmitter from 'eventemitter3';
-let emitter = new EventEmitter();
+import Mitt from 'mitt';
+let emitter = new Mitt();
 
 /**
 * Vitel Events service
 *
-* This module is really just a wrapped version of eventemitter3 which is a frontend version of Nodes EventEmitter
+* This module is really just a wrapped version of Mitt which is a frontend version of Node's EventEmitter
 * @see https://nodejs.org/api/events.html#class-eventemitter
 */
 export default {
 	name: '$events',
-	methods: Object.fromEntries( // Copy all EventEmitter methods to this component
-		Object.entries(Object.getPrototypeOf(emitter))
-			.filter(([, val]) => typeof val == 'function')
-			.map(([key, val]) => [key, emitter[key].bind(emitter)])
-	),
+	methods: {
+		all() {
+			return emitter.all();
+		},
+		on(...args) {
+			return emitter.on(...args);
+		},
+		off(...args) {
+			return emitter.off(...args);
+		},
+		emit(...args) {
+			return emitter.emit(...args);
+		},
+	},
 }
 </script>
