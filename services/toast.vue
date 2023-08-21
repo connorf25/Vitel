@@ -1,5 +1,4 @@
 <script>
-import {getCurrentInstance} from "vue"
 import Vue3Toasity, {toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -42,7 +41,7 @@ export default {
 			// }}}
 			toast.update(id, {
 				...(text && {render: text}),
-				...(options.progress && {hideProgressBar: false}), // Re-enable progress bar when we're setting some kind of progress
+				...(options?.progress && {hideProgressBar: false}), // Re-enable progress bar when we're setting some kind of progress
 				...options,
 			});
 		},
