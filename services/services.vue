@@ -16,6 +16,13 @@ export default {
 		* @type {VueApp}
 		*/
 		app: {type: Object, required: true},
+
+
+		/**
+		* Warn if we end up waiting longer than this time in milliseconds for a `resolve()` operation to conclude
+		* @type {Number}
+		*/
+		timeout: {type: Number, default: 0},
 	},
 	methods: {
 		/**
@@ -40,7 +47,18 @@ export default {
 							});
 						}
 					})
-					.map(service => service.promise()) // Return the promise which checks its ready
+					.map(service => { // Return the promise which checks its ready
+						if (this.timeout == 0) { // Not bothering with a timeout?
+							return service.promise();
+						} else { // Glue a timeout and warn if it doesn't resolve
+							let timeoutHandle = setInterval(()=> {
+								console.log('Still waiting for', service.$options.name, 'to finish');
+							}, this.timeout);
+
+							return service.promise()
+								.finally(()=> clearTimeout(timeoutHandle));
+						}
+					})
 			);
 		},
 	},
