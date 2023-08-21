@@ -138,14 +138,14 @@ export default {
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		refresh() {
-			if (!this.bypassEmail) { // Bypass hanko on dev instances
+			if (this.bypassEmail) { // Bypass hanko on dev instances
 				this.isLoggedIn = true;
 				this.state = 'user';
 				this.user = {
 					id: this.bypassId, // UUID-a-like for basic auth trickery
 					email: this.bypassEmail,
 				};
-				app.services.$events.emit('$hanko:change');
+				this.$events.emit('$hanko:change');
 			} else if (this.hanko.session.isValid()) {
 				return this.hanko.user.getCurrent()
 					.then(res => {
@@ -195,7 +195,7 @@ export default {
 				.then(()=> this.isLoggedIn || Promise.reject('NOLOGIN'))
 				.catch(e => {
 					if (e === 'NOLOGIN') {
-						if (!settings.silent && settings.notify) app.services.$toast.create(settings.toast);
+						if (!settings.silent && settings.notify) this.$toast.create(settings.toast);
 						if (settings.redirect) this.$router.push(settings.redirect);
 						if (!settings.silent && settings.throw) throw new Error(settings.throw);
 					}
@@ -203,7 +203,8 @@ export default {
 		},
 	},
 	created() {
-		return this.$services.load(EventsService)
+		console.log('$authHanko', {me: this, $services: this.$services});
+		return this.$services.require(EventsService)
 			.then(()=> {
 				if (this.bypassEmail) {
 					// Bypass Hanko - this should only occur on local dev instances
@@ -215,15 +216,13 @@ export default {
 						storageKey: 'auth',
 					})
 					.then(({hanko}) => this.hanko = hanko)
-					// Setup event listeners {{{
-					.then(()=> {
+					.then(()=> { // Setup event listeners to refresh on state change
 						this.hanko.onUserLoggedOut(this.refresh);
 						this.hanko.onSessionExpired(this.refresh);
 						this.hanko.onUserDeleted(this.refresh);
 						this.hanko.onSessionCreated(this.refresh);
 						return this.refresh();
 					})
-					// }}}
 				}
 			})
 	},

@@ -19,38 +19,29 @@ export default {
 	},
 	methods: {
 		/**
-		* Load a service from a spec
-		*
-		* @param {String|Object} service The name of the service to load or the Vue component spec
-		* @param {Object} [options] Additional options to mutate behaviour
-		* @returns {Promise} A promise which resolves when the service has loaded
-		*/
-		load(service, options) {
-			let settings = {
-				force: false,
-				...options,
-			};
-
-			console.log('Lazy load service', service);
-			if (!settings.force && typeof service == 'string' && this.services[service]) return Promise.resolve(); // Service already loaded
-			return Promise.resolve()
-				.then(()=> typeof service == 'string' ? import(service /* @vite-ignore */) : service)
-				.then(component => Service(component, {
-					app: this.app,
-					...settings,
-				}))
-		},
-
-
-		/**
-		* Wait for all named services to signal they are ready
-		* This function assumes all named services are all loaded before being called - so use `load()` if this may not be the case
+		* Wait for all services to signal they are ready - loading any specified if necessary
+		* Services can be either a named of a service or a VueComponent
 		*
 		* A ready state is the execution of any and all init() functions and setting `{ready:true}` for each
 		* @param {String} service... Service names to wait for
+		* @returns {Promise} A promise when all named/specified services have become ready
 		*/
-		waitReady(...services) {
-			return services.map(service => this.services[service].promise());
+		require(...services) {
+			return Promise.all(
+				services
+					.map(service => { // Either find existing service or load it
+						if (typeof service == 'string') {
+							return this.services[service];
+						} else if (typeof service == 'object' && service.name && this.services[service]) { // Given VueComponent spec - but we already know it
+							return this.services[service];
+						} else if (typeof service == 'object') { // Assume VueComponent spec that needs loading
+							return  Service(service, {
+								app: this.app,
+							});
+						}
+					})
+					.map(service => service.promise()) // Return the promise which checks its ready
+			);
 		},
 	},
 }
