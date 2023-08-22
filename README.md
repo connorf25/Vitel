@@ -69,14 +69,22 @@ import {createApp} from 'vue'
 import App from './App.vue';
 let app = createApp(App);
 
+// Install Vitel against our app to provide `app.filter`
+import Vitel from '@momsfriendlydevco/vitel';
+app.use(Vitel);
+
 // Import a filter
 import List from '@momsfriendlydevco/vitel/filters/list';
-
-// Use within Vue:
-app.filter('List', List); // Can only be used either with Vue@2 or the [Doop framework](https://github.com/MomsFriendlyDevCo/Doop)
+app.filter('List', List);
 
 // Use within vanilla JavaScript:
 console.log( List(['Foo', 'Bar', 'Baz']) );
+
+// Or within a Vue Component:
+this.$filters.list(['Foo', 'Bar', 'Baz']);
+// or within a Vue Template:
+{{$filters.list(['Foo', 'Bar', 'Baz'])}}
+{{$filters.pipe(['Foo', 'Bar', 'Baz'], 'list')}}
 ```
 
 

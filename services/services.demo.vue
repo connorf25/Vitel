@@ -23,7 +23,7 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">$services.services</div>
 			<div class="card-body">
-				<pre>$service: {{servicesState}}</pre>
+				<pre>$services: {{servicesState}}</pre>
 			</div>
 		</div>
 		<div class="card mb-2">
