@@ -66,6 +66,7 @@
     }
   },
   "dependencies": {
+    "@momsfriendlydevco/formatters": "^1.2.3",
     "@teamhanko/hanko-elements": "^0.8.2",
     "mitt": "^3.0.1",
     "vue3-toastify": "^0.1.12"
