@@ -31,12 +31,6 @@ export default function(value, options) {
 	let prefixOptions = convertToPluralizeOptions(settings.prefix);
 	let suffixOptions = convertToPluralizeOptions(settings.suffix);
 
-	console.log('DO PLURALIZE', {
-		numericVal,
-		prefixOptions,
-		suffixOptions,
-	});
-
 	return [
 		!prefixOptions ? null
 		: typeof prefixOptions == 'string' ? prefixOptions

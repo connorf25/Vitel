@@ -37,7 +37,7 @@ export default {
 			return Promise.all(
 				services
 					.map(service => { // Either find existing service or load it
-						if (typeof service == 'string') {
+						if (typeof service == 'string' && this.services[service]) {
 							return this.services[service];
 						} else if (typeof service == 'object' && service.name && this.services[service]) { // Given VueComponent spec - but we already know it
 							return this.services[service];
@@ -45,8 +45,11 @@ export default {
 							return  Service(service, {
 								app: this.app,
 							});
+						} else {
+							throw new Error(`Unknown service "${service}" - is it loaded?`);
 						}
 					})
+					.filter(Boolean)
 					.map(service => { // Return the promise which checks its ready
 						if (this.timeout == 0) { // Not bothering with a timeout?
 							return service.promise();
