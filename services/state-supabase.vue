@@ -674,27 +674,36 @@ export default {
 		*
 		* @param {StateFile|String|Array<String>} input Either the StateFile entity or the StateFile name to fetch
 		* @param {Object} [options] Additional options to mutate behaviour
-		* @param {Boolean} [options.json] Parse the file as JSON and return the decoded content
+		* @param {Boolean} [options.json=false] Parse the file as JSON and return the decoded content
+		* @param {Boolean} [options.toast=true] Use $toast.loading to show progress while downloading
 		* @returns {Promise<Blob>} The eventual file contents as a Blob object
 		*/
 		fileGet(input, options) {
 			let path = input?.name || input;
 			let settings = {
 				json: false,
+				toast: true,
 				...options,
 			};
 
+			let toastId; // Eventual toastID used to track the loading progress
 			let {entity, id, operand} = this.splitPath(path, {requireEntity: true, requireId: true});
 
 			// FIXME: Need 404 here if needed
 
-			return this.supabase.storage
+			return Promise.resolve()
+				.then(()=> {
+					if (!settings.toast) return;
+					toastId = this.$toast.loading(`Downloading "${operand}"`);
+				})
+				.then(()=> this.supabase.storage
 				.from(entity)
 				.download(`${id}/${operand}`)
 				.then(({data}) => settings.json
 					? data.text().then(d => JSON.parse(d))
 					: data
-				);
+				))
+				.finally(()=> this.$toast.close(toastId))
 		},
 
 
