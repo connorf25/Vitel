@@ -66,9 +66,25 @@ export default {
 		/*
 		* Immediately remove a toast by its ID
 		* @param {String} id The toast ID to dismiss
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Number} [options.retry=3] How many times to try and close a potencially not-active-yet toast
+		* @param {Number} [options.retryDelay=200] Delay between retries
 		*/
-		close(id) {
-			toast.remove(id);
+		close(id, options) {
+			let settings = {
+				retry: 3,
+				retryDelay: 200,
+			};
+
+			if (!toast.isActive(id)) {
+				if (settings.retry > 0) { // Can retry
+					setTimeout(()=> this.close(id, {...settings, retry: settings.retry-1}), settings.retryDelay);
+				} else {
+					console.warn('Asked to close non-existant toast', id);
+				}
+			} else {
+				toast.remove(id);
+			}
 		},
 
 
