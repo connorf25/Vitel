@@ -1,5 +1,5 @@
 <script>
-import {debounce, pickBy} from 'lodash-es';
+import {debounce, isPlainObject, pickBy} from 'lodash-es';
 import {createClient as Supabase} from '@supabase/supabase-js'
 import {reactive, watch} from 'vue';
 import {BlobWriter as ZipBlobWriter, BlobReader as ZipBlobReader, ZipWriter} from '@zip.js/zip.js';
@@ -588,84 +588,162 @@ export default {
 		*
 		* @param {String|Array<String>} path The path to upload to (not the same as the file name)
 		* @param {Object} [options] Additional options to mutate behaviour
-		* @param {File} [options.file] Existing File object, if present. If omitted a file is prompted for
-		* @param {Object} [options.meta] Meta information to attach to the file
-		* @param {Function} [options.metaPath] Function, called as `({file:File, meta:Object})` which returns the Path to use when setting meta data
+		* @param {File|Blob|FormData|Object|Array} [options.file] Existing File object as a binary type (File, Blob, FormData) or a POJO (Array, Object), If omitted a file is prompted for
+		* @param {String} [options.mode='auto'] Which method to use when uploading, if 'auto' this is guessed from context but some processing can be skipped if specified
+		* @param {Object} [options.meta] Meta information to attach to the file, only applicable if `{multiple:false}`
+		* @param {Boolean} [options.multiple=false] If prompting, allow multiple file selection (conflicts with `meta`)
+		* @param {String} [options.accept] If prompting, Add additional file type restrictions
+		* @param {Boolean} [options.toast=true] Use $toast.loading to show progress while uploading the file
+		* @param {Function} [options.metaPath] Function, called as `(rawFile:File)` which returns the Path to use when setting meta data
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		fileUpload(path, options) {
 			let settings = {
 				file: null,
-				multiple: true,
-				accept: null,
+				mode: 'auto',
+				name: null,
 				meta: null,
+				multiple: false,
+				accept: null,
+				toast: true,
 				metaPath: rawFile => `/fileMeta/${rawFile.id}`,
 				...options,
 			};
+			let toastId; // Eventual toastID used to track the loading progress
 			let {entity, id} = this.splitPath(path, {requireEntity: true, requireId: true});
 
-			return Promise.resolve()
-				.then(()=> settings.file || new Promise((resolve, reject) => {
-					// Create outer, hidden wrapper
-					let wrapper = document.createElement('div');
-					wrapper.classList.add('d-none');
-					document.body.append(wrapper);
+			// Sanity checks {{{
+			if (settings.multiple && settings.meta) throw new Error('Cannot specify {multiple:true} + {meta:Object} at the same time - upload one file or wrap this function in Promise.all()');
+			// }}}
 
-					// Create inner input file element we fake interaction with
-					let fileControl = document.createElement('input');
-					fileControl.type = 'file';
-					if (settings.multiple) fileControl.multiple = true;
-					if (settings.accept) fileControl.accept = settings.accept;
-					wrapper.append(fileControl);
-					fileControl.addEventListener('change', e => {
-						if (e.target.files.length > 0) {
-							resolve(e.target.files);
-						} else {
-							reject('CANCEL');
-						}
-						wrapper.remove();
-					});
-					fileControl.addEventListener('cancel', ()=> {
-						wrapper.remove();
-						reject();
-					});
-					fileControl.click();
-				}))
-				.then(files => Array.from(files).map(file => Promise.resolve()
-					.then(()=> {
-						let payload = { // Payload to pass to callbacks which allows mutation
-							file,
-							meta: {},
-						};
-						return Promise.resolve()
-							.then(()=> this.fileTranscoders.reduce((acc, cb) => acc
-								.then(()=> cb.call(this, payload))
-								.then(result => result && Promise.reject('END')) // Exit out of promise series chain on first non-falsy
-							, Promise.resolve()))
-							.then(()=> payload) // No transcoder triggered - return payload as is
-							.catch(e => {
-								if (e === 'END') return payload; // Exited cleanly in the middle of a promise series chain
-								throw e; // Otherwise throw upwards
+			return Promise.resolve()
+				// Determine upload mode (or use settings.mode if specified) {{{
+				.then(()=> {
+					if (settings.mode != 'auto') return settings.mode;
+
+					// Otherwise, try to guess from context
+					if (!settings.file) { // No file given at all - assume we are prompting
+						return 'prompt';
+					} else if (
+						settings.file // Being given SOMETHING
+						&& !settings.multiple // ... and only one of it
+						&& (Array.isArray(settings.file) || isPlainObject(settings.file)) // ... and it looks like a primative Array or a POJO
+					) { // Assume we need to encode the raw file input
+						return 'pojo';
+					} else if (
+						settings.file // Being given SOMETHING
+						&& !settings.multiple // ... and only one of it
+						&& ( // And its an accepted type
+							settings.file instanceof File
+							|| settings.file instanceof Blob
+							|| settings.file instanceof FormData
+						)
+					) {
+						return 'native';
+					} else {
+						throw new Error('Unable to determine upload file. Specify a File, Bob, FormData, Object or Array or be more specific by setting {type:String}');
+					}
+				})
+				// }}}
+				// Accept files from the detected mode -> Array {{{
+				.then(mode => {
+					this.debug('Using upload mode', mode);
+					switch (mode) {
+						case 'pojo':
+							this.debug('Encoding Array|POJO file to Blob');
+							if (!settings.name) throw new Error('Passing an Array|POJO to fileUpload() requires `{name:String}` to be specified');
+
+							return [ // Encode POJO into an array of one File
+								new File(
+									[
+										new Blob(
+											[
+												JSON.stringify(settings.file, null, '\t')
+											],
+											{
+												type: 'application/json',
+											}
+										),
+									],
+									settings.name,
+									{
+										type: 'application/json',
+									},
+								),
+							];
+						case 'native':
+							return Array.from(settings.file);
+						case 'prompt':
+							return this._uploadBlob({
+								multiple: settings.multiple,
 							})
-					})
-					.then(({file, meta}) => this.supabase.storage
-						.from(entity)
-						.upload(`${id}/${file.name}`, file)
-						.then(()=> ({file, meta})) // Pass result + meta to next .then block
+								.then(res => Array.from(res))
+						default:
+							throw new Error(`Unknown upload mode "${mode}"`);
+					}
+				})
+				// }}}
+				// Create $toast {{{
+				.then(files => {
+					if (settings.toast) {
+						toastId = this.$toast.loading(
+							files.length == 1
+								? `Uploading "${this._parsePath('/UPLOAD/' + files[0].name).basename}"`
+								: `Uploading ${files.length} files`
+						);
+					}
+					return files;
+				})
+				// }}}
+				// Upload all seleted files {{{
+				.then(files => {
+					let stats = {
+						totalSize: files.reduce((acc, file) => acc + file.size, 0),
+						uploaded: 0,
+					};
+
+					return files.map(file => Promise.resolve()
+						.then(()=> {
+							let payload = { // Payload to pass to callbacks which allows mutation
+								file,
+								meta: {},
+							};
+							return Promise.resolve()
+								.then(()=> this.fileTranscoders.reduce((acc, cb) => acc
+									.then(()=> cb.call(this, payload))
+									.then(result => result && Promise.reject('END')) // Exit out of promise series chain on first non-falsy
+								, Promise.resolve()))
+								.then(()=> payload) // No transcoder triggered - return payload as is
+								.catch(e => {
+									if (e === 'END') return payload; // Exited cleanly in the middle of a promise series chain
+									throw e; // Otherwise throw upwards
+								})
+						})
+						.then(({file, meta}) => this.supabase.storage
+							.from(entity)
+							.upload(`${id}/${file.name}`, file)
+							.then(()=> ({file, meta})) // Pass result + meta to next .then block
+						)
+						.then(({file, meta}) => {
+							if (meta) { // If we also want to populate meta we need to refetch the uploaded file by its name
+								return this.fileList(`${entity}/${id}`, {
+									search: file.name,
+									meta: false,
+									limit: 1,
+								})
+									.then(([newFile]) => this.replace(settings.metaPath(newFile), meta))
+							}
+						})
+						.then(()=> {
+							stats.uploaded += file.size;
+							if (toastId) this.$toast.update(toastId, {
+								progress: stats.uploaded / stats.totalSize,
+							});
+						})
 					)
-					.then(({file, meta}) => {
-						console.log('SET META', {meta});
-						if (meta) { // If we also want to populate meta we need to refetch the uploaded file by its name
-							return this.fileList(`${entity}/${id}`, {
-								search: file.name,
-								meta: false,
-								limit: 1,
-							})
-								.then(([newFile]) => this.replace(settings.metaPath(newFile), meta))
-						}
-					})
-				))
-				.then(()=> console.log('Upload cycle completed'));
+				})
+				// }}}
+				.finally(()=> toastId && this.$toast.close(toastId))
 		},
 
 
@@ -703,7 +781,7 @@ export default {
 					? data.text().then(d => JSON.parse(d))
 					: data
 				))
-				.finally(()=> this.$toast.close(toastId))
+				.finally(()=> toastId && this.$toast.close(toastId))
 		},
 
 
@@ -897,6 +975,51 @@ export default {
 			document.body.appendChild(el);
 			el.click();
 			el.remove();
+		},
+
+
+		/**
+		* Internal function to prompt for a file from disk, returning a File(s) object
+		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Boolean} [options.multiple=false] If prompting, allow multiple file selection (conflicts with `meta`)
+		* @param {String} [options.accept] If prompting, Add additional file type restrictions
+		*
+		* @returns {Promise<FileList>} The output FileList object generated by the user OR the promise will reject with `'CANCEL'`
+		*/
+		_uploadBlob(options) {
+			let settings = {
+				multiple: false,
+				accept: null,
+				...options,
+			};
+
+			return new Promise((resolve, reject) => {
+				// Create outer, hidden wrapper
+				let wrapper = document.createElement('div');
+				wrapper.classList.add('d-none');
+				document.body.append(wrapper);
+
+				// Create inner input file element we fake interaction with
+				let fileControl = document.createElement('input');
+				fileControl.type = 'file';
+				if (settings.multiple) fileControl.multiple = true;
+				if (settings.accept) fileControl.accept = settings.accept;
+				wrapper.append(fileControl);
+				fileControl.addEventListener('change', e => {
+					if (e.target.files.length > 0) {
+						resolve(e.target.files);
+					} else {
+						reject('CANCEL');
+					}
+					wrapper.remove();
+				});
+				fileControl.addEventListener('cancel', ()=> {
+					wrapper.remove();
+					reject();
+				});
+				fileControl.click();
+			})
 		},
 
 
