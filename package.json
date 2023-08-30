@@ -67,7 +67,7 @@
   },
   "dependencies": {
     "@momsfriendlydevco/formatters": "^1.2.3",
-    "@supabase/supabase-js": "^2.33.0",
+    "@supabase/supabase-js": "^2.33.1",
     "@teamhanko/hanko-elements": "^0.8.2",
     "@zip.js/zip.js": "^2.7.24",
     "lodash-es": "^4.17.21",
