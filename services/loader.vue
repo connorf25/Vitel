@@ -1,6 +1,4 @@
 <script>
-import {getCurrentInstance} from "vue"
-
 /**
 * Global $loader service
 *

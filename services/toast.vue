@@ -74,6 +74,7 @@ export default {
 			let settings = {
 				retry: 3,
 				retryDelay: 200,
+				...options,
 			};
 
 			if (!toast.isActive(id)) {
