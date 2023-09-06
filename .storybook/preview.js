@@ -20,6 +20,15 @@ const preview = {
 		},
 		msw: {
 			handlers: [
+				rest.get('/api/fake/users', (req, res, ctx) => res(
+					ctx.json(
+						faker.helpers.multiple(()=> ({
+							name: faker.person.fullName(),
+							jobTitle: faker.person.jobTitle(),
+							dob: faker.date.birthdate(),
+						}), {count: 60}),
+					)
+				)),
 				rest.get('/api/test/200', (req, res, ctx) => res(
 					ctx.status(200, 'OK 200 response')
 				)),
