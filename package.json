@@ -42,11 +42,13 @@
     "@supabase/supabase-js": "^2.33.1",
     "@teamhanko/hanko-elements": "^0.8.2",
     "@zip.js/zip.js": "^2.7.24",
+    "axios": "^1.5.0",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
     "vue3-toastify": "^0.1.12"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@momsfriendlydevco/eslint-config": "^1.0.5",
     "@storybook/addon-essentials": "^7.2.3",
     "@storybook/addon-interactions": "^7.2.3",
@@ -58,6 +60,8 @@
     "@storybook/vue3-vite": "^7.2.3",
     "bootstrap": "^5.3.1",
     "eslint": "^8.47.0",
+    "msw": "^1.3.0",
+    "msw-storybook-addon": "^1.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sass": "^1.65.1",
@@ -73,5 +77,8 @@
       "ecmaVersion": 13,
       "sourceType": "module"
     }
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
