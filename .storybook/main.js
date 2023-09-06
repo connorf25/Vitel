@@ -6,6 +6,9 @@ const config = {
 		'@storybook/addon-interactions',
 		// '@storybook/addon-styling',
 	],
+	core: {
+		disableWhatsNewNotifications: true,
+	},
 	docs: {
 		autodocs: 'tag',
 	},
