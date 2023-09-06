@@ -308,12 +308,9 @@ export default {
 		* Scroll to the top of the table
 		*/
 		scrollIntoView() {
-			$('html, body').animate({
-				scrollTop: $(this.$el).position().top + +this.autoScrollOffset,
-			}, {
-				duration: 'slow',
-				queue: false,
-			});
+			this.$el
+				.querySelector('tr:first')
+				.scrollIntoView({behavior: 'smooth'});
 		},
 	},
 	created() {

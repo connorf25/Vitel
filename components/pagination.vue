@@ -16,6 +16,7 @@ import {range} from 'lodash-es';
 * @emits change Emitted as `(newPageOffset)` when the page number changes
 */
 export default {
+	emits: ['change'],
 	props: {
 		value: {type: Number, default: 1},
 		min: {type: Number, default: 1},
