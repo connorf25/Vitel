@@ -6,6 +6,7 @@ import {
 	omit,
 	pickBy,
 } from 'lodash-es';
+import Pagination from './pagination.vue';
 
 /**
 * Customizable table component with auto data retrieval, pagnination and searching
@@ -67,6 +68,9 @@ import {
 */
 export default {
 	name: 'vTable',
+	components: {
+		Pagination,
+	},
 	data() { return {
 		refreshPromise: null, // Handle to the current refresh Promise
 		state: 'init', // ENUM: 'loading', 'ready', 'empty', 'error'
