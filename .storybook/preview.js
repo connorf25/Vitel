@@ -20,6 +20,11 @@ const preview = {
 		},
 		msw: {
 			handlers: [
+				rest.get('/api/fake/users/count', (req, res, ctx) => res(
+					ctx.json({
+						count: 60,
+					})
+				)),
 				rest.get('/api/fake/users', (req, res, ctx) => res(
 					ctx.json(
 						faker.helpers.multiple(()=> ({
