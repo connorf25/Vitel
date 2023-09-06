@@ -29,6 +29,12 @@ export default {
 		put: axios.put,
 		request: axios.request,
 	}},
+	/**
+	* Vitel service wrapper in case this component is called as a function (e.g. `vm.$http()`)
+	*/
+	call(...args) {
+		return axios.request(...args);
+	},
 	created() {
 		// Make Axios request JSON by default
 		axios.defaults.headers.common.Accept = 'application/json';

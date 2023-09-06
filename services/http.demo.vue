@@ -6,7 +6,10 @@ export default {
 	}},
 	methods: {
 		mockRequest(method, req) {
-			return this.$http[method](req)
+			return (method
+				? this.$http[method](req)
+				: this.$http(req)
+			)
 				.then(res => {
 					this.isError = false;
 					this.response = res
@@ -37,6 +40,12 @@ export default {
 						class="list-group-item list-group-item-action"
 					>
 						$http.get('/api/test/400')
+					</a>
+					<a
+						@click="mockRequest(null, {method: 'GET', url: '/api/test/200'})"
+						class="list-group-item list-group-item-action"
+					>
+						$http({method: 'GET', url: '/api/test/200'})
 					</a>
 				</div>
 			</div>
