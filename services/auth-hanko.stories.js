@@ -1,6 +1,5 @@
-// Load service
-import {setup} from "@storybook/vue3";
-import AuthHanko from './auth-hanko.vue';
+import {setup} from '@storybook/vue3';
+import AuthHanko from '#services/auth-hanko';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -10,8 +9,7 @@ setup(app => {
 	});
 });
 
-// Load Debug UI
-import AuthHankoDemo from './auth-hanko.demo.vue';
+import AuthHankoDemo from '#services/auth-hanko.demo';
 export default {
 	title: 'Services/AuthHanko',
 	component: AuthHankoDemo,

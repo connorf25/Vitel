@@ -1,4 +1,4 @@
-import DateComponent from './date.vue';
+import DateComponent from '#components/date';
 
 export default {
 	title: 'Components/Date',

@@ -1,4 +1,3 @@
-// Load Demo UI
 import DateDemo from './date.demo.vue';
 export default {
 	title: 'Filters/Date',

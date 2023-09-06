@@ -1,4 +1,4 @@
-import FileSize from './file-size.vue';
+import FileSize from '#components/file-size';
 
 export default {
 	title: 'Components/File-Size',

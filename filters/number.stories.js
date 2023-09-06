@@ -1,4 +1,3 @@
-// Load Demo UI
 import NumberDemo from './number.demo.vue';
 export default {
 	title: 'Filters/Number',

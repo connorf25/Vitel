@@ -1,6 +1,5 @@
-// Load service
-import {setup} from "@storybook/vue3";
-import Events from './events.vue';
+import {setup} from '@storybook/vue3';
+import Events from '#services/events';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -9,7 +8,7 @@ setup(app => {
 });
 
 // Load Debug UI
-import EventsDemo from './events.demo.vue';
+import EventsDemo from '#services/events.demo';
 export default {
 	title: 'Services/Events',
 	component: EventsDemo,

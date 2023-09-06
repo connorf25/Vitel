@@ -1,6 +1,5 @@
-// Load service
-import {setup} from "@storybook/vue3";
-import Http from './http.vue';
+import {setup} from '@storybook/vue3';
+import Http from '#services/http';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -8,8 +7,7 @@ setup(app => {
 	app.service('$http', Http);
 });
 
-// Load Debug UI
-import HttpDemo from './http.demo.vue';
+import HttpDemo from '#services/http.demo';
 export default {
 	title: 'Services/Http',
 	component: HttpDemo,

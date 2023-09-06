@@ -1,4 +1,3 @@
-// Load Demo UI
 import CurrencyDemo from './currency.demo.vue';
 export default {
 	title: 'Filters/Currency',

@@ -1,4 +1,3 @@
-// Load Demo UI
 import ListDemo from './list.demo.vue';
 export default {
 	title: 'Filters/List',

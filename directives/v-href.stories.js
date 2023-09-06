@@ -1,4 +1,4 @@
-import VHref from './v-href.vue';
+import VHref from '#directives/v-href';
 
 export default {
 	title: 'Directives/v-href',

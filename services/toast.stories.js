@@ -1,6 +1,5 @@
-// Load service
-import {setup} from "@storybook/vue3";
-import Toast from './toast.vue';
+import {setup} from '@storybook/vue3';
+import Toast from '#services/toast';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -8,8 +7,7 @@ setup(app => {
 	app.service('$toast', Toast);
 });
 
-// Load Debug UI
-import ToastDemo from './toast.demo.vue';
+import ToastDemo from '#services/toast.demo';
 export default {
 	title: 'Services/Toast',
 	component: ToastDemo,

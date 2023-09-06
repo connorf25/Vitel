@@ -1,4 +1,3 @@
-// Load Demo UI
 import StartCase from './startCase.demo.vue';
 export default {
 	title: 'Filters/StartCase',

@@ -13,6 +13,10 @@
   ],
   "type": "module",
   "imports": {
+    "#components/*": "./components/*.vue",
+    "#directives/*": "./directives/*.vue",
+    "#filters/*": "./filters/*.js",
+    "#services/*": "./services/*.vue",
     "#vitel": "./lib/vitel.js"
   },
   "exports": {

@@ -1,7 +1,7 @@
-import DateComponent from './date.vue';
-import Dynamic from './dynamic.vue';
+import DateComponent from '#components/date';
+import Dynamic from '#components/dynamic';
 
-import {setup} from "@storybook/vue3";
+import {setup} from '@storybook/vue3';
 setup(app => app.component('date', DateComponent)); // eslint-disable-line vue/multi-word-component-names, vue/component-definition-name-casing
 
 export default {

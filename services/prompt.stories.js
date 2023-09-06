@@ -1,7 +1,6 @@
-// Load service
-import {setup} from "@storybook/vue3";
-import Placeholder from '../components/placeholder.vue';
-import Prompt from './prompt.vue';
+import {setup} from '@storybook/vue3';
+import Placeholder from '#components/placeholder';
+import Prompt from '#services/prompt';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -10,8 +9,7 @@ setup(app => {
 	app.service('$prompt', Prompt);
 });
 
-// Load Debug UI
-import PromptDemo from './prompt.demo.vue';
+import PromptDemo from '#services/prompt.demo';
 export default {
 	title: 'Services/Prompt',
 	component: PromptDemo,

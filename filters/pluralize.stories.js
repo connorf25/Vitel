@@ -1,4 +1,3 @@
-// Load Demo UI
 import PluralizeDemo from './pluralize.demo.vue';
 export default {
 	title: 'Filters/Pluralize',

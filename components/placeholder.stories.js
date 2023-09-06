@@ -1,4 +1,4 @@
-import Placeholder from './placeholder.vue';
+import Placeholder from '#components/placeholder';
 
 export default {
 	title: 'Components/Placeholder',

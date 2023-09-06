@@ -1,6 +1,6 @@
 // Load service
-import {setup} from "@storybook/vue3";
-import Loader from './loader.vue';
+import {setup} from '@storybook/vue3';
+import Loader from '#services/loader';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -9,7 +9,7 @@ setup(app => {
 });
 
 // Load Debug UI
-import LoaderDemo from './loader.demo.vue';
+import LoaderDemo from '#services/loader.demo';
 export default {
 	title: 'Services/Loader',
 	component: LoaderDemo,

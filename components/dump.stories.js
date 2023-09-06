@@ -1,4 +1,4 @@
-import Dump from './dump.vue';
+import Dump from '#components/dump';
 
 export default {
 	title: 'Components/Dump',

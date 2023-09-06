@@ -1,9 +1,8 @@
-// Load service
-import {setup} from "@storybook/vue3";
-import Filters from './filters.vue';
-import FilterCurrency from '../filters/currency.js';
-import FilterNumber from '../filters/number.js';
-import FilterPluralize from '../filters/pluralize.js';
+import {setup} from '@storybook/vue3';
+import Filters from '#services/filters';
+import FilterCurrency from '#filters/currency';
+import FilterNumber from '#filters/number';
+import FilterPluralize from '#filters/pluralize';
 import Vitel from '#vitel';
 
 setup(app => {
@@ -14,8 +13,7 @@ setup(app => {
 	app.filter('pluralize', FilterPluralize);
 });
 
-// Load Debug UI
-import FiltersDemo from './filters.demo.vue';
+import FiltersDemo from '#services/filters.demo';
 export default {
 	title: 'Services/Filters',
 	component: FiltersDemo,
