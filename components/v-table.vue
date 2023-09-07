@@ -65,6 +65,13 @@ import Pagination from './pagination.vue';
 * @slot table-footer-center Slot to template as the footer area (center) - displays nothing by default
 * @slot table-footer-right Slot to template as the footer area (far right) - wraps item counts
 * @slot COLUMN Per-column custom cell rendering, if specified each slot gets the "row" data binding
+*
+* @example Table with sticky headers
+* <style>
+* body {
+*   overflow-x: initial !important;
+* }
+* </style>
 */
 export default {
 	name: 'vTable',
@@ -415,31 +422,55 @@ export default {
 					<slot name="table-footer-left">
 						<div v-if="showPagination" class="v-table-pagination">
 							<pagination
+								@change="setPage($event).then(scrollIntoView)"
 								:value="endpointPage"
 								:max="pages"
-								@change="setPage($event).then(scrollIntoView)"
 							/>
 
 							<!-- Goto page {{{ -->
-							<div v-if="showPaginationGoto" class="input-group ml-2" v-tooltip="'Go to page'">
-								<input type="number" class="form-control" min="1" step="1"
+							<div
+								v-if="showPaginationGoto"
+								v-tooltip="'Go to page'"
+								class="input-group ml-2"
+							>
+								<input
+									@keyup.enter="setPage(parseInt($event.target.value)).then(scrollIntoView)"
+									type="number"
+									class="form-control"
+									min="1"
+									step="1"
 									:max="pages"
 									:placeholder="limitDesc"
-									@keyup.enter="setPage(parseInt($event.target.value)).then(scrollIntoView)"
 								/>
 							</div>
 							<!-- }}} -->
 
 							<!-- Per page {{{ -->
-							<div v-if="showPaginationDropdown" class="dropdown ml-2" v-tooltip="'Items per page'">
-								<a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<div
+								v-if="showPaginationDropdown"
+								v-tooltip="'Items per page'"
+								class="dropdown ml-2"
+							>
+								<a
+									id="dropdownMenuLink"
+									class="btn btn-primary dropdown-toggle"
+									href="#"
+									role="button"
+									data-toggle="dropdown"
+									aria-haspopup="true"
+									aria-expanded="false"
+								>
 									{{endpointLimit}}
 								</a>
 
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-									<a v-for="(option, index) in limitEnum" :key="index" class="dropdown-item"
-										href="" @click.prevent="setLimit(option).then(scrollIntoView)"
-										:class="{ active:  (option == endpointLimit)}">
+									<a
+										v-for="(option, index) in limitEnum"
+										:key="index"
+										@click.prevent="setLimit(option).then(scrollIntoView)"
+										class="dropdown-item"
+										:class="option == endpointLimit && 'active'"
+									>
 										{{option}}
 									</a>
 								</div>
@@ -476,6 +507,28 @@ export default {
 	}
 	/* }}} */
 
+	/* Header {{{ */
+	& thead {
+		position: sticky;
+		top: 0px;
+		background: #FFF;
+		box-shadow: 0 1px 2px -1px rgb(0 0 0 / 40%);
+
+		/* Correct .col-status from collapsing to just hiding its text element */
+		& th.col-status, & th.col-verbs {
+			visibility: visible;
+
+			& > * { /* Rely on the next level down being a wrapped <a.no-click/> and just hide it */
+				display: none;
+			}
+		}
+
+		& th.col-status > a {
+			display: none;
+		}
+	}
+	/* }}} */
+
 	/* Footer {{{ */
 	& .v-table-footer {
 		display: flex;
@@ -506,36 +559,4 @@ export default {
 	}
 	/* }}} */
 }
-
-/* Sticky thead hacks - Experiment in progress - MC 2021-07-11 {{{ */
-body {
-	overflow-x: initial !important; /* Override theme o-x for body */
-}
-
-#wrapper, .content-page {
-	overflow: initial !important; /* Override theme wrappers */
-}
-
-.v-table {
-	& thead {
-		position: sticky;
-		top: 0px;
-		background: #FFF;
-		box-shadow: 0 1px 2px -1px rgb(0 0 0 / 40%);
-
-		/* Correct .col-status from collapsing to just hiding its text element */
-		& th.col-status, & th.col-verbs {
-			visibility: visible;
-
-			& > * { /* Rely on the next level down being a wrapped <a.no-click/> and just hide it */
-				display: none;
-			}
-		}
-
-		& th.col-status > a {
-			display: none;
-		}
-	}
-}
-/* }}} */
 </style>
