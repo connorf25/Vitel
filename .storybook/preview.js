@@ -6,7 +6,14 @@ import '../node_modules/bootstrap/dist/css/bootstrap.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.js';
 
 // Initialize MSW
-initialize();
+initialize({
+	serviceWorker: {
+		...(location.hostname === 'momsfriendlydevco.github.io' && {
+			// Override endpoint URL with GitHub pages
+			url: 'https://momsfriendlydevco.github.io/Vitel/mockServiceWorker.js',
+		}),
+	},
+});
 
 const preview = {
 	loaders: [mswLoader],
