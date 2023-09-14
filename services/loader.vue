@@ -17,9 +17,23 @@ export default {
 
 
 		/**
+		* Most recent loading caption to display
+		* @type {String}
+		*/
+		caption: null,
+
+
+		/**
 		* Object lookup of active loaders by ID
 		*/
 		loaders: new Set(),
+
+
+		/**
+		* DOM element for the main loading wrapper
+		* @type {DOMElement}
+		*/
+		loadingEl: null,
 	}},
 	props: {
 		/**
@@ -27,17 +41,41 @@ export default {
 		* @type {VueApp}
 		*/
 		app: {type: Object, required: true},
+
+
+		/**
+		* Default loading caption
+		* @type {String}
+		*/
+		defaultCaption: {type: String, default: 'Loading...'},
 	},
 	methods: {
 		/**
 		* Queue up a loader by a given ID (or if possible use the parent VueComponent ._uid)
 		* A wrapped version of this function is added to each VueComponent which provides the `component._uid` field as the ID by default
 		*
-		* @param {String} [id='global'] The unique ID of the loader to start
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {String} [options.id='global'] ID to uniquely identify the loader in order to stack them
 		*/
-		start(id = 'global') {
-			this.loaders.add(id);
+		start(options) {
+			let settings = {
+				id: 'global',
+				caption: '',
+				...options,
+			};
+
+			this.loaders.add(settings.id);
 			this.refresh();
+			if (settings.caption) this.updateCaption(settings.caption);
+		},
+
+
+		/**
+		* Set the active loader caption
+		* @param {String} [caption] The caption to set or falsy to disable
+		*/
+		updateCaption(caption) {
+			this.loadingEl.querySelector('.loading-caption').innerText = caption || this.defaultCaption;
 		},
 
 
@@ -45,10 +83,15 @@ export default {
 		* Remove a loader from the set, updating the overall status
 		* A wrapped version of this function is added to each VueComponent which provides the `component._uid` field as the ID by default
 		*
-		* @param {String} [id='global'] The unique ID of the loader to stop
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {String} [options.id='global'] ID to uniquely identify the loader in order to stack them
 		*/
-		stop(id='global') {
-			this.loaders.delete(id);
+		stop(options) {
+			let settings = {
+				id: 'global',
+				...options,
+			};
+			this.loaders.delete(settings.id);
 			this.refresh();
 		},
 
@@ -64,17 +107,17 @@ export default {
 	},
 	created() {
 		// Inject generic loader UI into the top level body element {{{
-		let loaderDialog = document.createElement('div');
-		loaderDialog.id = 'global-loader';
-		loaderDialog.innerHTML = [
+		this.loadingEl = document.createElement('div');
+		this.loadingEl.id = 'global-loader';
+		this.loadingEl.innerHTML = [
 			'<div class="loading-spinner">',
 				'<div class="fingerprint-spinner">',
 					'<div class="spinner-ring"></div>'.repeat(9),
 				'</div>',
-				'<div>Loading...</div>',
+				'<div class="loading-caption">Loading...</div>',
 			'</div>',
 		].join('\n');
-		document.body.appendChild(loaderDialog);
+		document.body.appendChild(this.loadingEl);
 
 		let loaderStyle = document.createElement('style');
 		loaderStyle.innerText = [
@@ -113,11 +156,11 @@ export default {
 				let vm = this;
 				this.$loader = {
 					...this.$mainLoader,
-					start(id) {
-						return $mainLoader.start(id || vm.$.uid);
+					start(caption) {
+						return $mainLoader.start({id: vm.$.uid, caption});
 					},
 					stop(id) {
-						return $mainLoader.stop(id || vm.$.uid);
+						return $mainLoader.stop({id: id || vm.$.uid});
 					},
 				};
 			},
