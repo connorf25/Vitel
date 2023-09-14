@@ -124,6 +124,44 @@ export default {
 					type: 'error',
 				}))
 		},
+
+
+		/**
+		* Try to inteligently work out what to show when catching errors
+		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {String} [options.generic="An error has occured"] Generic error text
+		* @param {Array<*>} [options.ignore] Optional arguments to ignore silently, defaults to 'cancel' + 'SKIP'
+		*
+		* @example Perform a server action and show errors if any
+		* this.$http.get('/api/something/complicated') // Make web request
+		*   .catch(this.$toast.catch) // Handle all error output
+		*/
+		catch(obj, options) {
+			let settings = {
+				generic: 'An error has occured',
+				ignore: ['cancel', 'SKIP'],
+				...options,
+			};
+			console.warn('$toast.catch(', obj, ')');
+			if (settings.ignore.includes(obj)) return; // Silently ignore anything in the ignore list
+
+			return this.error(
+				obj === undefined ? settings.generic
+				: typeof obj == 'string' ? obj
+				: obj instanceof Error ? obj.toString().replace(/^Error: /, '')
+				: obj.error ? obj.error
+				: obj.err && typeof obj.err == 'string' ? obj.err
+				: obj?.data && typeof obj.data == 'string' ? obj.data
+				: obj?.data?.errmsg && typeof obj.data.errmsg == 'string' ? obj.data.errmsg
+				: obj?.data?.error && typeof obj.data.error == 'string' ? obj.data.error
+				: obj?.data?.err && typeof obj.data.err == 'string' ? obj.data.err
+				: obj?.data?.statusText && typeof obj.data.statusText == 'string' ? obj.data.statusText
+				: obj?.status === -1 ? 'Server connection failed'
+				: typeof obj == 'function' && obj.toString() !== '[object Object]' ? obj.toString()
+				: settings.generic
+			, options);
+		},
 	},
 	created() {
 		this.app.use(Vue3Toasity, {

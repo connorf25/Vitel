@@ -2,6 +2,7 @@
 export default {
 	data() { return {
 		toastId: null,
+		Error, // So we can create error objects
 	}},
 	methods: {
 		testNotifyPromise(isOk = true) {
@@ -26,6 +27,19 @@ export default {
 					<a @click="$toast.success('Success!')" class="list-group-item list-group-item-action">$toast.success('Success!')</a>
 					<a @click="$toast.warn('Warn!')" class="list-group-item list-group-item-action">$toast.warn('Warn!')</a>
 					<a @click="$toast.error('Error!')" class="list-group-item list-group-item-action">$toast.error('Error!')</a>
+				</div>
+			</div>
+		</div>
+		<div class="card mb-2">
+			<div class="card-header">Error catching via $toast.catch()</div>
+			<div class="card-body">
+				<div class="list-group">
+					<a @click="$toast.catch('Error String')" class="list-group-item list-group-item-action">$toast.catch('Error String')</a>
+					<a @click="$toast.catch({error: 'Object string'})" class="list-group-item list-group-item-action">$toast.catch({error: 'Object string'})</a>
+					<a @click="$toast.catch(new Error('Error object'))" class="list-group-item list-group-item-action">$toast.catch(new Error('Error object'))</a>
+					<a @click="$toast.catch()" class="list-group-item list-group-item-action">$toast.catch() (generic errors)</a>
+					<a @click="$toast.catch('SKIP')" class="list-group-item list-group-item-action">$toast.catch('SKIP') (ignored)</a>
+					<a @click="$toast.catch('cancel')" class="list-group-item list-group-item-action">$toast.catch('cancel') (ignored)</a>
 				</div>
 			</div>
 		</div>
