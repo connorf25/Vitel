@@ -20,36 +20,41 @@ import axios from 'axios';
 export default {
 	name: '$http',
 	data() { return {
-		delete: axios.delete,
-		get: axios.get,
-		head: axios.head,
-		options: axios.options,
-		patch: axios.patch,
-		post: axios.post,
-		put: axios.put,
-		request: axios.request,
+		axios: axios.create(),
 	}},
+	methods: {
+		delete(...args) { return this.axios.delete(...args) },
+		get(...args) { return this.axios.get(...args) },
+		head(...args) { return this.axios.head(...args) },
+		options(...args) { return this.axios.options(...args) },
+		patch(...args) { return this.axios.patch(...args) },
+		post(...args) { return this.axios.post(...args) },
+		put(...args) { return this.axios.put(...args) },
+		request(...args) { return this.axios.request(...args) }
+	},
 	/**
 	* Vitel service wrapper in case this component is called as a function (e.g. `vm.$http()`)
 	*/
 	call(...args) {
-		return axios.request(...args);
+		return this.axios.request(...args);
 	},
 	created() {
 		// Make Axios request JSON by default
-		axios.defaults.headers.common.Accept = 'application/json';
+		this.axios.defaults.headers.common.Accept = 'application/json';
 
 		// Make Axios encode using jQueries parameter serializer to keep Monoxide happy
-		axios.defaults.paramsSerializer = params =>
+		/* FIXME: Not sure if this is used these days - MC 2023-09-19
+		this.axios.defaults.paramsSerializer = params =>
 			$.param(params)
 				.replace(/\bq=(.+)\b/g, p => p.replace(/%3A/g, ':')) // Allow `q=` to contain ':' tags
+		*/
 
 		// Monkey patch Axios so that any error response gets correctly decoded rather than weird stuff like 'Server returned a 403 code'
-		axios.interceptors.response.use(
+		this.axios.interceptors.response.use(
 			response => response,
 			error => {
-				if (!error.response || !error.response.status) { // Recommended method to catch network errors as per https://github.com/axios/axios/issues/383#issuecomment-234079506
-					return Promise.reject('Network error');
+				if (!error.response || !error.response.status) {
+					return Promise.reject(error);
 				} else if (error.response && error.response.data) {
 					return Promise.reject(error.response.data);
 				} else {
