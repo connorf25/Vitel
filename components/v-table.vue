@@ -291,7 +291,7 @@ export default {
 
 		/**
 		* Navigate to a specific page + refresh
-		* @param {number} page The page offset (starting at 1) to navigate to
+		* @param {Number} page The page offset (starting at 1) to navigate to
 		* @returns {Promise} A promise when the data has finished refreshing
 		*/
 		setPage(page) {
@@ -302,7 +302,7 @@ export default {
 
 		/**
 		* Adjust the number of items per page
-		* @param {number} limit The number of items per page
+		* @param {Number} limit The number of items per page
 		* @returns {Promise} A promise when the data has finished refreshing
 		*/
 		setLimit(limit) {
@@ -318,6 +318,34 @@ export default {
 			this.$el
 				.querySelector('tr:first')
 				.scrollIntoView({behavior: 'smooth'});
+		},
+
+
+		/**
+		* Basic filtering which will use `this.$filters` if available otherwise will try to drop back to a suitable default
+		* @param {String} id The ID of the filter to use
+		* @param {*} value The value to pass
+		* @param {Object} [options] Additional options
+		* @returns {String} The filtered value
+		*/
+		filter(id, value, options) {
+			if (this.$filters) {
+				return this.$filters[id](value, options);
+			} else if (id == 'number') {
+				return new Intl.NumberFormat(navigator.language).format(value);
+			} else {
+				return value;
+			}
+		},
+
+
+		/**
+		* Format an incoming value as a number
+		* This iss really just a smaller wrapper for `filter()`
+		* @see filter()
+		*/
+		filterNumber(value, options) {
+			return this.filter('number', value, options);
 		},
 	},
 	created() {
@@ -483,11 +511,11 @@ export default {
 						<div class="text-muted">
 							Displaying
 							{{entity}}
-							{{limit * (endpointPage-1) + 1 | number}}
+							{{filterNumber(limit * (endpointPage-1) + 1)}}
 							-
-							{{Math.min(rowCount, limit * (endpointPage)) | number}}
+							{{filterNumber(Math.min(rowCount, limit * (endpointPage)))}}
 							of
-							{{rowCount | number}}
+							{{filterNumber(rowCount)}}
 						</div>
 					</slot>
 				</div>
