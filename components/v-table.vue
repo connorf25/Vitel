@@ -188,7 +188,7 @@ export default {
 					}
 				})
 				.then(()=> this.state = 'loading')
-				.then(()=> this.services && this.$loader && this.$loader.start(`v-table-${this._uid}`, this.loadForeground && !this.row.length))
+				.then(()=> this.services && this.$loader && this.$loader.start())
 				.then(()=> merge( // Calculate Axios request object
 					{}, // Empty object so we don't stomp on anything
 					typeof this.url == 'string' ? {url: this.url} : this.url, // Merge either single URL string OR entire url object
@@ -218,7 +218,7 @@ export default {
 
 					return Promise.all([
 						// Fetch matching rows
-						this.$http({
+						this.$http.request({
 							...req,
 							url: endpointQuery.toString(),
 						})
@@ -229,8 +229,8 @@ export default {
 								throw e;
 							}),
 
-						// Count potencial rows (i.e. the count based on query)
-						this.$http({
+						// Count potential rows (i.e. the count based on query)
+						this.$http.request({
 							...req,
 							url: endpointCount.toString(),
 							params: req.params
@@ -259,7 +259,7 @@ export default {
 						throw e;
 					}
 				})
-				.finally(()=> this.services && this.$loader && this.$loader.stop(`v-table-${this.$.uid}`))
+				.finally(()=> this.services && this.$loader && this.$loader.stop())
 				.finally(()=> this.reloadCount++)
 				.finally(()=> this.refreshPromise = null)
 		},
