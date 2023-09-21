@@ -3,6 +3,9 @@ import axios from 'axios';
 
 /**
 * Axios wrapper
+*
+* @param {String} [baseUrl] Optional base URL to apply to all requests
+*
 * @url https://github.com/axios/axios#example
 *
 * @example Make a GET request and process the (array'd) document body)
@@ -32,6 +35,11 @@ export default {
 		put(...args) { return this.axios.put(...args) },
 		request(...args) { return this.axios.request(...args) }
 	},
+	props: {
+		baseUrl: {type: String},
+	},
+
+
 	/**
 	* Vitel service wrapper in case this component is called as a function (e.g. `vm.$http()`)
 	*/
@@ -41,6 +49,9 @@ export default {
 	created() {
 		// Make Axios request JSON by default
 		this.axios.defaults.headers.common.Accept = 'application/json';
+
+		// Set baseURL if we have one
+		if (this.baseUrl) this.axios.defaults.baseURL = this.baseUrl;
 
 		// Make Axios encode using jQueries parameter serializer to keep Monoxide happy
 		/* FIXME: Not sure if this is used these days - MC 2023-09-19
