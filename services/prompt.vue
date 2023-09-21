@@ -17,6 +17,15 @@ export default {
 		*/
 		handler: null,
 	}},
+	computed: {
+		/**
+		* Indicator that a modal is open
+		* @returns {Boolean} Boolean indicating if at least one modal is present
+		*/
+		isOpen() {
+			return this.stack.length > 0;
+		},
+	},
 	methods: {
 		/**
 		* Generic debug function
@@ -105,6 +114,20 @@ export default {
 		close(success = true, payload) {
 			this.debug('.close()', {success, payload});
 			return this.handler.pop(success, payload);
+		},
+
+
+		/**
+		* Like close but doesn't throw if no modal is open anyway
+		* Designed to be called by the router when moving between routes which can show prompts
+		* i.e. this function just dismisses all open modals
+		* @returns {Boolean} True if any modals were dismissed
+		*/
+		closeIfOpen(success = false, payload) {
+			if (!this.isOpen) return false;
+			this.debug('.closeIfOpen()', {success, payload});
+			return this.handler.pop(success, payload)
+				.then(()=> true);
 		},
 	},
 }
