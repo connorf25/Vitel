@@ -18,6 +18,7 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">$filters.filters</div>
 			<div class="card-body">
+				<p>Access for loaded filters.</p>
 				<pre>$filters: {{filtersState}}</pre>
 			</div>
 		</div>

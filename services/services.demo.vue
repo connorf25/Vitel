@@ -23,6 +23,7 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">$services.services</div>
 			<div class="card-body">
+				<p>Meta service access for Vue</p>
 				<pre>$services: {{servicesState}}</pre>
 			</div>
 		</div>

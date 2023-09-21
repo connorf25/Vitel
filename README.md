@@ -4,11 +4,11 @@ Various, pickable Vue@3 / Vite modules and components.
 
 A collection of useful [Components](#components), [Directives](#directives), [Filters](#filters) and [Services](#services)
 
-[Storybook documentation](https://momsfriendlydevco.github.io/Vitel/)
+[Documentation & Demo](https://momsfriendlydevco.github.io/Vitel/)
 
 
-Refering to different things
-----------------------------
+Glossary & Terms used
+---------------------
 This NPM module, commit history and various other documentation surrounding it uses shorthand notation to refer to different types of export:
 
 * [Components](#components) are referred to as a DOM like element - e.g. `<widget/>`

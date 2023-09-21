@@ -28,6 +28,7 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">$http</div>
 			<div class="card-body">
+				<p><a href="https://axios-http.com/docs/intro" target="_blank">Axios</a> wrapper for Vue</p>
 				<div class="list-group">
 					<a
 						@click="mockRequest('get', '/api/test/200')"

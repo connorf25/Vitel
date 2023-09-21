@@ -22,6 +22,15 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">Simple toasts</div>
 			<div class="card-body">
+				<p>
+					<a href="https://github.com/jerrywu001/vue3-toastify" target="_blank">Vue3-Toastify</a> wrapper for Vue with some additional functionality
+					<ul>
+						<li>Promise wrappers</li>
+						<li>Update wrapper</li>
+						<li>Close functionality</li>
+						<li>Generic 'catch' function to handle misc errors</li>
+					</ul>
+				</p>
 				<div class="list-group">
 					<a @click="$toast.create('Hello World')" class="list-group-item list-group-item-action">$toast.create('Hello World')</a>
 					<a @click="$toast.success('Success!')" class="list-group-item list-group-item-action">$toast.success('Success!')</a>

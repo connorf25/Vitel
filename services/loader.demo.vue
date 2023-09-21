@@ -14,6 +14,7 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">$loader methods</div>
 			<div class="card-body">
+				<p>General "I'm doing something" loader that locks the UI</p>
 				<div class="list-group">
 					<a @click="testLoader()" class="list-group-item list-group-item-action">$toast.start() (for 3 seconds)</a>
 					<a @click="testLoader({caption: 'Doing something'})" class="list-group-item list-group-item-action">$toast.start({caption: 'Doing something'}) (for 3 seconds)</a>

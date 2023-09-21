@@ -14,6 +14,7 @@ export default {
 		<div class="card mb-2">
 			<div class="card-header">Prompts</div>
 			<div class="card-body">
+				<p>Popup and other UI locking window functionality for simple input prompts</p>
 				<div class="list-group">
 					<a @click="$prompt.dialog({body: 'Hello World'})" class="list-group-item list-group-item-action">
 						$prompt.dialog({body: 'Hello World'})
