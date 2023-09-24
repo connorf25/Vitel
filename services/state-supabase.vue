@@ -114,13 +114,6 @@ export default {
 		supabaseKey: {type: String, required: true},
 	},
 	methods: {
-		// Utilify functions  - debug() {{{
-		debug(...args) { // eslint-disable-line no-unused-vars
-			// NOTE: Uncomment this next line to see service chatter
-			// console.log('$state', ...args);
-		},
-		// }}}
-
 		// Pathing utilities - splitPath() {{{
 		/**
 		* Split a simple path into Supabase compatible entity + filters

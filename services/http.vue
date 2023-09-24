@@ -51,7 +51,10 @@ export default {
 		this.axios.defaults.headers.common.Accept = 'application/json';
 
 		// Set baseURL if we have one
-		if (this.baseUrl) this.axios.defaults.baseURL = this.baseUrl;
+		if (this.baseUrl) {
+			this.debug('Using baseUrl', this.baseUrl);
+			this.axios.defaults.baseURL = this.baseUrl;
+		}
 
 		// Make Axios encode using jQueries parameter serializer to keep Monoxide happy
 		/* FIXME: Not sure if this is used these days - MC 2023-09-19
@@ -59,6 +62,17 @@ export default {
 			$.param(params)
 				.replace(/\bq=(.+)\b/g, p => p.replace(/%3A/g, ':')) // Allow `q=` to contain ':' tags
 		*/
+
+		// Add request debugging if enabled
+		if (this.debug.enabled) this.axios.interceptors.request.use(
+			config => {
+				this.debug('Request', config);
+			},
+			error => {
+				this.debug('Request error', error);
+			},
+		)
+
 
 		// Monkey patch Axios so that any error response gets correctly decoded rather than weird stuff like 'Server returned a 403 code'
 		this.axios.interceptors.response.use(

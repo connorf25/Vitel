@@ -98,6 +98,7 @@ Services are very similar to standard Vue Components except that:
 * They are singleton instances - only one of each service exists within your app at any time (by default anyway)
 * They are setup against every component automatically as `$serviceName`
 * If a service requires an async `created()` lifecycle sequence, `ready` (a boolean) and `promise()` (a function which returns when the created process has completed) are also automatically provided
+* A `debug(...msg)` method is injected automatically into all services, when initalizing with `debug: true` this will be activated to output information to the console
 
 Services can be imported from the `@momsfriendlydevco/vitel/services/*` path.
 
