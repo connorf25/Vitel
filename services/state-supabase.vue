@@ -640,7 +640,7 @@ export default {
 				// }}}
 				// Accept files from the detected mode -> Array {{{
 				.then(mode => {
-					this.debug('Using upload mode', mode);
+					this.debug('Uploading with mode', mode);
 					switch (mode) {
 						case 'pojo':
 							this.debug('Encoding Array|POJO file to Blob');
@@ -1044,8 +1044,7 @@ export default {
 	created() {
 		this.supabase = Supabase(this.supabaseUrl, this.supabaseKey);
 
-		return this.$services.require('$toast')
-			.then(()=> console.log('$state ready!'))
+		return this.$services.require('$toast');
 	},
 }
 </script>

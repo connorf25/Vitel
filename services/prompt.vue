@@ -28,17 +28,6 @@ export default {
 	},
 	methods: {
 		/**
-		* Generic debug function
-		* Overload this with something that shows output if needed
-		* @param {*} [msg...] Output message to display
-		*/
-		debug(...msg) { // eslint-disable-line no-unused-vars
-			// Uncomment the following line to show debugging information
-			// console.info('$prompt', ...msg);
-		},
-
-
-		/**
 		* Display a modal dialog with various customizations
 		* This is the main this worker - all the other this.* functions are really just wrappers for this function
 		* Requires `<prompt-handler/>` (`./services/prompt-handler.vue`) to be installed as a component somewhere in the root DOM of the body object

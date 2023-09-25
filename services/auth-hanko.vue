@@ -145,6 +145,7 @@ export default {
 					id: this.bypassId, // UUID-a-like for basic auth trickery
 					email: this.bypassEmail,
 				};
+				this.debug('Auth change', this.user, '(bypassed email)');
 				this.$events.emit('$hanko:change');
 			} else if (this.hanko.session.isValid()) {
 				return this.hanko.user.getCurrent()
@@ -153,12 +154,14 @@ export default {
 						this.state = 'user';
 						this.user = res;
 						this.hasPasskeys = true;
+						this.debug('Auth change', this.user);
 					})
 					.then(()=> this.$events.emit('$hanko:change'))
 			} else {
 				this.isLoggedIn = false;
 				this.state = 'guest';
 				this.user = null;
+				this.debug('Auth change to null');
 				this.$events.emit('$hanko:change');
 			}
 		},
@@ -203,11 +206,11 @@ export default {
 		},
 	},
 	created() {
-		console.log('$authHanko', {me: this, $services: this.$services});
 		return this.$services.require(EventsService)
 			.then(()=> {
 				if (this.bypassEmail) {
 					// Bypass Hanko - this should only occur on local dev instances
+					this.debug('Bypassing auth with email', this.bypassEmail);
 					return this.refresh();
 				} else {
 					return hankoRegister(this.accountUrl, {
