@@ -210,9 +210,9 @@ export default {
 					this.debug('AxiosRequest', req);
 
 					// Calculate endpoint URLs {{{
-					var endpointQuery = new URL(req.url, window.location.href);
+					var endpointQuery = new URL(req.url, this.$http.baseUrl);
 
-					var endpointCount = new URL(req.url, window.location.href);
+					var endpointCount = new URL(req.url, this.$http.baseUrl);
 					endpointCount.pathname += '/count';
 					// }}}
 
