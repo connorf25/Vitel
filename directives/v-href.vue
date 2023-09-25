@@ -10,6 +10,8 @@
 * @param {Boolean} [settings.allowTab=true] Allow middle clicking to open a new tab by adding a `href` attribute to `<a/>` tags
 * @param {String} [settings.method='push'] The router method to use
 * @param {String} [settings.class='v-href'] Class to append to handled objects
+* @param {Function} [settings.before] Function to run before navigating
+* @param {Function} [settings.after] Function to run after navigating
 * @param {Object} [settings.router] The router instance to send the request via, defaults to `binding.instance.$router`
 *
 * @param {Boolean} [modifier.window] Sets `{target: '_blank'}` - i.e. open in a new tab / window
@@ -49,6 +51,8 @@ let bindVHref = function vHrefBind(el, binding) {
 		method: 'push',
 		class: 'v-href',
 		router: binding.instance.$router,
+		before: ()=> {},
+		after: ()=> {},
 		...(typeof binding.value == 'string' ? {path: binding.value} : binding.value),
 	};
 
@@ -85,6 +89,9 @@ let clickListener = function vHrefClick(e) {
 	if (this.stop) e.stopPropagation();
 	if (this.prevent) e.preventDefault();
 	console.info('v-href navigate', this.method, this.destination);
-	this.router[this.method](this.destination);
+	return Promise.resolve()
+		.then(()=> this.before(e))
+		.then(()=> this.router[this.method](this.destination))
+		.then(()=> this.after(e))
 }
 </script>
