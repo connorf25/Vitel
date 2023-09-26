@@ -1046,6 +1046,9 @@ export default {
 		// }}}
 	},
 	created() {
+		if (!this.supabaseUrl || !this.supabaseKey) throw new Error('Cannot connect to Supabase without passing supabaseUrl + supabaseKey');
+
+		this.debug('Connecting to Supabase URL', this.supabaseUrl);
 		this.supabase = Supabase(this.supabaseUrl, this.supabaseKey);
 
 		return this.$services.require('$toast');
