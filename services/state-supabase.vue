@@ -556,7 +556,7 @@ export default {
 							: {column: settings.sort, order: 'asc'}
 					}),
 				})
-				.then(({data}) => Promise.all(data.map(rawFile => Promise.resolve()
+				.then(({data}) => Promise.all((data || []).map(rawFile => Promise.resolve()
 					.then(()=> settings.meta
 						? this.get(settings.metaPath(rawFile), {}, {id: false})
 						: false
