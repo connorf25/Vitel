@@ -289,6 +289,7 @@ export default {
 		*
 		* @param {Function} [options.onPostInit] Called as `(data)` when the inital state has been fetched
 		* @param {Function} [options.onReactives] Called as `(Reactives)` when the reactive workers for the refresh cycle are loaded, These are added to objects by default but cannot be added to Array types
+		* @param {Function} [options.onRemoteChange] Called as `(data)` when either the intiial state was fetched or some other remote change caused a data fetch
 		*
 		* @returns {VueReactive} Vue reactive object
 		* @property {Promise} $ready A promise which resolves when the initial state + local subscription + Vue watchers have all been initalized
@@ -314,6 +315,7 @@ export default {
 
 				onPostInit: (data) => {}, // eslint-disable-line no-unused-vars
 				onReactives: ({$ready, $refresh}) => {}, // eslint-disable-line no-unused-vars
+				onRemoteChange: (data) => {},
 				...options,
 			};
 			if (settings.filter && (!Array.isArray(settings.filter) || settings.filter.length != 3)) throw new Error('Custom filtering in bindData must contain 3 element parts in PostgREST format');
@@ -382,6 +384,7 @@ export default {
 								this.debug('INIT', resolvedPath, '=', dataFieldVal);
 								Object.assign(dataReactive, dataFieldVal);
 								settings.onPostInit(dataReactive);
+								settings.onRemoteChange(dataReactive);
 							});
 					};
 
@@ -408,6 +411,7 @@ export default {
 							({new: {[settings.dataColumn]: payload}}) => { // React to remote changes
 								this.debug('REMOTE-UPDATE', resolvedPath, '=', payload);
 								Object.assign(dataReactive, payload);
+								settings.onRemoteChange(payload);
 							}
 						)
 						.subscribe(),
