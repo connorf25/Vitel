@@ -88,7 +88,6 @@ let bindVHref = function vHrefBind(el, binding) {
 let clickListener = function vHrefClick(e) {
 	if (this.stop) e.stopPropagation();
 	if (this.prevent) e.preventDefault();
-	console.info('v-href navigate', this.method, this.destination);
 	return Promise.resolve()
 		.then(()=> this.before(e))
 		.then(()=> this.router[this.method](this.destination))
