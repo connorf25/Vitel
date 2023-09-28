@@ -124,14 +124,16 @@ export default {
 		*/
 
 		// Add request debugging if enabled
-		if (this.debug.enabled) this.axios.interceptors.request.use(
-			config => {
-				this.debug('Request', config);
-			},
-			error => {
-				this.debug('Request error', error);
-			},
-		)
+		this.debug(()=> {
+			this.axios.interceptors.request.use(
+				config => {
+					this.debug('Request', config);
+				},
+				error => {
+					this.debug('Request error', error);
+				},
+			)
+		});
 
 
 		// Monkey patch Axios so that any error response gets correctly decoded rather than weird stuff like 'Server returned a 403 code'
