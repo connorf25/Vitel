@@ -47,6 +47,9 @@ const preview = {
 				rest.get('/api/test/400', (req, res, ctx) => res(
 					ctx.status(400, 'Fake 400 response')
 				)),
+				rest.get('/api/test/delayed', (req, res, ctx) => setTimeout(()=> {
+					res(ctx.status(200, 'OK 200 response'))
+				}, 5 * 5000)),
 			],
 		},
 	},

@@ -62,6 +62,31 @@ export default {
 				</div>
 			</div>
 		</div>
+		<div class="card mb-2">
+			<div class="card-header">$http.throttle(request)</div>
+			<div class="card-body">
+				<p>Axios requests + combine duplicate request + local caching. This method follows these rules:
+					<ol>
+						<li>Hash the current request based on `hashMethod` (defaults to `url`)</li>
+						<li>Using the hash, if the request is currently being made - return that pending promise</li>
+						<li>Using the hash, if the <code>$cache</code> service is present and the request has been made recently and has not expired - reuse that response</li>
+						<li>If none of the above matches - make a fresh request</li>
+					</ol>
+				</p>
+				<div class="list-group">
+					<a
+						@click="
+							mockRequest('throttle', {url: '/api/test/delayed'});
+							mockRequest('throttle', {url: '/api/test/delayed'});
+							mockRequest('throttle', {url: '/api/test/delayed'});
+						"
+						class="list-group-item list-group-item-action"
+					>
+						$http.throttle({url: '/api/test/delayed'}) x 3
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 

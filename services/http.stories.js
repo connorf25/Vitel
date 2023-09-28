@@ -4,7 +4,9 @@ import Vitel from '#vitel';
 
 setup(app => {
 	app.use(Vitel);
-	app.service('$http', Http);
+	app.service('$http', Http, {
+		debug: true, // Show output in console
+	});
 });
 
 import HttpDemo from '#services/http.demo';

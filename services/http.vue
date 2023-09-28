@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import hasher from 'object-hash';
 
 /**
 * Axios wrapper
@@ -13,7 +14,7 @@ import axios from 'axios';
 *   .then(({data}) => data)
 *
 * @example Make a complex request
-* vm.$http({
+* vm.$http.request({
 *   method: 'PUT',
 *   headers: {'My Custom Header': 123},
 *   params: {id: 123},
@@ -23,8 +24,21 @@ import axios from 'axios';
 export default {
 	name: '$http',
 	data() { return {
+		/**
+		* Axios instance we're wrapping
+		* @type {Axios}
+		*/
 		axios: axios.create(),
+
+		/**
+		* Hash->request lookup for requests being made against their resolving promise
+		* @type {Object<Promise>}
+		*/
+		throttles: {},
 	}},
+	props: {
+		baseUrl: {type: String},
+	},
 	methods: {
 		delete(...args) { return this.axios.delete(...args) },
 		get(...args) { return this.axios.get(...args) },
@@ -33,10 +47,56 @@ export default {
 		patch(...args) { return this.axios.patch(...args) },
 		post(...args) { return this.axios.post(...args) },
 		put(...args) { return this.axios.put(...args) },
-		request(...args) { return this.axios.request(...args) }
-	},
-	props: {
-		baseUrl: {type: String},
+		request(...args) { return this.axios.request(...args) },
+
+		/**
+		* Similar to a regular Axios.request() except that incoming requests are throttled if they match a given hash + expiry period
+		*
+		* @param {AxiosRequest} [config] The request to make
+		* @param {String} [config.hashMethod='url'] How to hash the response. ENUM: 'url', 'query', 'request', 'custom'
+		* @param {*} [config.hash] Precomputed hash if using `{hashMethod:'custom'}`
+		* @param {String} [config.cachePrefix='http-'] Prefix to use when stashing HTTP cache responses
+		*
+		* @returns {Promise<AxiosResponse>} Either the regular resolved AxiosResponse or the existing value by hash
+		*/
+		throttle(config) {
+			if (typeof config != 'object') throw new Error(`$http.throttle only accepts an AxiosRequest object "${typeof config}" given`);
+
+			let hashMethod = config.hashMethod || 'url';
+			let hash =
+				hashMethod == 'url' ? hasher(config.url)
+				: hashMethod == 'query' ? hasher({url: config.url, params: config.params, data: config.data})
+				: hashMethod == 'request' ? hasher(config)
+				: hashMethod == 'custom' && typeof config.hash == 'string' && /^\w+$/.test(config.hash) ? config.hash // Given a hash and it looks valid
+				: hashMethod == 'custom' ? hasher(config.hash) // Don't trust it, run via hash() instead
+				: (()=> { throw new Error(`Invalid $http.throttle hashMethod "${hashMethod}"`) })()
+
+			let reqPrefix = `${config.method || 'GET'} ${config.url} ~ HASH[${hash}]`;
+			if (this.throttles[hash]) { // Already making the request?
+				// Request is already being made - return the pending promise;
+				this.debug(reqPrefix, 'Reuse pending request');
+				return this.throttles[hash];
+			} else if (this.$cache?.get) { // $cache service is available - ask that
+				return this.$cache.get((config.cachePrefix ?? 'http-') + hash, null)
+					.then(val => {
+						if (val !== null) { // Cache returned a value - use it
+							return val;
+						} else {
+							this.debug(reqPrefix, 'Make fresh throttled request - no $cache value available');
+							return this.throttles[hash] = this.axios.request(config)
+								.finally(()=> { // Resolved - remove from pending list
+									delete this.throttles[hash];
+								})
+						}
+					})
+			} else { // Give up and make the request as-is
+				this.debug(reqPrefix, 'Make fresh throttled request');
+				return this.throttles[hash] = this.axios.request(config)
+					.finally(()=> { // Resolved - remove from pending list
+						delete this.throttles[hash];
+					})
+			}
+		},
 	},
 
 
