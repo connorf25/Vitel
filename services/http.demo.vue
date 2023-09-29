@@ -43,10 +43,10 @@ export default {
 						$http.get('/api/test/400')
 					</a>
 					<a
-						@click="mockRequest('get', '/api/fake/users')"
+						@click="mockRequest('get', '/api/users')"
 						class="list-group-item list-group-item-action"
 					>
-						$http.get('/api/fake/users')
+						$http.get('/api/users')
 					</a>
 					<a
 						@click="mockRequest(null, {method: 'GET', url: '/api/test/200'})"

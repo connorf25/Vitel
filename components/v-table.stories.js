@@ -25,7 +25,7 @@ export default {
 
 export const Example = {
 	args: {
-		url: '/api/fake/users',
+		url: '/api/users',
 		mutateRequest(req) { // MSP gets upset if we include any params for some reason
 			delete req.params;
 			return req;
