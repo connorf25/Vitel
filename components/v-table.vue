@@ -182,7 +182,7 @@ export default {
 				// }}}
 				.then(()=> {
 					if (this.reloadCount > 0) {
-						var vtBody = $(this.$el).find('.v-table-body');
+						var vtBody = this.$el.querySelector('.v-table-body');
 						if (!vtBody.css('min-height')) // No existing min-height class
 							vtBody.css('min-height', vtBody.height() + 'px'); // Force CSS height of table to lock
 					}
