@@ -491,7 +491,7 @@ export default {
 		},
 		// }}}
 
-		// Files / storage - fileList(), fileUpload(), fileTranscode(), fileGet(), fileDownload(), fileZip(), fileSnapshot(), fileRemove(), fileIcon() {{{
+		// Files / storage - fileList(), fileUpload(), fileTranscode(), fileGet(), fileSet(), fileDownload(), fileZip(), fileSnapshot(), fileRemove(), fileIcon() {{{
 		/**
 		* Storage file schema
 		* Returned by `this.fileList()`
@@ -532,7 +532,7 @@ export default {
 		*
 		* @returns {Promise<Array<StateFile>>} List of found files for the given path
 		*/
-		fileList(path, options) {
+		fileList(path, options = {}) {
 			let settings = {
 				limit: 0,
 				offset: 0,
@@ -544,6 +544,7 @@ export default {
 			};
 			let {entity, id} = this.splitPath(path, {requireEntity: true, requireId: true});
 
+			this.debug('fileList(', path, options, ')');
 			return this.supabase.storage
 				.from(entity)
 				.list(id, {
@@ -782,6 +783,22 @@ export default {
 		},
 
 
+		/**
+		* Wrapper around fileUpload() specifically for setting file contents en-masse
+		*
+		* @param {String|Array<String>} path The path to upload to (not the same as the file name)
+		* @param {File|Blob|FormData|Object|Array} contents File contents to set
+		* @param {Object} [options] Additional options to mutate behaviour, see `fileUpload()` for more details
+		*/
+		fileSet(path, contents, options) {
+			return this.fileUpload(path, {
+				file: contents,
+				...options,
+			});
+		},
+
+
+
 
 		/**
 		* Download a file for the user
@@ -954,7 +971,7 @@ export default {
 		},
 		// }}}
 
-		// Helper functions - _downloadBlob(), _parsePath() {{{
+		// Helper functions - _downloadBlob(), _uploadBlob(), _parsePath() {{{
 		/**
 		* Internal function to provide a blob as a downloadable file
 		* @private
