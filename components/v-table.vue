@@ -128,8 +128,8 @@ export default {
 
 		layout: {type: String, default: 'card'},
 		entity: {type: String, default: 'items'},
-		textEmpty: {type: String, default() { return `No ${this?.entity || 'items'} found` }},
-		textLoading: {type: String, default() { return `Loading ${this?.entity || 'items'}...` }},
+		textEmpty: {type: String, default(props) { return `No ${props?.entity || 'items'} found` }},
+		textLoading: {type: String, default(props) { return `Loading ${props?.entity || 'items'}...` }},
 
 		tableClass: {type: String, default: 'table'},
 
