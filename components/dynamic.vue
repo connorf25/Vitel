@@ -16,17 +16,21 @@ export default {
 	},
 	render() {
 		console.log('Render', this.$props);
-		console.log('Render resolved', {component: resolveComponent(this.component)});
-		return h(resolveComponent(this.component), {
-			...this.props, // Splat props directly
-			...Object.fromEntries( // Convert all event keys: `click` -> `onClick`
-				Object.entries(this.events || {})
-					.map(([event, cb]) => [
-						'on' + event.toUpperCase().substr(0, 1) + event.toLowerCase().substr(1),
-						cb,
-					])
-			)
-		});
+		return h(
+			typeof this.component == 'string'
+				? resolveComponent(this.component) // Resolve component if string
+				: this.component, // OR use prototype if given one
+			{
+				...this.props, // Splat props directly
+				...Object.fromEntries( // Convert all event keys: `click` -> `onClick`
+					Object.entries(this.events || {})
+						.map(([event, cb]) => [
+							'on' + event.toUpperCase().substr(0, 1) + event.toLowerCase().substr(1),
+							cb,
+						])
+				)
+			},
+		);
 	},
 }
 </script>
