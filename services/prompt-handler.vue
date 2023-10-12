@@ -65,7 +65,11 @@ export default {
 	},
 	created() {
 		if (!this.$prompt) throw new Error('$prompt service not found - check the service has been installed correctly');
-		if (!window.bootstrap) throw new Error('Bootstrap module not found - check tha the Bootstrap JavaScript helper is installed correctly');
+
+		if (import.meta.env.DEV) { // Sanity checks if in dev mode
+			if (!window.bootstrap) console.warn('Bootstrap module not found for use by $prompt - check tha the Bootstrap JavaScript helper is installed correctly');
+			if (!window.bootstrap?.modal) console.warn('Bootstrap Modal functionality not found for use by $prompt - check tha the Bootstrap JavaScript Modal sub-module is installed correctly');
+		}
 
 		// Create top level div#prompt-handler
 		let promptEl = document.createElement('div');
