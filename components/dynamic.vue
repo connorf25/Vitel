@@ -1,12 +1,13 @@
 <script>
 import {h, resolveComponent} from 'vue';
+import {startCase} from 'lodash-es';
 
 /**
 * Display component composed from a component name + object of props + object of events to respond to
 *
 * @param {String|Object} component The string name of a component or the object definition
-* @param {Object} [events] Event bindings as an object lookup
-* @param {Object} [props] Prop bindings as an object lookup
+* @param {Object<*>} [props] Prop bindings as an object lookup
+* @param {Object<Function>} [events] Event bindings as an object lookup
 */
 export default {
 	props: {
@@ -15,7 +16,6 @@ export default {
 		events: {type: Object},
 	},
 	render() {
-		console.log('Render', this.$props);
 		return h(
 			typeof this.component == 'string'
 				? resolveComponent(this.component) // Resolve component if string
@@ -25,7 +25,7 @@ export default {
 				...Object.fromEntries( // Convert all event keys: `click` -> `onClick`
 					Object.entries(this.events || {})
 						.map(([event, cb]) => [
-							'on' + event.toUpperCase().substr(0, 1) + event.toLowerCase().substr(1),
+							'on' + startCase(event),
 							cb,
 						])
 				)
