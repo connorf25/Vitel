@@ -98,12 +98,13 @@ export default {
 					<div class="modal-content">
 						<div :id="`${prompt.id}-header`" class="modal-header">
 							{{prompt.title}}
-							<button
-								@click="$prompt.close(prompt.dialogClose == 'resolve', 'CLOSE')"
-								type="button"
-								class="btn-close"
+							<a
+								@click="$prompt.close(prompt.dialogClose == 'resolve')"
+								class="btn btn-link btn-close"
 								aria-label="Close"
-							/>
+							>
+								<i class="fas fa-lg fa-times"/>
+							</a>
 						</div>
 						<div class="modal-body">
 							<div v-if="prompt.isHtml" v-html="prompt.body"/>
@@ -116,8 +117,20 @@ export default {
 								:events="prompt.componentEvents"
 							/>
 						</div>
-						<div class="modal-footer">
-							FIXME: Footer
+						<div v-if="prompt.buttons && prompt.buttons.length > 0" class="modal-footer d-flex d-justify-end">
+							<a
+								v-for="button in prompt.buttons"
+								:key="button"
+								@click="
+									button.click == 'resolve' ? $prompt.close(true)
+									: button.click == 'reject' ? $prompt.close(false)
+									: button.click()
+								"
+								:class="button.class || 'btn btn-light'"
+							>
+								<i v-if="button.icon" :class="button.icon"/>
+								{{button.title}}
+							</a>
 						</div>
 					</div>
 				</div>
@@ -125,3 +138,37 @@ export default {
 		</teleport>
 	</div>
 </template>
+
+<style>
+#prompt-handler {
+	& .btn.btn-close {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 50px;
+		width: 50px;
+		aspect-ratio: 1/1;
+
+		padding: 0;
+		border-radius: 50%;
+		border: 1px solid transparent;
+		cursor: pointer;
+
+		color: var(--bs-text);
+		text-decoration: none;
+
+		& > i {
+			margin: 0px;
+		}
+
+		&:hover {
+			background: var(--bs-primary);
+			color: var(--bs-white);
+		}
+	}
+
+	& .modal-footer .btn + .btn {
+		margin-left: 5px;
+	}
+}
+</style>

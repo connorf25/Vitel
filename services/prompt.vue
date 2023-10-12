@@ -1,4 +1,6 @@
 <script>
+import {startCase} from 'lodash-es';
+
 /**
 * Vitel Prompt service
 */
@@ -18,6 +20,16 @@ export default {
 		handler: null,
 	}},
 	computed: {
+		/**
+		* The currently active prompt settings (if any)
+		* Taken as the last item in `stack`
+		* @returns {Object}
+		*/
+		active() {
+			return this.stack.at(-1);
+		},
+
+
 		/**
 		* Indicator that a modal is open
 		* @returns {Boolean} Boolean indicating if at least one modal is present
@@ -45,16 +57,27 @@ export default {
 		*
 		* @param {String} [options.dialogClose='reject'] Operation to perform when the dialog is dismissed via close or keyboard interaction. ENUM: 'resolve', 'reject'
 		*
+		* @param {Array<Object|String>} [options.buttons] Button mappings to display in modal footer (or omit to disable). Entries can also be shorthand strings such as 'ok', 'cancel'
+		* @param {String} [options.buttons.title] The text to display on the button
+		* @param {String} [options.buttons.class='btn btn-light'] The button class to apply (default is 'btn btn-success' for buttons that resolve, 'btn btn-danger' for ones that reject and 'btn btn-default' otherwise)
+		* @param {String} [options.buttons.icon] Optional icon to show on the button
+		* @param {Function|String} [options.buttons.click] Function to run when the button is clicked or 'resolve', 'reject'
+		*
 		* @param {String} [options.id] Optional ID to identify this dialog, must be DOM compatible. Allocated automatically if omitted
 		* @param {BootstrapModel} [options.modelEl] The DOM element representing the mode, allocated during creation
 		* @param {DOMElement} [options.modelBS] The Bootstrap Model instance, allocated during creation
+		* @param {String} [options.autoListen='change'] Listen for the specified event and accept its payload as the resolve value. Useful to map a components 'change' emitter to the final value of the $prompt.dialog() output
+		* @param {*} [options.payloadResolve] Optional payload to resolve with (see also: `autoListen`)
+		* @param {*} [options.payloadReject] Optional payload to reject with
+		*
 		* @param {Promise} [options.promise] Pending promise representing this model instance, allocated during creation
 		* @param {Function} [options.promiseResolve] Function to resolve the pending promise
 		* @param {Function} [options.promiseReject] Function to reject the pending promise
 		*
-		* @returns {Promise} A promise which will resolve / reject based on the dialog config
+		* @returns {Promise<*>} A promise which will resolve / reject based on the dialog config. NOTE: If the component triggers the 'change' event the payload of the promise on resolve with be the last given value, otherwise resolves with the payload called with `$prompt.close(isResvoled:Boolean, payload:*)`
 		*/
 		dialog(options) {
+			let $prompt = this;
 			let settings = {
 				id: null, // FIXME: Auto-allocated ID for this prompt, needed when stacking
 				title: 'Question',
@@ -65,14 +88,70 @@ export default {
 				keyboard: true,
 				backdrop: true,
 				dialogClose: 'reject',
+				buttons: null,
 				stack: false,
 				modelEl: null, // Eventual DOM element for the model
 				modelBS: null, // Eventual Bootstrap Model instance
+				autoListen: 'change',
+				payloadResolve: undefined,
+				payloadReject: undefined,
 				promise: null,
 				promiseResolve: null,
 				promiseReject: null,
 				...options,
 			};
+
+			// Settings mangling {{{
+			// Remap button shorthands {{{
+			if (settings.buttons) {
+				settings.buttons = settings.buttons.map(b =>
+					['accept', 'confirm', 'ok', 'save'].includes(b) ? {
+						click: 'resolve',
+						class: 'btn btn-success',
+						icon: 'fas fa-check',
+						title: startCase(b),
+					}
+					: ['cancel'].includes(b) ? {
+						click: 'reject',
+						class: 'btn btn-danger',
+						icon: 'fas fa-times',
+						title: startCase(b),
+					}
+					: ['back'].includes(b) ? {
+						click: 'reject',
+						class: 'btn btn-light',
+						icon: 'fas fa-arrow-left',
+						title: startCase(b),
+					}
+					: ['-'].includes(b) ? { // Dividers
+						class: 'd-block flex-grow-1',
+						title: '',
+					}
+					: b
+				);
+			}
+			// }}}
+
+			// Add listener `autoListen` {{{
+			if (
+				settings.autoListen
+				&& settings.component
+				&& !settings.componentEvents?.change
+			) {
+				this.debug(`Enabling @${settings.autoListen} event listener for $prompt component`);
+				settings.componentEvents = {
+					[settings.autoListen](payload) {
+						if (payload && payload instanceof Event) return; // Ignore pure-event objects which may have bubbled up from JS / nested Vue event emitters
+
+						$prompt.debug(`Set resolve payload from @${settings.autoListen}`, {payload});
+						settings.payloadResolve = payload;
+					},
+					...settings.componentEvents,
+				};
+			}
+
+			// }}}
+			// }}}
 
 			return Promise.resolve()
 				.then(()=> {
@@ -101,6 +180,15 @@ export default {
 		* @returns {Promise} A promise which resolves when the dialog has closed
 		*/
 		close(success = true, payload) {
+			debugger;
+			// Glue in payload if non provided
+			if (
+				payload === undefined
+				&& this.active?.[success ? 'payloadResolve' : 'payloadReject'] !== undefined
+			) {
+				payload = this.active?.[success ? 'payloadResolve' : 'payloadReject'];
+			}
+
 			this.debug('.close()', {success, payload});
 			return this.handler.pop(success, payload);
 		},
@@ -118,6 +206,14 @@ export default {
 			return this.handler.pop(success, payload)
 				.then(()=> true);
 		},
+	},
+	created() {
+		if (import.meta.env.DEV) { // Check for <prompt-hanlder/> if in dev mode
+			setTimeout(()=> {
+				if (!this.handler)
+					console.error('<prompt-handler/> not present or it hasnt regierested itself - check you have this component in the top-level of your app');
+			}, 500);
+		}
 	},
 }
 </script>
