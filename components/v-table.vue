@@ -128,8 +128,8 @@ export default {
 
 		layout: {type: String, default: 'card'},
 		entity: {type: String, default: 'items'},
-		textEmpty: {type: String, default() { return `No ${this?.entity || 'items'} found` }},
-		textLoading: {type: String, default() { return `Loading ${this?.entity || 'items'}...` }},
+		textEmpty: {type: String, default(props) { return `No ${props?.entity || 'items'} found` }},
+		textLoading: {type: String, default(props) { return `Loading ${props?.entity || 'items'}...` }},
 
 		tableClass: {type: String, default: 'table'},
 
@@ -183,7 +183,7 @@ export default {
 				.then(()=> {
 					if (this.reloadCount > 0) {
 						var vtBody = this.$el.querySelector('.v-table-body');
-						if (!vtBody.css('min-height')) // No existing min-height class
+						if (vtBody && !vtBody.css('min-height')) // No existing min-height class
 							vtBody.css('min-height', vtBody.height() + 'px'); // Force CSS height of table to lock
 					}
 				})

@@ -120,6 +120,7 @@ export default {
 		document.body.appendChild(this.loadingEl);
 
 		let loaderStyle = document.createElement('style');
+		// FIXME: New lines are being included as "<br>"
 		loaderStyle.innerText = [
 			'body:not(.loading) #global-loader {',
 				'display: none;',
