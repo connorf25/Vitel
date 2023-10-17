@@ -6,6 +6,7 @@ setup(app => {
 	app.use(Vitel);
 	app.service('$hanko', AuthHanko, {
 		bypassEmail: 'fake-user@fake-domain.com',
+		debug: true,
 	});
 });
 
