@@ -94,9 +94,9 @@ export default {
 				:aria-labelledby="`${prompt.id}-header`"
 				aria-hidden="true"
 			>
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div :id="`${prompt.id}-header`" class="modal-header">
+				<div class="modal-dialog" :class="prompt.modalDialogClass">
+					<div class="modal-content" :class="prompt.modalClass">
+						<div v-if="prompt.title" :id="`${prompt.id}-header`" class="modal-header">
 							{{prompt.title}}
 							<a
 								@click="$prompt.close(prompt.dialogClose == 'resolve')"
@@ -170,5 +170,13 @@ export default {
 	& .modal-footer .btn + .btn {
 		margin-left: 5px;
 	}
+
+	/* Modal sizes {{{ */
+	& .modal-dialog {
+		&.modal-dialog-lg {
+			--bs-modal-width: calc(100% - 100px);
+		}
+	}
+	/* }}} */
 }
 </style>

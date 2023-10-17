@@ -47,6 +47,9 @@ export default {
 		* @param {Object} options Options object to create the dialog from
 		* @param {String} [options.title] Dialog title to display
 		* @param {String} [options.body] Simple body text to display
+		* @param {Boolean} [options.isHtml=false] Indicate that the body text should be rendered as HTML content
+		* @param {String} [options.modalClass] Optional class to add to the `.modal-content` element
+		* @param {String} [options.modalDialogClass] Optional class to add to the outer `.modal-dialog` element
 		* @param {String|Object} [options.component] Vue component name or definition to display after the body text
 		* @param {Object} [options.componentProps] Property values to pass when initializing the component
 		* @param {Object} [options.componentEvents] Event mappings to pass when initializing the component
@@ -83,6 +86,8 @@ export default {
 				title: 'Question',
 				body: '',
 				isHtml: false,
+				modalClass: '',
+				modalDialogClass: '',
 				component: null,
 				componentProps: {},
 				keyboard: true,
