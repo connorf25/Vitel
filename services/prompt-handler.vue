@@ -68,7 +68,7 @@ export default {
 
 		if (import.meta.env.DEV) { // Sanity checks if in dev mode
 			if (!window.bootstrap) console.warn('Bootstrap module not found for use by $prompt - check tha the Bootstrap JavaScript helper is installed correctly');
-			if (!window.bootstrap?.modal) console.warn('Bootstrap Modal functionality not found for use by $prompt - check tha the Bootstrap JavaScript Modal sub-module is installed correctly');
+			if (!window.bootstrap?.Modal) console.warn('Bootstrap Modal functionality not found for use by $prompt - check tha the Bootstrap JavaScript Modal sub-module is installed correctly');
 		}
 
 		// Create top level div#prompt-handler
