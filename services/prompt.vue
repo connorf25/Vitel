@@ -180,7 +180,6 @@ export default {
 		* @returns {Promise} A promise which resolves when the dialog has closed
 		*/
 		close(success = true, payload) {
-			debugger;
 			// Glue in payload if non provided
 			if (
 				payload === undefined
