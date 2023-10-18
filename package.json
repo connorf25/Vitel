@@ -41,7 +41,7 @@
   "engines": {
     "node": ">=16.14.0"
   },
-  "optionalDependencies": {
+  "dependencies": {
     "@kinde-oss/kinde-auth-pkce-js": "^3.0.22",
     "@momsfriendlydevco/formatters": "^1.2.3",
     "@supabase/supabase-js": "^2.37.0",
