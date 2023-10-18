@@ -170,15 +170,16 @@ export default {
 					return this.refresh();
 				} else {
 
-					return createKindeClient({ // Create Kinde handler
-						client_id: this.clientId,
-						domain: this.domain,
-						redirect_uri: window.location.origin,
-						on_redirect_callback: this.refresh,
-						...(import.meta.env.DEV && {
-							is_dangerously_use_local_storage: true,
-						}),
-					})
+					return Promise.resolve()
+						.then(()=> createKindeClient({ // Create Kinde handler
+							client_id: this.clientId,
+							domain: this.domain,
+							redirect_uri: window.location.origin,
+							on_redirect_callback: this.refresh,
+							...(import.meta.env.DEV && {
+								is_dangerously_use_local_storage: true,
+							}),
+						}))
 						.then(instance => this.kinde = instance)
 						.then(()=> this.kinde.getUserProfile() // Fetch user (if there is one)
 							.catch(e => {
