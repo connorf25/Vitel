@@ -173,6 +173,10 @@ export default {
 
 	/* Modal sizes {{{ */
 	& .modal-dialog {
+		&.modal-dialog-md {
+			--bs-modal-width: 750px;
+		}
+
 		&.modal-dialog-lg {
 			--bs-modal-width: calc(100% - 100px);
 		}
