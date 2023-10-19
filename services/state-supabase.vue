@@ -700,46 +700,49 @@ export default {
 						uploaded: 0,
 					};
 
-					return files.map(file => Promise.resolve()
-						.then(()=> {
-							let payload = { // Payload to pass to callbacks which allows mutation
-								file,
-								meta: {},
-							};
-							return Promise.resolve()
-								.then(()=> this.fileTranscoders.reduce((acc, cb) => acc
-									.then(()=> cb.call(this, payload))
-									.then(result => result && Promise.reject('END')) // Exit out of promise series chain on first non-falsy
-								, Promise.resolve()))
-								.then(()=> payload) // No transcoder triggered - return payload as is
-								.catch(e => {
-									if (e === 'END') return payload; // Exited cleanly in the middle of a promise series chain
-									throw e; // Otherwise throw upwards
-								})
-						})
-						.then(({file, meta}) => this.supabase.storage
-							.from(entity)
-							.upload(`${id}/${file.name}`, file)
-							.then(()=> ({file, meta})) // Pass result + meta to next .then block
+					return Promise.all(
+						files.map(file => Promise.resolve()
+							.then(()=> {
+								let payload = { // Payload to pass to callbacks which allows mutation
+									file,
+									meta: {},
+								};
+								return Promise.resolve()
+									.then(()=> this.fileTranscoders.reduce((acc, cb) => acc
+										.then(()=> cb.call(this, payload))
+										.then(result => result && Promise.reject('END')) // Exit out of promise series chain on first non-falsy
+									, Promise.resolve()))
+									.then(()=> payload) // No transcoder triggered - return payload as is
+									.catch(e => {
+										if (e === 'END') return payload; // Exited cleanly in the middle of a promise series chain
+										throw e; // Otherwise throw upwards
+									})
+							})
+							.then(({file, meta}) => this.supabase.storage
+								.from(entity)
+								.upload(`${id}/${file.name}`, file)
+								.then(()=> ({file, meta})) // Pass result + meta to next .then block
+							)
+							.then(({file, meta}) => {
+								if (meta) { // If we also want to populate meta we need to refetch the uploaded file by its name
+									return this.fileList(`${entity}/${id}`, {
+										search: file.name,
+										meta: false,
+										limit: 1,
+									})
+										.then(([newFile]) => this.replace(settings.metaPath(newFile), meta))
+								}
+							})
+							.then(()=> {
+								stats.uploaded += file.size;
+								if (toastId) this.$toast.update(toastId, {
+									progress: stats.uploaded / stats.totalSize,
+								});
+							})
 						)
-						.then(({file, meta}) => {
-							if (meta) { // If we also want to populate meta we need to refetch the uploaded file by its name
-								return this.fileList(`${entity}/${id}`, {
-									search: file.name,
-									meta: false,
-									limit: 1,
-								})
-									.then(([newFile]) => this.replace(settings.metaPath(newFile), meta))
-							}
-						})
-						.then(()=> {
-							stats.uploaded += file.size;
-							if (toastId) this.$toast.update(toastId, {
-								progress: stats.uploaded / stats.totalSize,
-							});
-						})
-					)
+					);
 				})
+				.then(()=> console.log('Upload chain finished'))
 				// }}}
 				.finally(()=> toastId && this.$toast.close(toastId))
 		},
