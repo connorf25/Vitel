@@ -637,9 +637,9 @@ export default {
 							|| settings.file instanceof FormData
 						)
 					) {
-						return 'native';
+						return 'encoded';
 					} else {
-						throw new Error('Unable to determine upload file. Specify a File, Bob, FormData, Object or Array or be more specific by setting {type:String}');
+						throw new Error('Unable to determine upload file. Specify a File, Bob, FormData, Object or Array or be more specific by setting {mode:String}');
 					}
 				})
 				// }}}
@@ -649,27 +649,27 @@ export default {
 					switch (mode) {
 						case 'pojo':
 							this.debug('Encoding Array|POJO file to Blob');
-							if (!settings.name) throw new Error('Passing an Array|POJO to fileUpload() requires `{name:String}` to be specified');
+							if (!path) throw new Error('Passing an Array|POJO to fileUpload() requires `{path:String}` to be specified');
 
 							return [ // Encode POJO into an array of one File
 								new File(
 									[
 										new Blob(
 											[
-												JSON.stringify(settings.file, null, '\t')
+												this._pojoToJson(settings.file)
 											],
 											{
 												type: 'application/json',
 											}
 										),
 									],
-									settings.name,
+									this._parsePath(path).basename,
 									{
 										type: 'application/json',
 									},
 								),
 							];
-						case 'native':
+						case 'encoded':
 							return Array.from(settings.file);
 						case 'prompt':
 							return this._uploadBlob({
@@ -776,7 +776,7 @@ export default {
 				.from(entity)
 				.download(`${id}/${operand}`)
 				.then(({data}) => settings.json
-					? data.text().then(d => JSON.parse(d))
+					? data.text().then(d => this._jsonToPojo(d))
 					: data
 				))
 				.finally(()=> toastId && this.$toast.close(toastId))
@@ -796,8 +796,6 @@ export default {
 				...options,
 			});
 		},
-
-
 
 
 		/**
@@ -971,7 +969,7 @@ export default {
 		},
 		// }}}
 
-		// Helper functions - _downloadBlob(), _uploadBlob(), _parsePath() {{{
+		// Helper functions - _downloadBlob(), _uploadBlob(), _parsePath(), _pojoToJson(), _jsonToPojo() {{{
 		/**
 		* Internal function to provide a blob as a downloadable file
 		* @private
@@ -1059,6 +1057,28 @@ export default {
 			ext = ext.toLowerCase();
 
 			return {dirname, basename, filename, ext};
+		},
+
+
+		/**
+		* Encode a POJO to a JSON string
+		* This is really just a wrapper around `JSON.stringify()` which could also tidy up output + inject meta information
+		* @param {Object|Array} pojo Input object to encode
+		* @returns {String} Encoded JSON string
+		*/
+		_pojoToJson(pojo) {
+			return JSON.stringify(pojo, null, '\t');
+		},
+
+
+		/**
+		* Decode a JSON string into a POJO
+		* This is really just a wrapper around `JSON.parse()` which could also tidy up input + inject meta information
+		* @param {String} str The input string to parse
+		* @returns {Object|Array} Decoded POJO output
+		*/
+		_jsonToPojo(str) {
+			return JSON.parse(str);
 		},
 		// }}}
 	},
