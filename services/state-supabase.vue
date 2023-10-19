@@ -587,6 +587,7 @@ export default {
 		* @param {String|Array<String>} path The path to upload to (not the same as the file name)
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {File|Blob|FormData|Object|Array} [options.file] Existing File object as a binary type (File, Blob, FormData) or a POJO (Array, Object), If omitted a file is prompted for
+		* @param {Boolean} [options.overwrite=true] Allow overwriting existing files if the path matches
 		* @param {String} [options.mode='auto'] Which method to use when uploading, if 'auto' this is guessed from context but some processing can be skipped if specified
 		* @param {Object} [options.meta] Meta information to attach to the file, only applicable if `{multiple:false}`
 		* @param {Boolean} [options.multiple=false] If prompting, allow multiple file selection (conflicts with `meta`)
@@ -598,6 +599,7 @@ export default {
 		fileUpload(path, options) {
 			let settings = {
 				file: null,
+				overwrite: false,
 				mode: 'auto',
 				name: null,
 				meta: null,
@@ -693,7 +695,7 @@ export default {
 					return files;
 				})
 				// }}}
-				// Upload all seleted files {{{
+				// Upload all selected files {{{
 				.then(files => {
 					let stats = {
 						totalSize: files.reduce((acc, file) => acc + file.size, 0),
@@ -720,7 +722,9 @@ export default {
 							})
 							.then(({file, meta}) => this.supabase.storage
 								.from(entity)
-								.upload(`${id}/${file.name}`, file)
+								.upload(`${id}/${file.name}`, file, {
+									upsert: settings.overwrite,
+								})
 								.then(()=> ({file, meta})) // Pass result + meta to next .then block
 							)
 							.then(({file, meta}) => {
@@ -742,7 +746,6 @@ export default {
 						)
 					);
 				})
-				.then(()=> console.log('Upload chain finished'))
 				// }}}
 				.finally(()=> toastId && this.$toast.close(toastId))
 		},
