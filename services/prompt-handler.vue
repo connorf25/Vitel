@@ -27,7 +27,7 @@ export default {
 
 			dialog.modelEl = document.body.querySelector(`#prompt-handler #${dialog.id}`);
 			// Bind closing the model to the $prompt.close handler - ideally any successful promises will be resolved BEFORE this happens
-			dialog.modelEl.addEventListener('hidden.bs.modal', ()=> this.$prompt.close(dialog.dialogClose == 'resolve', 'CLOSE'));
+			dialog.modelEl.addEventListener('hidden.bs.modal', ()=> this.$prompt.close(dialog.dialogClose == 'resolve'));
 
 			dialog.modelBS = new window.bootstrap.Modal(dialog.modelEl, {
 				backdrop: dialog.backdrop,
