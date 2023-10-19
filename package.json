@@ -42,11 +42,12 @@
     "node": ">=16.14.0"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.2.0",
     "@kinde-oss/kinde-auth-pkce-js": "^3.0.22",
     "@momsfriendlydevco/formatters": "^1.2.3",
-    "@supabase/supabase-js": "^2.37.0",
+    "@supabase/supabase-js": "^2.38.1",
     "@teamhanko/hanko-elements": "^0.8.2",
-    "@zip.js/zip.js": "^2.7.24",
+    "@zip.js/zip.js": "^2.7.30",
     "axios": "^1.5.1",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
@@ -54,7 +55,6 @@
     "vue3-toastify": "^0.1.12"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.2",
     "@momsfriendlydevco/eslint-config": "^1.0.7",
     "@storybook/addon-essentials": "^7.2.3",
     "@storybook/addon-interactions": "^7.2.3",
