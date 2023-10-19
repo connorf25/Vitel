@@ -116,13 +116,16 @@ export default {
 					isLoading: false,
 					type: 'success',
 				}))
-				.catch(res => this.closable(toastId, {
-					...(res?.toString && {
-						render: res.toString(),
-					}),
-					isLoading: false,
-					type: 'error',
-				}))
+				.catch(res => {
+					console.warn('$toast.promisify() wrapped worker threw', res);
+					this.closable(toastId, {
+						...(res?.toString && {
+							render: res.toString(),
+						}),
+						isLoading: false,
+						type: 'error',
+					})
+				})
 		},
 
 
