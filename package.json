@@ -49,6 +49,7 @@
     "@teamhanko/hanko-elements": "^0.8.2",
     "@zip.js/zip.js": "^2.7.30",
     "axios": "^1.5.1",
+    "json-markup": "^1.1.4",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
     "object-hash": "^3.0.0",

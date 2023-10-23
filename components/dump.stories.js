@@ -21,3 +21,14 @@ export const Collection = {
 		],
 	},
 }
+
+export const CollectionNoHighlight = {
+	args: {
+		highlight: false,
+		value: [
+			{title: 'Foo widget', value: 123},
+			{title: 'Bar widget', value: 456},
+			{title: 'Baz widget', value: 789},
+		],
+	},
+}
