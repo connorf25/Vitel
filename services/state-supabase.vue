@@ -1,5 +1,5 @@
 <script>
-import {debounce, isPlainObject, pickBy} from 'lodash-es';
+import {cloneDeepWith, debounce, isEqual, isPlainObject} from 'lodash-es';
 import {createClient as Supabase} from '@supabase/supabase-js'
 import {reactive, watch} from 'vue';
 import {BlobWriter as ZipBlobWriter, BlobReader as ZipBlobReader, ZipWriter} from '@zip.js/zip.js';
@@ -212,13 +212,32 @@ export default {
 					.update({
 						data: {
 							...existingData,
-							...pickBy(data, k => !['id'].includes(k) && !/^[$\_]/.test(k)), // Don't copy ID col nor anything thats private
+							...tidyValue(data),
 						},
 					})
 					.eq('id', id)
 					.select('id')
 				)
 				.then(payload => payload.error?.message && Promise.reject(payload.error.message))
+		},
+
+
+		/**
+		* Tidy JSON field data so that is safe from private methods (anything starting with '$' or '_', proxies or other non POJO slush
+		* @param {Object|Array} input Input object to tidy
+		* @returns {Object|Array} POJO, scalar output
+		*/
+		tidyValue(input) {
+			return cloneDeepWith(input, (v, k) => // Clone so we break up all the proxy slush and store primatives only
+				!/^[$\_]/.test(k) // Key doesn't start with '$' or '_'
+				&& (
+					['string', 'number', 'boolean'].includes(typeof v) // Basic scalar types
+					|| Array.isArray(v)
+					|| isPlainObject(v)
+				)
+					? undefined // Use default cloning behaviour
+					: null // Strip from output
+			);
 		},
 
 
@@ -238,7 +257,7 @@ export default {
 				.from(entity)
 				.upsert({
 					id,
-					data: pickBy(data, k => !['id'].includes(k) && !/^[$\_]/.test(k)), // Don't copy ID col nor anything thats private
+					data: this.tidyValue(data),
 				}, {
 					onConflict: 'id',
 					ignoreDuplicates: false,
@@ -286,6 +305,7 @@ export default {
 		* @param {Array<Field:String,Comparison:String,Target:String>} [options.filter] Optional filter (which overrides per-ID watching) to monitor for, note that the value of the filter must be in a three part PostgREST format, not SQL e.g. `['field', 'eq', '123']`. Remember to override `single` if subscribing to multiple matches
 		* @param {Boolean} [options.single=true] Assume response to contain one record only
 		* @param {Boolean} [options.write=true] Allow writing back to the resource on local changes, if falsy no local watch is setup
+		* @param {Boolean} [options.writeSend=true] Actually transfer writes to the server - disable this to see the debugging of what would be written
 		*
 		* @param {Function} [options.onPostInit] Called as `(data)` when the inital state has been fetched
 		* @param {Function} [options.onReactives] Called as `(Reactives)` when the reactive workers for the refresh cycle are loaded, These are added to objects by default but cannot be added to Array types
@@ -312,6 +332,7 @@ export default {
 				single: true,
 				waitFor: null,
 				write: true,
+				writeSend: true,
 
 				onPostInit: (data) => {}, // eslint-disable-line no-unused-vars
 				onReactives: ({$ready, $refresh}) => {}, // eslint-disable-line no-unused-vars
@@ -324,13 +345,44 @@ export default {
 			let dataReactive = reactive(settings.single ? {} : []);
 
 			/**
+			* Storage for the last known "pristine" state
+			* @type {Null|Object|Array}
+			*/
+			let rawState = null;
+
+			/**
+			* Number of skips to the the next "local changes" detection
+			* This is usually set by the local-change checker to avoid getting into a loop when we needed to update the local state
+			* The type is a number in case any nested loops get involed and we need to push/pop stack space
+			* @type {Number}
+			*/
+			let skipLocalUpdate = 0;
+
+			/**
 			* Storage for populated reactive functions
 			* These are Functions appended to the binding which can be called to perform various utility actions
 			* @type {Object<Function>}
+			* @param {Function} $getRaw Get the last pristine raw response from the server or local state
+			* @param {Function} $setRaw Set a new pristine raw response from the server or local state - clears the dirty flag
+			* @param {Function} $refresh Async function to renew state from remote
+			* @param {Function} $destroy Async function to call to release the reactive state and release all watchers - calls all `$destroy*` functions
+			* @param {Function} $destroyLocal Async function to disconnect from local watcher
+			* @param {Function} $destroyRemote Async function to disconnect from remote watcher
+			* @param {Promise} $ready A promise which will resolve when the data state has been loaded
 			*/
-			let reactives = {};
+			let reactives = {
+				$getRaw() {
+					return rawState;
+				},
+				$setRaw(newRaw) {
+					skipLocalUpdate++; // Mark next change as skippable so we don't get in a loop
+					rawState = newRaw;
+					Object.assign(dataReactive, newRaw);
+				},
+			};
 
-			// Reactive: $ready {{{
+
+			// Reactive: $ready: Promise {{{
 			reactives.$ready = Promise.resolve()
 				.then(()=> Promise.all([
 					// Wait on path if its a promise
@@ -382,7 +434,7 @@ export default {
 										...row[settings.dataColumn],
 									}))
 								this.debug('INIT', resolvedPath, '=', dataFieldVal);
-								Object.assign(dataReactive, dataFieldVal);
+								reactives.$setRaw(dataFieldVal);
 								settings.onPostInit(dataReactive);
 								settings.onRemoteChange(dataReactive);
 							});
@@ -397,57 +449,75 @@ export default {
 					// }}}
 
 					// Subscribe to remote changes {{{
-					this.supabase.channel('any')
-						.on(
-							'postgres_changes',
-							{
-								event: 'UPDATE',
-								schema: 'public',
-								table: entity,
-								filter: settings.filter
-									? settings.filter.join('')
-									: `${settings.idColumn}=eq.${id}`,
-							},
-							({new: {[settings.dataColumn]: payload}}) => { // React to remote changes
-								this.debug('REMOTE-UPDATE', resolvedPath, '=', payload);
-								Object.assign(dataReactive, payload);
-								settings.onRemoteChange(payload);
-							}
-						)
-						.subscribe(),
+					(()=> {
+						let query = {
+							event: 'UPDATE',
+							schema: 'public',
+							table: entity,
+							filter: settings.filter
+								? settings.filter.join('')
+								: `${settings.idColumn}=eq.${id}`,
+						};
+						let listener = ({new: {[settings.dataColumn]: payload}}) => { // React to remote changes
+							this.debug('REMOTE-UPDATE', resolvedPath, '=', payload);
+							reactives.$setRaw(payload);
+							settings.onRemoteChange(payload);
+						};
+
+						this.debug('Subscribe remote', {query});
+
+						reactives.$destroyRemote = ()=> { // Setup remote watcher release
+							console.log('DEBUG: Attempt to disconnect from watcher - this functionality is untested');
+							return this.supabase.channel('any')
+								.off('postgres_changes', query, listener)
+						};
+
+						return this.supabase.channel('any')
+							.on('postgres_changes', query, listener)
+							.subscribe()
+					})(),
 					// }}}
 
 					// Subscribe to local changes {{{
 					(()=> {
 						if (!settings.write) return; // Skip this step if we're not interested in wrting
 						let localWatchHook = rawPayload => {
-							if (settings.single) throw new Error('Reacting to multiple record changes via subscriber is not yet supported');
+							if (!settings.single) throw new Error('Reacting to multiple record changes via subscriber is not yet supported');
+							if (skipLocalUpdate > 0) {
+								// this.debug('Skip local update');
+								skipLocalUpdate--;
+								return;
+							}
 
-							let payload = pickBy(rawPayload, (v, k) =>
-								!/^[$\_]/.test(k) // Key doesn't start with '$' or '_'
-								&& ['string', 'number', 'boolean'].includes(typeof v) // Is a JavaScript scalar
-							);
+							let payload = this.tidyValue(rawPayload);
 
 							this.debug('LOCAL-UPDATE', resolvedPath, '=', payload);
-							this.supabase
-								.from(entity)
-								.upsert({
-									[settings.idColumn]: id,
-									[settings.dataColumn]: payload,
-								}, {
-									onConflict: settings.idColumn,
-									ignoreDuplicates: false,
-								})
-								.eq(settings.idColumn, id)
-								.select(settings.dataColumn)
-								.then(res => {
-									if (res.data?.[0][settings.dataColumn]) // Remote decorated response
-										Object.assign(dataReactive, res.data?.[0][settings.dataColumn]);
-								})
+							if (settings.writeSend)
+								this.supabase
+									.from(entity)
+									.upsert({
+										[settings.idColumn]: id,
+										[settings.dataColumn]: payload,
+									}, {
+										onConflict: settings.idColumn,
+										ignoreDuplicates: false,
+									})
+									.eq(settings.idColumn, id)
+									.select(settings.dataColumn)
+									.then(res => {
+										let newData = res.data?.[0][settings.dataColumn];
+										if (
+											!newData // Response doesn't include any data
+											|| isEqual(rawState, newData) // Plain data is the same
+										) return;
+
+										// Merge server changes into local
+										reactives.$setRaw(newData);
+									})
 						};
 						if (settings.throttle) localWatchHook = debounce(localWatchHook, settings.throttle);
 
-						watch(
+						reactives.$destroyLocal = watch(
 							dataReactive,
 							localWatchHook,
 							{
@@ -459,12 +529,33 @@ export default {
 					})(),
 					// }}}
 				]))
-				// Assign reqactives + call onReactives() {{{
+				// Assign reactives + call onReactives() {{{
 				.then(()=> {
-					if (settings.single) Object.assign(dataReactive, reactives);
+					if (settings.single) Object.defineProperties(
+						dataReactive,
+						Object.fromEntries(
+							Object.entries(reactives)
+								.map(([key, value]) => [
+									key,
+									{
+										value,
+										configurable: false,
+										enumerable: false,
+										writable: false,
+									}
+								])
+						)
+					);
 					settings.onReactives(reactives);
 				})
 				// }}}
+				// }}}
+
+				// Reactive: $destroy {{{
+				reactives.$destroy = ()=> Promise.all([
+					reactives.$destroyRemote && reactives.$destroyRemote(),
+					reactives.$destroyLocal && reactives.$destroyLocal(),
+				])
 				// }}}
 
 			return dataReactive;
