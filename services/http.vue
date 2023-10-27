@@ -1,13 +1,22 @@
 <script>
 import axios from 'axios';
 import hasher from 'object-hash';
+import {merge} from 'lodash-es';
 
 /**
 * Axios wrapper
 *
-* @param {String} [baseUrl] Optional base URL to apply to all requests
+* @param {Object} [config] Base config to merge into axios.defaults
 *
 * @url https://github.com/axios/axios#example
+*
+* @example Load the HTTP module with a sane baseUrl + credential headers
+* import HttpService from '@momsfriendly/vitel/services/http';
+* app.service('$http', HttpService, {
+*   debug: true, // Enable debugging if you want more verbosity
+*   config: {
+*   },
+* });
 *
 * @example Make a GET request and process the (array'd) document body)
 * vm.$http.get('/api/widgets')
@@ -38,6 +47,7 @@ export default {
 	}},
 	props: {
 		baseUrl: {type: String},
+		config: {type: Object},
 	},
 	methods: {
 		delete(...args) { return this.axios.delete(...args) },
@@ -111,9 +121,9 @@ export default {
 		this.axios.defaults.headers.common.Accept = 'application/json';
 
 		// Set baseURL if we have one
-		if (this.baseUrl) {
-			this.debug('Using baseUrl', this.baseUrl);
-			this.axios.defaults.baseURL = this.baseUrl;
+		if (this.config) {
+			this.debug('Using config', this.config);
+			merge(this.axios.defaults, this.config);
 		}
 
 		// Make Axios encode using jQueries parameter serializer to keep Monoxide happy
