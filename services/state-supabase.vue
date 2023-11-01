@@ -468,6 +468,8 @@ export default {
 
 						reactives.$destroyRemote = ()=> { // Setup remote watcher release
 							console.log('DEBUG: Attempt to disconnect from watcher - this functionality is untested');
+							return;
+							// FIXME: None of the below works - destroy all active connections and rebuild?
 							return this.supabase.channel('any')
 								.off('postgres_changes', query, listener)
 						};
