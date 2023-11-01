@@ -307,9 +307,9 @@ export default {
 		* @param {Boolean} [options.write=true] Allow writing back to the resource on local changes, if falsy no local watch is setup
 		* @param {Boolean} [options.writeSend=true] Actually transfer writes to the server - disable this to see the debugging of what would be written
 		*
-		* @param {Function} [options.onPostInit] Called as `(data)` when the inital state has been fetched
-		* @param {Function} [options.onReactives] Called as `(Reactives)` when the reactive workers for the refresh cycle are loaded, These are added to objects by default but cannot be added to Array types
-		* @param {Function} [options.onRemoteChange] Called as `(data)` when either the intiial state was fetched or some other remote change caused a data fetch
+		* @param {Function} [options.onReactives] Function called as `(Reactives)` when the reactive workers for the refresh cycle are loaded, These are added to objects by default but cannot be added to Array types
+		* @param {Function} [options.onRemoteChange] Async function called as `(data)` when either the intiial state was fetched or some other remote change caused a data fetch, will be waited on before calling `onPostInit()`
+		* @param {Function} [options.onPostInit] Async function called as as `(data)` when the inital state has been fetched
 		*
 		* @returns {VueReactive} Vue reactive object
 		* @property {Promise} $ready A promise which resolves when the initial state + local subscription + Vue watchers have all been initalized
@@ -435,9 +435,9 @@ export default {
 									}))
 								this.debug('INIT', resolvedPath, '=', dataFieldVal);
 								reactives.$setRaw(dataFieldVal);
-								settings.onPostInit(dataReactive);
-								settings.onRemoteChange(dataReactive);
-							});
+							})
+								.then(()=> settings.onRemoteChange(dataReactive))
+								.then(()=> settings.onPostInit(dataReactive))
 					};
 
 					return {resolvedPath, entity, id};
