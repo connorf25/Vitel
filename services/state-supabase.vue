@@ -383,7 +383,8 @@ export default {
 
 
 			// Reactive: $ready: Promise {{{
-			reactives.$ready = Promise.resolve()
+			// NOTE: We also glue this to the dataReactive right now so its available immediately
+			dataReactive.$ready = reactives.$ready = Promise.resolve()
 				.then(()=> Promise.all([
 					// Wait on path if its a promise
 					typeof path == 'function'
