@@ -299,6 +299,7 @@ export default {
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {String} [options.idColumn='id'] Primary ID to match against, based on the path
 		* @param {String} [options.dataColumn='data'] Data / JSON column to retrieve data from, based on the path
+		* @param {Boolean} [options.syncId=true] Whether to also include the `idColumn` and its value with all data
 		* @param {Number} [options.throttle=$props.throttle] Throttle all writes by this time in milliseconds, set to falsy to disable
 		* @param {Boolean} [options.deep=true] Deeply watch reactive data writes
 		* @param {Promise|Array<Promise>} Wait for the given promise(es) to resolve before binding
@@ -326,6 +327,7 @@ export default {
 			let settings = {
 				idColumn: 'id',
 				dataColumn: 'data',
+				syncId: true,
 				throttle: this.throttle,
 				deep: true,
 				filter: null,
@@ -336,7 +338,7 @@ export default {
 
 				onPostInit: (data) => {}, // eslint-disable-line no-unused-vars
 				onReactives: ({$ready, $refresh}) => {}, // eslint-disable-line no-unused-vars
-				onRemoteChange: (data) => {},
+				onRemoteChange: (data) => {}, // eslint-disable-line no-unused-vars
 				...options,
 			};
 			if (settings.filter && (!Array.isArray(settings.filter) || settings.filter.length != 3)) throw new Error('Custom filtering in bindData must contain 3 element parts in PostgREST format');
@@ -362,6 +364,7 @@ export default {
 			* Storage for populated reactive functions
 			* These are Functions appended to the binding which can be called to perform various utility actions
 			* @type {Object<Function>}
+			* @param {String} $id The unique ID of the document, as specified by `settings.idColumn`
 			* @param {Function} $getRaw Get the last pristine raw response from the server or local state
 			* @param {Function} $setRaw Set a new pristine raw response from the server or local state - clears the dirty flag
 			* @param {Function} $refresh Async function to renew state from remote
@@ -371,13 +374,20 @@ export default {
 			* @param {Promise} $ready A promise which will resolve when the data state has been loaded
 			*/
 			let reactives = {
+				$id: null,
 				$getRaw() {
 					return rawState;
 				},
 				$setRaw(newRaw) {
 					skipLocalUpdate++; // Mark next change as skippable so we don't get in a loop
 					rawState = newRaw;
-					Object.assign(dataReactive, newRaw);
+					Object.assign(
+						dataReactive,
+						newRaw,
+						settings.syncId && {
+							[settings.idColumn]: reactives.$id,
+						},
+					);
 				},
 			};
 
@@ -406,6 +416,8 @@ export default {
 				})
 				// Add reactive.$refresh() {{{
 				.then(({resolvedPath, entity, id}) => {
+					reactives.$id = id;
+
 					/**
 					* Refresh the snapshot state of a binding
 					* This is used to fetch the initial state
