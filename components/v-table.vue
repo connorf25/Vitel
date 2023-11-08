@@ -12,7 +12,8 @@ import Pagination from './pagination.vue';
 /**
 * Customizable table component with auto data retrieval, pagnination and searching
 *
-* @param {String|Object} url Doop / Monoxide ReST endpoint to connect to, if this is a plain object its assumed to be an Axios compatible request (including a 'url' key) to merge with computed properties such as filters, sorting, pagination
+* @param {String|Object} url ReST endpoint to connect to, if this is a plain object its assumed to be an Axios compatible request (including a 'url' key) to merge with computed properties such as filters, sorting, pagination
+* @param {String} [baseUrl] Base URL to assume URLs source from, defaults to trying the `$http` service base config OR the `window.location.origin`
 * @param {Function} [dataDecorate] Optional function to run the retrieved data through before use, useful to add meta fields
 * @param {String} [sort] Field to sort by, if omitted the rowKey is used instead
 * @param {Boolean} [sortAsc=true] When sorting, sort ascending (A-Z)
@@ -96,6 +97,10 @@ export default {
 	}},
 	props: {
 		url: {type: [String, Object], required: true},
+		baseUrl: {type: String, default: ()=> {
+			return app.service('$http')?.config?.baseURL
+				|| window.location.origin;
+		}},
 		dataDecorate: {type: Function},
 		sort: {type: String},
 		sortAsc: {type: Boolean, default: true},
@@ -213,9 +218,9 @@ export default {
 					this.debug('AxiosRequest', req);
 
 					// Calculate endpoint URLs {{{
-					var endpointQuery = new URL(req.url, this.$http.baseUrl);
+					var endpointQuery = new URL(req.url, this.baseUrl);
 
-					var endpointCount = new URL(req.url, this.$http.baseUrl);
+					var endpointCount = new URL(req.url, this.baseUrl);
 					endpointCount.pathname += '/count';
 					// }}}
 
