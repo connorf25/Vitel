@@ -15,6 +15,8 @@ import {merge} from 'lodash-es';
 * app.service('$http', HttpService, {
 *   debug: true, // Enable debugging if you want more verbosity
 *   config: {
+*     baseURL: 'http://localhost:8080',
+*     withCredentials: true,
 *   },
 * });
 *
@@ -46,7 +48,6 @@ export default {
 		throttles: {},
 	}},
 	props: {
-		baseUrl: {type: String},
 		config: {type: Object},
 	},
 	methods: {
@@ -120,7 +121,7 @@ export default {
 		// Make Axios request JSON by default
 		this.axios.defaults.headers.common.Accept = 'application/json';
 
-		// Set baseURL if we have one
+		// Set base config if we are given one
 		if (this.config) {
 			this.debug('Using config', this.config);
 			merge(this.axios.defaults, this.config);
