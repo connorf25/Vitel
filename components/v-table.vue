@@ -5,6 +5,7 @@ import {
 	merge,
 	omit,
 	pickBy,
+	camelCase
 } from 'lodash-es';
 import Pagination from './pagination.vue';
 
@@ -136,13 +137,15 @@ export default {
 		services: {type: Boolean, default: true},
 	},
 	methods: {
-		// Utilify functions  - debug() {{{
+		// Utility functions  - debug() {{{
 		debug(...args) { // eslint-disable-line no-unused-vars
 			// NOTE: Uncomment this next line to see component chatter
 			console.info('v-table', ...args);
 		},
 		// }}}
 
+		// Utility functions from lodash
+		camelCase,
 
 		/**
 		* Refresh the contents of the table
@@ -417,7 +420,7 @@ export default {
 					<tr v-for="row in rows" :key="row[rowKey]">
 						<td v-for="col in columns" :key="col.id" :class="col.cellClass || col.type && columnTypes[col.type].cellClass">
 							<a v-href="cellHref ? cellHref(row) : false" :class="!cellHref && 'no-click'">
-								<slot :name="col.slot" :row="row">
+								<slot :name="col.slot || camcelCase(col.id)" :row="row">
 									{{row[col.id]}}
 								</slot>
 							</a>
