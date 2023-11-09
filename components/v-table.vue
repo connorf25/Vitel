@@ -425,7 +425,7 @@ export default {
 					<tr v-for="row in rows" :key="row[rowKey]">
 						<td v-for="col in columns" :key="col.id" :class="col.cellClass || col.type && columnTypes[col.type].cellClass">
 							<a v-href="cellHref ? cellHref(row) : false" :class="!cellHref && 'no-click'">
-								<slot :name="col.slot || camcelCase(col.id)" :row="row">
+								<slot :name="col.slot || camelCase(col.id)" :row="row">
 									{{row[col.id]}}
 								</slot>
 							</a>
