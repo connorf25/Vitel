@@ -1194,6 +1194,23 @@ export default {
 		_jsonToPojo(str) {
 			return JSON.parse(str);
 		},
+
+
+		/**
+		* Lazily convert a string to a UUID
+		* This tries to mash strings that are "sort of" already like UUIDs into them by adding padding
+		*
+		* @param {String} input Input string
+		* @returns {String} A UUID compatible string
+		*/
+		_String2UUID(input) {
+			let candidate = input.replace(/[^0-9a-f]+/g, '').substr(0, 34).padStart(34, '0');
+			return candidate.substr(0, 8) + '-'
+			+ candidate.substr(8, 4) + '-'
+			+ candidate.substr(12, 4) + '-'
+			+ candidate.substr(16, 4) + '-'
+			+ candidate.substr(22);
+		},
 		// }}}
 	},
 	created() {
