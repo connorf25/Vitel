@@ -605,6 +605,7 @@ export default {
 		* @name StateFile
 		* @property {String} id A UUID string representing the unique ID of the file
 		* @property {String} name Relative name path (can contain prefix directories) for the human readable file name
+		* @property {String} path Internal path to the file, used to pass the file onto other functions
 		* @property {Object} parsedName An object representing meta file parts of a file name
 		* @property {String} parsedName.basename The filename + extention (i.e. everything without directory name)
 		* @property {String} parsedName.filename The file portion of the name (basename without the extension)
@@ -616,7 +617,7 @@ export default {
 		* @property {Number} size Size, in bytes, of the file
 		* @property {String} mime The associated mime type for the file
 		*
-		* @property {Object} meta Meta information pulled from the corresponding fileMeta table
+		* @property {Object} [meta] Meta information pulled from the corresponding fileMeta table, if `{meta: true}` is enabled when requesting the file list
 		*
 		* @property {String} icon CSS icon to display for the file (extracted from the file name by `this.fileType()`)
 		* @property {String} type Human readable descrition of the file name (extracted from the file name by `this.fileType()`)
@@ -633,7 +634,7 @@ export default {
 		* @param {Number} [options.offset=0] Offset file count
 		* @param {String} [options.sort='name'] Optional sort criteria, begin field with '-' if reverse order is required
 		* @param {String} [options.search] Optional search string to filter by
-		* @param {Boolean} [options.meta] Pull meta information for each file entity
+		* @param {Boolean} [options.meta=true] Pull meta information for each file entity
 		* @param {Function} [options.metaPath] Function, called as `(rawFile)` which returns the Path to use when fetching meta data
 		*
 		* @returns {Promise<Array<StateFile>>} List of found files for the given path
@@ -672,6 +673,7 @@ export default {
 						let baseFile = {
 							id: rawFile.id,
 							name: rawFile.name,
+							path: `/${entity}/${id}/${rawFile.name}`,
 							parsedName: this._parsePath('/' + rawFile.name),
 							created: new Date(rawFile.created_at),
 							modified: new Date(rawFile.updated_at),
