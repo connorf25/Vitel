@@ -92,12 +92,18 @@ export default {
 	}},
 	props: {
 		/**
-		* Options for this Deepstream wrapper
+		* Options for throttling writes to the server
+		* The options here match the Lodash `debounce` function along with a `wait` time in milliseconds
 		*
 		* @type {Object}
 		* @property {Number} throttle Throttle all writes by this time in milliseconds, set to falsy to disable
 		*/
-		throttle: {type: Number, default: 200},
+		throttle: {type: Object, default: ()=> { return {
+			wait: 200,
+			maxWait: 2000,
+			leading: false,
+			trailing: true,
+		}}},
 
 
 		/**
@@ -300,7 +306,7 @@ export default {
 		* @param {String} [options.idColumn='id'] Primary ID to match against, based on the path
 		* @param {String} [options.dataColumn='data'] Data / JSON column to retrieve data from, based on the path
 		* @param {Boolean} [options.syncId=true] Whether to also include the `idColumn` and its value with all data
-		* @param {Number} [options.throttle=$props.throttle] Throttle all writes by this time in milliseconds, set to falsy to disable
+		* @param {Object} [options.throttle=$props.throttle] Lodash debounce options + `wait` key used to throttle all writes, set to falsy to disable
 		* @param {Boolean} [options.deep=true] Deeply watch reactive data writes
 		* @param {Promise|Array<Promise>} Wait for the given promise(es) to resolve before binding
 		* @param {Array<Field:String,Comparison:String,Target:String>} [options.filter] Optional filter (which overrides per-ID watching) to monitor for, note that the value of the filter must be in a three part PostgREST format, not SQL e.g. `['field', 'eq', '123']`. Remember to override `single` if subscribing to multiple matches
@@ -530,7 +536,7 @@ export default {
 										reactives.$setRaw(newData);
 									})
 						};
-						if (settings.throttle) localWatchHook = debounce(localWatchHook, settings.throttle);
+						if (settings.throttle) localWatchHook = debounce(localWatchHook, settings.throttle.wait, settings.throttle);
 
 						reactives.$destroyLocal = watch(
 							dataReactive,
@@ -538,7 +544,6 @@ export default {
 							{
 								immediate: false,
 								deep: settings.deep,
-								flush: 'post',
 							},
 						);
 					})(),
