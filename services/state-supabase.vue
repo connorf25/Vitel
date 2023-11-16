@@ -170,7 +170,7 @@ export default {
 		* @param {String|Array<String>} path The path to retrieve
 		* @param {*} [fallback] Optional fallback if the path does not exist
 		* @param {Object} [options] Additional options to mutate behaviour
-		* @param {Boolean} [options.id=true] Include ID of the entity
+		* @param {Boolean} [options.id=true] Include ID of the entity in the output
 		* @returns {Promise<Object>} A promise which will resolve with the current snapshot value
 		*/
 		get(path, fallback, options) {
@@ -937,12 +937,12 @@ export default {
 		* @returns {String} A UUID compatible string
 		*/
 		_String2UUID(input) {
-			let candidate = input.replace(/[^0-9a-f]+/g, '').substr(0, 34).padStart(34, '0');
+			let candidate = input.replace(/[^0-9a-f]+/g, '').substr(0, 32).padStart(32, '0');
 			return candidate.substr(0, 8) + '-'
 			+ candidate.substr(8, 4) + '-'
 			+ candidate.substr(12, 4) + '-'
 			+ candidate.substr(16, 4) + '-'
-			+ candidate.substr(22);
+			+ candidate.substr(20, 12);
 		},
 		// }}}
 	},
