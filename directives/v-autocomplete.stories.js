@@ -4,6 +4,8 @@ import RegExpEscape from '#utils/regexpEscape';
 import Vitel from '#vitel';
 import {setup} from '@storybook/vue3';
 
+let metasyntactic = ['Foo', 'Bar', 'Baz', 'Qux', 'Quux', 'Flarp', 'Corge', 'Grault', 'Garply', 'Waldo', 'Fred', 'Plugh', 'Xyzzy', 'Thud'];
+
 export default {
 	title: 'Directives/v-autocomplete',
 	component: vAutocompleteDemo,
@@ -20,7 +22,26 @@ setup(app => {
 export const SimpleArray = {
 	args: {
 		settings: {
-			options: ['Foo', 'Bar', 'Baz', 'Qux', 'Quux', 'Flarp', 'Corge', 'Grault', 'Garply', 'Waldo', 'Fred', 'Plugh', 'Xyzzy', 'Thud'],
+			options: metasyntactic,
+		},
+	},
+}
+
+export const SimpleArrayWithFiltering = {
+	args: {
+		settings: {
+			options: metasyntactic,
+			filter: true,
+		},
+	},
+}
+
+export const SimpleArrayWithFilteringAndSort = {
+	args: {
+		settings: {
+			options: metasyntactic,
+			filter: true,
+			sort: true,
 		},
 	},
 }
@@ -37,9 +58,7 @@ export const AsyncCallback = {
 					+ ')'
 				, 'i')
 
-				console.log('FILTER RE', queryRE);
-
-				return ['Foo', 'Bar', 'Baz', 'Qux', 'Quux', 'Flarp', 'Corge', 'Grault', 'Garply', 'Waldo', 'Fred', 'Plugh', 'Xyzzy', 'Thud']
+				return metasyntactic
 					.filter(term => queryRE.test(term))
 			},
 		},

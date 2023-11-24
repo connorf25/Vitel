@@ -1,14 +1,34 @@
 <script>
 import Dropdown from 'bootstrap/js/dist/dropdown';
-import {debounce} from 'lodash-es';
+import {debounce, sortBy} from 'lodash-es';
 import RegExpEscape from '#utils/regexpEscape';
 
+/**
+* Add an autocomplete element to a regular `<input/>` element with minimal DOM / Vue interruptions
+*
+* @param {Object} options Configuration options
+* @param {Array|Function} [options.options] Options to populate (if a simple array), otherwise this can be an async function which can return an array OR an AxiosRequest which will return the options to display
+* @param {Function} [options.change] Event fired when the user makes a selection. Called as `(option)`
+*
+* @param {String} [options.query] The initial query to use, if omitted uses the value of the element
+* @param {Boolean} [options.filter=false] Apply a client-side filter to the input options. This is only useful if the options function doesnt filter the options itself
+* @param {Boolean|String|Array<String>} [options.filter=false] Apply a client-side filter to optionsif a literal `true` value. If a non-boolean this indicates the options field(s) to sort by
+* @param {Function} [options.label] Function to extract the display label from individual options. Defaults to using the literal string value of the option. Called as `(option)`
+* @param {Function} [options.labelHighlighter] Curryable function used to return the label highlighter. Called as `(query)`. Expected to return a function which highlights subsequent option labels.
+* @param {String} [options.labelHighlightTag='strong'] HTML tag to use when highlighting matches if using the default `options.labelHightlighter`
+* @param {Function} [options.labelEmpty] Function to rreturn a prompt when no options match. Called as `(query)`
+* @param {Object} [options.dropdown] Dropdown options passed to `Boostrap.dropdown()` to create the dropdown aspect of the autocomplete
+* @param {Object<Function>} [options.events] Event mapping of event handlers for the source element. Each is mapped as a passive event listener
+* @param {Object<Function>} [options.keyHandlers] Key handler mapping for anything triggering a key event.
+*/
 let updateAutocomplete = function updateAutocomplete(el, binding) {
 	if (!el.parentElement) return console.log('Cannot render yet - no parent element');
 
 	let settings = {
 		options: [],
 		query: null,
+		filter: false,
+		sort: false,
 		label: option => option,
 		labelHighlighter(query) {
 			let highlightReplacer = query
@@ -123,6 +143,37 @@ let updateAutocomplete = function updateAutocomplete(el, binding) {
 						throw new Error('Unknown data type for `options` - expected an Array or Function');
 					}
 				})
+				// Apply client-side filtering (if settings.filter) {{{
+				.then(options => {
+					if (settings.filter) { // Apply client-side filtering?
+						let optionFilterRE = new RegExp(
+							'('
+							+ settings.query
+								.trim()
+								.split(/\s/)
+								.map(word => RegExpEscape(word))
+								.join('|')
+							+ ')'
+						, 'gi')
+
+						return options
+							.filter(option => optionFilterRE.test(settings.label(option)))
+					} else {
+						return options;
+					}
+				})
+				// }}}
+				// Apply client-side sorting (if settings.sort) {{{
+				.then(options => {
+					if (settings.sort === true) {
+						return sortBy(options, opt => settings.label(opt));
+					} else if (settings.sort) {
+						return sortBy(options, settings.sort);
+					} else {
+						return options;
+					}
+				})
+				// }}}
 				.then(options => state.options = options || [])
 				.then(()=> methods.renderOptions());
 		},
@@ -191,7 +242,7 @@ let updateAutocomplete = function updateAutocomplete(el, binding) {
 	}
 
 	if (!state.dropdownMenuBS)
-		state.dropdownMenuBS = new Dropdown(el);
+		state.dropdownMenuBS = new Dropdown(el, settings.dropdown);
 	// }}}
 
 	// Set initial state, if not already
