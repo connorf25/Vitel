@@ -17,6 +17,7 @@
     "#directives/*": "./directives/*.vue",
     "#filters/*": "./filters/*.js",
     "#services/*": "./services/*.vue",
+    "#utils/*": "./utils/*.js",
     "#vitel": "./lib/vitel.js"
   },
   "exports": {
