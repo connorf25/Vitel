@@ -1,11 +1,12 @@
 <script>
 import {
+	camelCase,
 	isObject,
 	isPlainObject,
 	merge,
 	omit,
 	pickBy,
-	camelCase
+	set as setPath,
 } from 'lodash-es';
 import Pagination from './pagination.vue';
 
@@ -98,7 +99,7 @@ export default {
 	props: {
 		url: {type: [String, Object], required: true},
 		baseUrl: {type: String, default: ()=> {
-			return app.service('$http')?.config?.baseURL
+			return this?.$http?.config?.baseURL
 				|| window.location.origin;
 		}},
 		dataDecorate: {type: Function},
@@ -185,7 +186,7 @@ export default {
 
 					// Omit empty keys from url object
 					if (isObject(this.url))
-						this.$setPath(this.url, 'params', pickBy(this.url.params));
+						setPath(this.url, 'params', pickBy(this.url.params));
 				})
 				// }}}
 				.then(()=> {
