@@ -4,7 +4,7 @@
 *
 * @provides {VueComponent} st This parent <scrollytelling/> component
 *
-* @property {Number} [positionStart=0] Starting point (as a percentage) of the stage
+* @property {String} [startAt] DOM selection matcher to align to at the start - mainly used for debugging
 */
 export default {
 	provide() { return {
@@ -24,7 +24,7 @@ export default {
 		children: [],
 	}},
 	props: {
-		positionStart: {type: Number, default: 0},
+		startAt: String,
 	},
 	methods: {
 		/**
@@ -54,21 +54,25 @@ export default {
 		* DOM level function to attach to the scroll event
 		* @param {Event} [e] The scroll event data
 		*/
-		domScrollListener(e) {
+		domScrollListener() {
 			let floatOffset = this.$el.scrollTop / (this.$el.scrollHeight - this.$el.clientHeight);
 			if (floatOffset > 1) floatOffset = 1; // Clamp to max
 			let positionRounded = Math.round(floatOffset * 100, 0);
-			console.log('SCROLL', {
-				floatOffset,
-				positionRounded,
-			});
 
 			this.setPosition(positionRounded);
 		},
 	},
 	mounted() {
 		this.$el.addEventListener('scroll', this.domScrollListener, {passive: true});
-	},
+
+		// Set up watcher + jump to starting position
+		this.$nextTick()
+			.then(()=> this.$watch('startAt', v => {
+				let domEl = document.querySelector(v);
+				if (!domEl) throw new Error(`Cannot locate DOM element "${v}" to use it as a starting position`);
+				domEl.scrollIntoView();
+			}, {immediate: true}))
+		},
 }
 </script>
 
