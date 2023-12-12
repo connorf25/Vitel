@@ -21,26 +21,29 @@ export default {
 		<template #default>
 			<!-- Slide 1 - white background -->
 			<scrollytelling-item
-				position="screen-snap"
+				id="slide-1"
+				position="screen"
 				class="bg-white"
 			/>
 
 			<!-- Slide 2 - blue background -->
 			<scrollytelling-item
-				position="screen-snap"
+				id="slide-2"
+				position="screen"
 				class="bg-blue"
 			/>
 
 			<!-- Slide 3 - yellow background -->
 			<scrollytelling-item
-				position="screen-snap"
+				id="slide-3"
+				position="screen"
 				class="bg-yellow"
 			/>
 
 			<!-- Slide 4 - Video example -->
 			<scrollytelling-item
 				id="slide-4"
-				position="screen-snap"
+				position="screen"
 			>
 				<scrollytelling-video
 					url="https://storage.googleapis.com/dara-c1b52.appspot.com/daras_ai/media/ea6bd022-a62b-11ed-b0a8-02420a0001c9/gooey.ai%20text%20to%20animation%20-%200%20a%20lush%20garden%20in%20...remely%20detailed%20face%20full%20body%203d%20realism%20render.mp4#t=0.001"

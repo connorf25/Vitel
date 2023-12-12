@@ -16,10 +16,19 @@ export default {
 	}},
 	data() { return {
 		/**
-		* Calculated scroll position within this item, based on the parent scroll + lifetime
-		* @type {Number} Offset in ticks (usually milliseconds)
+		* Position within this scrollytelling-item
+		*
+		* @typeDef {Position}
+		* @property {Float} float Position within the item expressed as a float percentage (0 to 1)
+		* @property {Number} percent Position within the item expressed as a natural percentage (0 - 100)
+		* @property {Number} absolute The raw absolute offset (usually pixels)
 		*/
-		innerPosition: 0,
+		innerPosition: {
+			float: 0,
+			percent: 0,
+			absolute: 0,
+		},
+
 
 		/**
 		* Number of life units this component is expected to hang around
@@ -63,6 +72,7 @@ export default {
 	},
 	mounted() {
 		this.st.register(this); // Register this child with parent
+		this.$el.$vueComponent = this; // Create handle we can use to lookup the VueComponent from the DOM element - used by parent to address child items on scroll
 	},
 }
 </script>
@@ -74,31 +84,42 @@ export default {
 			`position-${position}`,
 			`transition-${transition}`,
 		]"
+		:style="`scroll-padding-block-end: ${lifetime}px`"
 	>
-		<slot/>
+		<div class="content">
+			Position: {{innerPosition.absolute}} ~ {{innerPosition.percent}}% / {{lifetime}}
+			<slot/>
+		</div>
 
 		<div
 			v-if="lifetime > 0"
 			class="lifetime-padding"
 			:style="`height: ${lifetime}px`"
-		>
-			Padding: {{lifetime}}
-		</div>
+		/>
 	</div>
 </template>
 
 <style lang="scss">
 .scrollytelling .scrollytelling-item {
+	flex-wrap: wrap;
+
 	/* Positions: .position-* {{{ */
 	&.position-screen, &.position-screen-snap {
 		display: flex;
 		width: 100%;
-		height: 100%;
+		min-height: 100%;
 		border: 1px dashed blue;
 	}
 
 	&.position-screen-snap {
-		scroll-snap-align: start;
+		scroll-snap-align: end;
+	}
+	/* }}} */
+
+	/* Lock content area to top of view if we're focused + inside an innerPosition scroll {{{ */
+	&.focused .content {
+		position: fixed;
+		top: 0px;
 	}
 	/* }}} */
 
@@ -115,9 +136,8 @@ export default {
 
 	/* .lifetime-padding {{{ */
 	& .lifetime-padding {
-		display: block;
-		width: 100%;
-		background: #0FF;
+		flex-basis: 100%;
+		background: transparent;
 	}
 	/* }}} */
 }
