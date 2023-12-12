@@ -15,7 +15,7 @@ export default {
 		* The position offset of the stage as a percentage
 		* @type {Number}
 		*/
-		position: this.positionStart,
+		position: 0,
 
 
 		/**

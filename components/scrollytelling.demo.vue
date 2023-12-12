@@ -38,11 +38,14 @@ export default {
 			/>
 
 			<!-- Slide 4 - Video example -->
-			<scrollytelling-video
+			<scrollytelling-item
 				id="slide-4"
 				position="screen-snap"
-				url="https://storage.googleapis.com/dara-c1b52.appspot.com/daras_ai/media/ea6bd022-a62b-11ed-b0a8-02420a0001c9/gooey.ai%20text%20to%20animation%20-%200%20a%20lush%20garden%20in%20...remely%20detailed%20face%20full%20body%203d%20realism%20render.mp4#t=0.001"
-			/>
+			>
+				<scrollytelling-video
+					url="https://storage.googleapis.com/dara-c1b52.appspot.com/daras_ai/media/ea6bd022-a62b-11ed-b0a8-02420a0001c9/gooey.ai%20text%20to%20animation%20-%200%20a%20lush%20garden%20in%20...remely%20detailed%20face%20full%20body%203d%20realism%20render.mp4#t=0.001"
+				/>
+			</scrollytelling-item>
 
 			<!-- General timeline display -->
 			<scrollytelling-timeline

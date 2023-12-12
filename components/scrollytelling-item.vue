@@ -2,8 +2,7 @@
 /**
 * Sub-item of a <scrollytelling/> component
 *
-* NOTE: Don't use this component directly - its meant to be a class prototype
-*
+* @provides {VueComponent} stItem This <scrollytelling-item/> component
 * @injects {VueComponent} st The parent <scrollytelling/> component
 *
 * @property {String} [position='screen'] How to position the item
@@ -12,13 +11,23 @@
 */
 export default {
 	inject: ['st'],
+	provide() { return {
+		stItem: this,
+	}},
 	data() { return {
+		/**
+		* Calculated scroll position within this item, based on the parent scroll + lifetime
+		* @type {Number} Offset in ticks (usually milliseconds)
+		*/
+		innerPosition: 0,
+
 		/**
 		* Number of life units this component is expected to hang around
 		* Calculated automatically by <scrollytelling-video/> etc.
 		* Use setLifetime() to populate
+		* @type {Number} Time in ticks (usually milliseconds)
 		*/
-		lifetime: null,
+		lifetime: 0,
 	}},
 	props: {
 		position: {
@@ -42,20 +51,6 @@ export default {
 			].includes(v),
 		},
 	},
-	computed: {
-		/**
-		* Computed version of `$props.life` as an object
-		* @returns {Object}
-		* @property {Number} start The primary starting point of the item
-		* @propertY {Number} end The primary ending point of the item
-		*/
-		presence() {
-			let out = /^(?<start>\d+)-(?<end>\d+)$/.exec(this.life);
-			out.start = parseFloat(out.start);
-			out.end = parseFloat(out.end);
-			return out;
-		},
-	},
 	methods: {
 		/**
 		* Set the lifetime of a component based on some dynamic criteria like the video length
@@ -63,19 +58,7 @@ export default {
 		*/
 		setLifetime(lifetime) {
 			console.log('DEBUG: <scrollytelling-item/> setLifetime', lifetime);
-		},
-
-		/**
-		* Sets the location of this item based on its properties
-		*/
-		place() {
-			this.classes = [
-				// Toggle classes#alive|no-alive
-				...(this.st.position >= this.presence.start && this.st.position <= this.presence.end
-					? 'alive'
-					: 'no-alive'
-				),
-			];
+			this.lifetime = lifetime;
 		},
 	},
 	mounted() {
@@ -93,6 +76,14 @@ export default {
 		]"
 	>
 		<slot/>
+
+		<div
+			v-if="lifetime > 0"
+			class="lifetime-padding"
+			:style="`height: ${lifetime}px`"
+		>
+			Padding: {{lifetime}}
+		</div>
 	</div>
 </template>
 
@@ -120,6 +111,14 @@ export default {
 	}
 	/* }}}
 
+	/* }}} */
+
+	/* .lifetime-padding {{{ */
+	& .lifetime-padding {
+		display: block;
+		width: 100%;
+		background: #0FF;
+	}
 	/* }}} */
 }
 </style>

@@ -1,12 +1,10 @@
 <script>
-import ScrollyTellingItem from './scrollytelling-item.vue';
-
 /**
 * Scrollytelling component which displays a video
 * This component will automatically preload the video and bias the lifetime of this scrollytelling-item by its duration
 */
 export default {
-	extends: ScrollyTellingItem,
+	inject: ['stItem'],
 	props: {
 		url: {
 			type: String,
@@ -20,20 +18,14 @@ export default {
 		*/
 		domDurationChange(e) {
 			console.log('DEBUG: Duration-Change', e.target.duration);
-			this.setLifetime(Math.ceil(e.target.duration * 1000));
+			this.stItem.setLifetime(Math.ceil(e.target.duration * 1000));
 		},
 	},
 }
 </script>
 
 <template>
-	<div
-		class="scrollytelling-item"
-		:class="[
-			`position-${position}`,
-			`transition-${transition}`,
-		]"
-	>
+	<div>
 		<video
 			controlslist="nodownload nofullscreen noremoteplayback"
 			disablepictureinpicture
