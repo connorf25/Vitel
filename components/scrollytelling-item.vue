@@ -6,8 +6,6 @@
 * @injects {VueComponent} st The parent <scrollytelling/> component
 *
 * @property {String} [position='screen'] How to position the item
-* @property {String} life Main in-focus point of the item expressed as a percentage of the timeline in the form `${from%}-${to%}`
-* @property {String} [transition='snap'] Transition to use for the item
 */
 export default {
 	inject: ['st'],
@@ -48,17 +46,6 @@ export default {
 			].includes(v),
 			default: 'screen',
 		},
-		life: {
-			type: String,
-			validate: v => /^(\d+)-(\d+)$/.test(v),
-		},
-		transition: {
-			type: String,
-			default: 'snap',
-			validate: v => [
-				'snap',
-			].includes(v),
-		},
 	},
 	methods: {
 		/**
@@ -66,7 +53,6 @@ export default {
 		* @param {Number} lifetime Lifetime in milliseconds to allow this component to live
 		*/
 		setLifetime(lifetime) {
-			console.log('DEBUG: <scrollytelling-item/> setLifetime', lifetime);
 			this.lifetime = lifetime;
 		},
 	},
@@ -82,12 +68,11 @@ export default {
 		class="scrollytelling-item"
 		:class="[
 			`position-${position}`,
-			`transition-${transition}`,
 		]"
 		:style="`scroll-padding-block-end: ${lifetime}px`"
 	>
 		<div class="content">
-			Position: {{innerPosition.absolute}} ~ {{innerPosition.percent}}% / {{lifetime}}
+			<!-- Position: {{innerPosition.absolute}} ~ {{innerPosition.percent}}% / {{lifetime}} -->
 			<slot/>
 		</div>
 
@@ -121,17 +106,6 @@ export default {
 		position: fixed;
 		top: 0px;
 	}
-	/* }}} */
-
-	/* Transitions {{{ */
-
-	/* .transition-snap - Item only shows when alive {{{*/
-	& .transition-snap {
-		display: none;
-		&.alive {display: flex}
-	}
-	/* }}}
-
 	/* }}} */
 
 	/* .lifetime-padding {{{ */

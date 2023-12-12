@@ -96,14 +96,11 @@ export default {
 						: bestCandidate
 				, null)
 
-			console.log('Focused Item', this.focusedItem && this.focusedItem.el.id);
-
 			if (this.focusedItem) {
 				let itemComponent = this.focusedItem.el.$vueComponent;
 				itemComponent.innerPosition.absolute = 0 - this.focusedItem.rect.top;
 				itemComponent.innerPosition.float = itemComponent.innerPosition.absolute / itemComponent.lifetime;
 				itemComponent.innerPosition.percent = Math.round(itemComponent.innerPosition.float * 100);
-				console.log('INNER POS', this.focusedItem.el.$vueComponent.innerPosition);
 			}
 
 			// Add '.focused' class to childItem with best claim + remove it from others
@@ -125,6 +122,7 @@ export default {
 		},
 	},
 	mounted() {
+		// Listen for scroll events to update the position
 		this.$el.addEventListener('scroll', this.domScrollListener, {passive: true});
 
 		// Set up watcher + jump to starting position

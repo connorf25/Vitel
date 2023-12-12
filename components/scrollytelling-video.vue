@@ -17,9 +17,15 @@ export default {
 		* @param {Evenet} e DOM event
 		*/
 		domDurationChange(e) {
-			console.log('DEBUG: Duration-Change', e.target.duration);
 			this.stItem.setLifetime(Math.ceil(e.target.duration * 1000));
 		},
+	},
+	mounted() {
+		this.$watch('stItem.innerPosition.absolute', (v)=> {
+			let pos = v / 1000; // Absolute position is in milliseconds and <video/> takes seconds
+			console.log('SET VIDEO POSITION', pos);
+			this.$refs.videoEl.currentTime = pos;
+		}, {immediate: true});
 	},
 }
 </script>
@@ -27,6 +33,7 @@ export default {
 <template>
 	<div>
 		<video
+			ref="videoEl"
 			controlslist="nodownload nofullscreen noremoteplayback"
 			disablepictureinpicture
 			disableremoteplayback
