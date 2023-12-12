@@ -36,7 +36,7 @@ export default {
 
 
 		/**
-		* Set the new position (as a pecerntage offset) and arrange the stage
+		* Set the new position (as a percentage offset) and arrange the stage
 		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
@@ -47,11 +47,6 @@ export default {
 			this.position = position;
 			this.$el.style.setProperty('--storytelling-position-offset', `${this.position}s`);
 			this.$el.style.setProperty('--storytelling-position-delay', `-${this.position}s`);
-
-			return;
-			return Promise.all(this.children.map(child =>
-				child.place()
-			));
 		},
 
 
@@ -59,29 +54,20 @@ export default {
 		* DOM level function to attach to the scroll event
 		* @param {Event} [e] The scroll event data
 		*/
-		domScrollListener() {
-			let percentOffset = window.pageYOffset / (document.body.scrollHeight - window.innerHeight);
-			if (percentOffset > 1) percentOffset = 1; // Clamp to max
-
+		domScrollListener(e) {
+			let floatOffset = this.$el.scrollTop / (this.$el.scrollHeight - this.$el.clientHeight);
+			if (floatOffset > 1) floatOffset = 1; // Clamp to max
+			let positionRounded = Math.round(floatOffset * 100, 0);
 			console.log('SCROLL', {
-				percentOffset,
-				winInnerHeight: window.innerHeight,
-				docClientHeight: window.document.body.clientHeight,
-				offsetTop: window.document.body.offsetTop,
-				pageYOffset: window.pageYOffset,
-				scrollHeight: document.body.scrollHeight,
+				floatOffset,
+				positionRounded,
 			});
-
-			let positionRounded = Math.round(percentOffset * 100, 0);
 
 			this.setPosition(positionRounded);
 		},
 	},
 	mounted() {
-		window.addEventListener('scroll', this.domScrollListener, {passive: true});
-	},
-	beforeUnmount() {
-		window.removeEventListener('scroll', this.domScrollListener);
+		this.$el.addEventListener('scroll', this.domScrollListener, {passive: true});
 	},
 }
 </script>
@@ -103,6 +89,7 @@ export default {
 	overflow-x: hidden;
 	/* }}} */
 
+	/* Add snapping guides for sub-items that require it */
 	scroll-snap-type: y mandatory;
 
 	& > * {
@@ -111,25 +98,6 @@ export default {
 		animation-delay: var(--storytelling-position-delay);
 		animation-duration: 100s;
 		animation-timing-function: linear;
-	}
-
-	& .st-timeline-horiz {
-		display: flex;
-		width: 1%;
-		background: var(--bs-blue);
-
-		position: fixed;
-		left: 0px;
-		top: 0px;
-		width: 10px;
-		height: 100%;
-
-		animation-name: fill-vert;
-
-		@keyframes fill-vert {
-			from { height: 0% };
-			to { height: 100% };
-		}
 	}
 }
 </style>

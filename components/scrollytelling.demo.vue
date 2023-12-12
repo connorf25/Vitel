@@ -1,11 +1,13 @@
 <script>
 import Scrollytelling from './scrollytelling.vue';
 import ScrollytellingItem from './scrollytelling-item.vue';
+import ScrollytellingTimeline from './scrollytelling-timeline.vue';
 
 export default {
 	components: {
 		Scrollytelling,
 		ScrollytellingItem,
+		ScrollytellingTimeline,
 	},
 }
 </script>
@@ -31,7 +33,10 @@ export default {
 				class="bg-yellow"
 			/>
 
-			<div class="st-timeline-horiz"/>
+			<!-- General timeline display -->
+			<scrollytelling-timeline
+				position="bottom"
+			/>
 		</template>
 	</scrollytelling>
 </template>
