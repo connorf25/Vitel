@@ -86,6 +86,7 @@ export default {
 
 <style lang="scss">
 .scrollytelling .scrollytelling-item {
+	pointer-events: none;
 	flex-wrap: wrap;
 
 	/* Positions: .position-* {{{ */

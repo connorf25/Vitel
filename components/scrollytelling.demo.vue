@@ -23,22 +23,28 @@ export default {
 			<scrollytelling-item
 				id="slide-1"
 				position="screen"
-				class="bg-white"
-			/>
+				class="bg-text bg-white"
+			>
+				Slide 1
+			</scrollytelling-item>
 
 			<!-- Slide 2 - blue background -->
 			<scrollytelling-item
 				id="slide-2"
 				position="screen"
-				class="bg-blue"
-			/>
+				class="bg-text bg-blue"
+			>
+				Slide 2
+			</scrollytelling-item>
 
 			<!-- Slide 3 - yellow background -->
 			<scrollytelling-item
 				id="slide-3"
 				position="screen"
-				class="bg-yellow"
-			/>
+				class="bg-text bg-yellow"
+			>
+				Slide 3
+			</scrollytelling-item>
 
 			<!-- Slide 4 - Video garden path example -->
 			<!-- Videos used from https://gooey.ai/animation-generator/examples/ -->
@@ -66,3 +72,19 @@ export default {
 		</template>
 	</scrollytelling>
 </template>
+
+<style>
+.bg-text {
+	display: flex;
+	background: #FFF;
+
+	.content {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 24pt;
+	}
+}
+</style>

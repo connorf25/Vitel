@@ -146,6 +146,7 @@ export default {
 .scrollytelling {
 	margin: 0;
 	padding: 0;
+	user-select: none;
 
 	/* .scrollytelling should be the scroll component {{{ */
 	height: 500px;
