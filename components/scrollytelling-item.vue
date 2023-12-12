@@ -2,6 +2,8 @@
 /**
 * Sub-item of a <scrollytelling/> component
 *
+* NOTE: Don't use this component directly - its meant to be a class prototype
+*
 * @injects {VueComponent} st The parent <scrollytelling/> component
 *
 * @property {String} [position='screen'] How to position the item
@@ -10,6 +12,14 @@
 */
 export default {
 	inject: ['st'],
+	data() { return {
+		/**
+		* Number of life units this component is expected to hang around
+		* Calculated automatically by <scrollytelling-video/> etc.
+		* Use setLifetime() to populate
+		*/
+		lifetime: null,
+	}},
 	props: {
 		position: {
 			type: String,
@@ -47,6 +57,14 @@ export default {
 		},
 	},
 	methods: {
+		/**
+		* Set the lifetime of a component based on some dynamic criteria like the video length
+		* @param {Number} lifetime Lifetime in milliseconds to allow this component to live
+		*/
+		setLifetime(lifetime) {
+			console.log('DEBUG: <scrollytelling-item/> setLifetime', lifetime);
+		},
+
 		/**
 		* Sets the location of this item based on its properties
 		*/
