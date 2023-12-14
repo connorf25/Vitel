@@ -1,4 +1,6 @@
 <script>
+import {Position} from './scrollytelling.utils.js';
+
 /**
 * Sub-item of a <scrollytelling/> component
 *
@@ -16,16 +18,13 @@ export default {
 		/**
 		* Position within this scrollytelling-item
 		*
-		* @typeDef {Position}
+		* @type {Position}
 		* @property {Float} float Position within the item expressed as a float percentage (0 to 1)
 		* @property {Number} percent Position within the item expressed as a natural percentage (0 - 100)
 		* @property {Number} absolute The raw absolute offset (usually pixels)
+		* @property {Number} max Maxmimum absolute value
 		*/
-		innerPosition: {
-			float: 0,
-			percent: 0,
-			absolute: 0,
-		},
+		innerPosition: null,
 
 
 		/**
@@ -72,7 +71,6 @@ export default {
 		:style="`scroll-padding-block-end: ${lifetime}px`"
 	>
 		<div class="content">
-			<!-- Position: {{innerPosition.absolute}} ~ {{innerPosition.percent}}% / {{lifetime}} -->
 			<slot/>
 		</div>
 

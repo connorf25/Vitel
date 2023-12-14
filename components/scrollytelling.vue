@@ -1,4 +1,6 @@
 <script>
+import {Position} from './scrollytelling.utils.js';
+
 /**
 * Main <scrollytelling/> component
 *
@@ -14,16 +16,13 @@ export default {
 		/**
 		* The current stage position
 		*
-		* @typeDef {Position}
+		* @type {Position}
 		* @property {Float} float Position within the entire stage expressed as a float percentage (0 to 1)
 		* @property {Number} percent Position within the entire stage expressed as a natural percentage (0 - 100)
 		* @property {Number} absolute The raw absolute offset (usually pixels)
+		* @property {Number} max Maxmimum absolute value
 		*/
-		position: {
-			float: 0,
-			percent: 0,
-			absolute: 0,
-		},
+		position: new Position({max: 0, absolute: 0}),
 
 
 		/**
@@ -57,21 +56,14 @@ export default {
 		/**
 		* Set the new position (as a percentage offset) and arrange the stage
 		*
-		* @param {Object} position.float The new position expressed as a floating point percent (0 to 1)
+		* @param {Object} rawPosition.float The new position expressed as a floating point percent (0 to 1)
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
-		setPosition(position) {
-			if (!position.float) throw new Error('Incoming position must be an object containing a `float` key');
-			let positionRounded = Math.round(position);
+		setPosition(rawPosition) {
+			let position = new Position(rawPosition);
+			if (position.percent == this.position.percent) return; // Avoid setting the same position we're already
+			this.position = position;
 
-			if (positionRounded == this.position.percent) return; // Avoid setting the same position we're already
-			if (position < 0 || position > 1) throw new Error('Position must be a float between 0 - 1');
-
-			this.position = {
-				float: position,
-				percent: Math.round(position),
-				absolute: position,
-			};
 			this.$el.style.setProperty('--storytelling-position-offset', `${this.position.percent}s`);
 			this.$el.style.setProperty('--storytelling-position-delay', `-${this.position.percent}s`);
 
@@ -98,9 +90,10 @@ export default {
 
 			if (this.focusedItem) {
 				let itemComponent = this.focusedItem.el.$vueComponent;
-				itemComponent.innerPosition.absolute = 0 - this.focusedItem.rect.top;
-				itemComponent.innerPosition.float = itemComponent.innerPosition.absolute / itemComponent.lifetime;
-				itemComponent.innerPosition.percent = Math.round(itemComponent.innerPosition.float * 100);
+				itemComponent.innerPosition = new Position({
+					max: itemComponent.lifetime,
+					absolute: 0 - this.focusedItem.rect.top,
+				});
 			}
 
 			// Add '.focused' class to childItem with best claim + remove it from others
@@ -115,10 +108,10 @@ export default {
 		* @param {Event} [e] The scroll event data
 		*/
 		domScrollListener() {
-			let floatOffset = this.$el.scrollTop / (this.$el.scrollHeight - this.$el.clientHeight);
-			if (floatOffset > 1) floatOffset = 1; // Clamp to max
-
-			this.setPosition({float: floatOffset});
+			this.setPosition({
+				max: this.$el.scrollHeight - this.$el.clientHeight,
+				absolute: this.$el.scrollTop,
+			});
 		},
 	},
 	mounted() {
