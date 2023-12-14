@@ -42,7 +42,8 @@ export default {
 		focusedItem: null,
 	}},
 	props: {
-		startAt: String,
+		startAt: {type: String},
+		debug: {type: Boolean, default: false},
 	},
 	methods: {
 		/**
@@ -121,21 +122,64 @@ export default {
 		// Set up watcher + jump to starting position
 		this.$nextTick()
 			.then(()=> this.$watch('startAt', v => {
+				if (!v) return; // Nothing to jump to
 				let domEl = document.querySelector(v);
 				if (!domEl) throw new Error(`Cannot locate DOM element "${v}" to use it as a starting position`);
 				domEl.scrollIntoView();
 			}, {immediate: true}))
+	},
+	watch: {
+		position: {
+			deep: true,
+			handler() {
+				console.log('POSITION NOW', this.position);
+			},
 		},
+	},
 }
 </script>
 
 <template>
 	<div class="scrollytelling">
+		<teleport to="body">
+			<div v-if="debug" id="scrollytelling-debug" class="card">
+				<table>
+					<tr><td>Focus:</td><td>{{focusedItem ? focusedItem.el.id : 'NONE'}}</td></tr>
+					<tr><td colspan="2"><hr/></td></tr>
+					<tr><td>Position (Float):</td><td>{{position.float}}</td></tr>
+					<tr><td>Position (%):</td><td>{{position.percent}}%</td></tr>
+					<tr><td>Position (Abs):</td><td>{{position.absolute}}</td></tr>
+					<tr><td>Position (Max):</td><td>{{position.max}}</td></tr>
+				</table>
+			</div>
+		</teleport>
 		<slot/>
 	</div>
 </template>
 
 <style lang="scss">
+/* Debugging area {{{ */
+#scrollytelling-debug {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	max-width: 200px;
+	overflow: hidden;
+
+	background: #FFF;
+	border: 1px solid #CCC;
+	padding: 5px;
+
+	& td {
+		white-space: nowrap;
+	}
+
+	& td:first-child {
+		text-align: right;
+	}
+}
+/* }}} */
+
 .scrollytelling {
 	margin: 0;
 	padding: 0;

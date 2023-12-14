@@ -87,6 +87,11 @@ export default {
 	pointer-events: none;
 	flex-wrap: wrap;
 
+	& .content {
+		width: 100%;
+		height: 100%;
+	}
+
 	/* Positions: .position-* {{{ */
 	&.position-screen, &.position-screen-snap {
 		display: flex;
