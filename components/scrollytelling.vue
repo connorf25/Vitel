@@ -40,6 +40,21 @@ export default {
 		* @property {DOMElement} el The DOM element for the item
 		*/
 		focusedItem: null,
+
+
+		/**
+		* The state of the animation
+		* ENUM: 'manual' Human needs to scroll to play, 'playing' Animation is auto-playing, 'restart' Board needs restarting
+		* @type {String}
+		*/
+		status: 'manual',
+
+
+		/**
+		* Whether the stage is currently auto-playing
+		* @type {Boolean}
+		*/
+		playing: false,
 	}},
 	props: {
 		startAt: {type: String},
@@ -54,16 +69,43 @@ export default {
 		},
 
 
+		setPlaying(newStatus) {
+			// DEBUG: This needs to do things
+			this.playing = newStatus;
+		},
+
+
 		/**
 		* Set the new position (as a percentage offset) and arrange the stage
 		*
 		* @param {Object} rawPosition.float The new position expressed as a floating point percent (0 to 1)
+		*
+		* @param {Object} [options] Additional optionst to mutate behaviour
+		* @param {Boolean} [options.scrollTo=false] Also set the document scroll
+		* @param {Boolean} [options.animateScrollTo=false] Animate when setting document scroll
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
-		setPosition(rawPosition) {
-			let position = new Position(rawPosition);
+		setPosition(rawPosition, options) {
+			let settings = {
+				scrollTo: false,
+				animateScrollTo: false,
+				...options,
+			};
+
+			let position = new Position({
+				max: this.position.max, // Use previous max if we have one
+				...rawPosition,
+			});
 			if (position.percent == this.position.percent) return; // Avoid setting the same position we're already
 			this.position = position;
+
+			if (settings.scrollTo) {
+				this.$el.scrollTo({
+					top: this.position.absolute,
+					behavior: settings.animateScrollTo ? 'smooth' : 'instant',
+				});
+			}
 
 			this.$el.style.setProperty('--storytelling-position-offset', `${this.position.percent}s`);
 			this.$el.style.setProperty('--storytelling-position-delay', `-${this.position.percent}s`);
@@ -112,6 +154,8 @@ export default {
 			this.setPosition({
 				max: this.$el.scrollHeight - this.$el.clientHeight,
 				absolute: this.$el.scrollTop,
+			}, {
+				scrollTo: false, // We're already reacting to scroll, dont get into a loop
 			});
 		},
 	},
@@ -127,14 +171,6 @@ export default {
 				if (!domEl) throw new Error(`Cannot locate DOM element "${v}" to use it as a starting position`);
 				domEl.scrollIntoView();
 			}, {immediate: true}))
-	},
-	watch: {
-		position: {
-			deep: true,
-			handler() {
-				console.log('POSITION NOW', this.position);
-			},
-		},
 	},
 }
 </script>
