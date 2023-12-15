@@ -7,6 +7,8 @@ import {Position} from './scrollytelling.utils.js';
 * @provides {VueComponent} st This parent <scrollytelling/> component
 *
 * @property {String} [startAt] DOM selection matcher to align to at the start - mainly used for debugging
+* @property {Boolean} [debug=false] Whether to show various debugging information
+* @property {Number} [scrollRate=0.5] Multiplier of milliseconds to scroll-pixels. e.g. On a high-end desktop PC the animation loop fires every 16ms which will scroll half as many pixels
 */
 export default {
 	provide() { return {
@@ -55,10 +57,19 @@ export default {
 		* @type {Boolean}
 		*/
 		playing: false,
+
+
+		/**
+		* Timer handle auto-scrolling (if `playing=true`)
+		* Created by requestAnimationFrame() in a loop while auto-playing
+		* @type {Handle}
+		*/
+		playTimer: null,
 	}},
 	props: {
 		startAt: {type: String},
 		debug: {type: Boolean, default: false},
+		scrollRate: {type: Number, default: 0.5},
 	},
 	methods: {
 		/**
@@ -72,15 +83,38 @@ export default {
 		setPlaying(newStatus) {
 			// DEBUG: This needs to do things
 			this.playing = newStatus;
+			if (newStatus) {
+				let lastStamp = performance.now();
+				let queueFrame = timestamp => {
+					let elapsed = timestamp - lastStamp;
+					lastStamp = timestamp;
+
+					let newAbsolute = this.position.absolute + (elapsed * this.scrollRate);
+					if (newAbsolute >= this.position.max) { // Next step would move us equal / past the end
+						console.log('End of play scope - pausing', {newAbsolute, max: this.position.max});
+						this.setPosition({absolute: this.position.max}, {scrollTo: true});
+						this.setPlaying(false); // Disable playback
+					} else {
+						this.setPosition({absolute: newAbsolute}, {scrollTo: true});
+					}
+
+					if (this.playing)
+						this.playTimer = requestAnimationFrame(queueFrame);
+				};
+				this.playTimer = requestAnimationFrame(queueFrame);
+			} else if (!newStatus && this.playTimer) {
+				cancelAnimationFrame(this.playTimer);
+			}
 		},
 
 
 		/**
 		* Set the new position (as a percentage offset) and arrange the stage
 		*
-		* @param {Object} rawPosition.float The new position expressed as a floating point percent (0 to 1)
+		* @param {Position|Object} rawPosition New position (or POJO of the same) to set this stage to
 		*
 		* @param {Object} [options] Additional optionst to mutate behaviour
+		* @param {Boolean} [options.pause=false] After setting the position also reset the play state
 		* @param {Boolean} [options.scrollTo=false] Also set the document scroll
 		* @param {Boolean} [options.animateScrollTo=false] Animate when setting document scroll
 		*
@@ -90,6 +124,7 @@ export default {
 			let settings = {
 				scrollTo: false,
 				animateScrollTo: false,
+				pause: false,
 				...options,
 			};
 
@@ -97,7 +132,11 @@ export default {
 				max: this.position.max, // Use previous max if we have one
 				...rawPosition,
 			});
-			if (position.percent == this.position.percent) return; // Avoid setting the same position we're already
+			if (
+				position.absolute == this.position.absolute
+				&& position.max == this.position.max
+			) return; // Avoid setting the same position we're already at
+
 			this.position = position;
 
 			if (settings.scrollTo) {
@@ -106,6 +145,8 @@ export default {
 					behavior: settings.animateScrollTo ? 'smooth' : 'instant',
 				});
 			}
+
+			if (settings.pause && this.playing) this.setPlaying(false);
 
 			this.$el.style.setProperty('--storytelling-position-offset', `${this.position.percent}s`);
 			this.$el.style.setProperty('--storytelling-position-delay', `-${this.position.percent}s`);
@@ -165,6 +206,10 @@ export default {
 
 		// Set up watcher + jump to starting position
 		this.$nextTick()
+			.then(()=> this.setPosition({ // Prime initial position + set max
+				absolute: 0,
+				max: this.$el.scrollHeight - this.$el.clientHeight,
+			}, {scrollTo: false}))
 			.then(()=> this.$watch('startAt', v => {
 				if (!v) return; // Nothing to jump to
 				let domEl = document.querySelector(v);
