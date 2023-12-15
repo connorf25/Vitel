@@ -8,6 +8,7 @@ import {Position} from './scrollytelling.utils.js';
 * @injects {VueComponent} st The parent <scrollytelling/> component
 *
 * @property {String} [position='screen'] How to position the item
+* @property {Boolean} [follow=false] Follow the scroll down the page - usually true for videos or other context that needs to stay in the center of the screen
 */
 export default {
 	inject: ['st'],
@@ -45,6 +46,11 @@ export default {
 			].includes(v),
 			default: 'screen',
 		},
+
+		follow: {
+			type: Boolean,
+			default: true,
+		},
 	},
 	methods: {
 		/**
@@ -67,8 +73,8 @@ export default {
 		class="scrollytelling-item"
 		:class="[
 			`position-${position}`,
+			follow && 'follow',
 		]"
-		:style="`scroll-padding-block-end: ${lifetime}px`"
 	>
 		<div class="content">
 			<slot/>
@@ -97,7 +103,6 @@ export default {
 		display: flex;
 		width: 100%;
 		min-height: 100%;
-		border: 1px dashed blue;
 	}
 
 	&.position-screen-snap {
@@ -107,8 +112,17 @@ export default {
 
 	/* Lock content area to top of view if we're focused + inside an innerPosition scroll {{{ */
 	&.focused .content {
+		/*
 		position: fixed;
 		top: 0px;
+		*/
+	}
+	/* }}} */
+
+	/* Follow content: .follow {{{ */
+	&.follow .content {
+		position: sticky;
+		top: 1px;
 	}
 	/* }}} */
 
