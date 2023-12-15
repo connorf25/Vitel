@@ -53,6 +53,6 @@ export class Position {
 			throw new Error('new Position object must be provided `max` + (`absolute` || `float`)');
 		}
 
-		if (this.absolute > this.max) console.warn('Position.max', this.max, 'is higher than maximum', this.max);
+		if (this.max > 0 && this.absolute > this.max) console.warn('Position.max', this.max, 'is higher than maximum', this.max);
 	}
 }
