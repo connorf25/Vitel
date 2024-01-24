@@ -8,6 +8,7 @@ const config = {
 	],
 	core: {
 		disableWhatsNewNotifications: true,
+		disableTelemetry: true, // Causes issues with weird intenet connections around Europe
 	},
 	docs: {
 		autodocs: 'tag',
