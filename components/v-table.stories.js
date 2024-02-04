@@ -34,14 +34,17 @@ export const Example = {
 			{
 				id: 'name',
 				title: 'Name',
+				sortable: true,
 			},
 			{
 				id: 'jobTitle',
 				title: 'Job',
+				sortable: true,
 			},
 			{
 				id: 'dob',
 				title: 'DoB',
+				sortable: true,
 			},
 		],
 		layout: 'card',

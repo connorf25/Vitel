@@ -398,7 +398,7 @@ export default {
 		<slot v-if="state == 'loading'" name="overlay-loading">
 			<div class="v-table-overlay-loading text-center">
 				<div>
-					<i class="v-table-overlay-loading-spinner far fa-4x fa-spinner fa-spin"/>
+					<i class="v-table-overlay-loading-spinner fas fa-4x fa-spinner fa-spin"/>
 					<div class="v-table-overlay-loading-text ">
 						{{textLoading}}
 					</div>
@@ -416,7 +416,7 @@ export default {
 								{{col.title}}
 								<i
 									v-if="endpointSort == col.id"
-									:class="endpointSortAsc ? 'far fa-sort-amount-down-alt text-primary' : 'far fa-sort-amount-up-alt text-primary'"
+									:class="endpointSortAsc ? 'fas fa-sort-down text-primary' : 'fas fa-sort-up text-primary'"
 								/>
 							</a>
 						</th>
