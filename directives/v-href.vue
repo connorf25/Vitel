@@ -35,6 +35,7 @@ export default {
 		bindVHref(el, binding);
 	},
 	updated(el, binding) {
+		if (!el) return; // Skip updates to things that arn't mounted yet
 		bindVHref(el, binding);
 	},
 }
