@@ -158,8 +158,8 @@ export default {
 
 					if (item.icon) {
 						let dropdownIcon = document.createElement('i');
-						dropdownItem.classList.add(item.icon);
-						dropdownItem.append(dropdownIcon);
+						dropdownIcon.classList.add(item.icon);
+						dropdownIcon.append(dropdownIcon);
 					}
 
 					if (item.handler) {
