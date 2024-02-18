@@ -70,6 +70,15 @@ export default {
 		* @type {String}
 		*/
 		bypassId: {type: String, default: '00000000-0000-dead-beef-000000000000'},
+
+
+		/**
+		* Async callback triggered after an update cycle
+		* This can be used to hook into the user fetcher and further decorate the fetched data
+		* Called as `(user:Object|null)` and not expected to return a response
+		* @type {Function}
+		*/
+		onUpdate: {type: Function, default: ()=> ()=> {}},
 	},
 	methods: {
 		/**
@@ -80,28 +89,39 @@ export default {
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		refresh(newState) {
-			if (this.bypassEmail) { // Bypass Kinde on dev instances
-				this.isLoggedIn = true;
-				this.state = 'user';
-				this.user = {
-					id: this.bypassId, // UUID-a-like for basic auth trickery
-					email: this.bypassEmail,
-				};
-				this.debug('Auth change', this.user, '(bypassed email)');
-				this.$events.emit('$kinde:change');
-			} else if (newState) {
-				this.isLoggedIn = true;
-				this.state = 'user';
-				this.user = newState;
-				this.debug('Auth change', this.user);
-				this.$events.emit('$kinde:change', this.user);
-			} else {
-				this.isLoggedIn = false;
-				this.state = 'guest';
-				this.user = null;
-				this.debug('Auth change to null');
-				this.$events.emit('$kinde:change');
-			}
+			return Promise.resolve()
+				.then(()=> { // Get new user state
+					if (this.bypassEmail) { // Bypass Kinde on dev instances
+						this.debug('Bypassing login');
+						return {
+							id: this.bypassId, // UUID-a-like for basic auth trickery
+							email: this.bypassEmail,
+						};
+					} else if (newState) { // Being given our new user
+						return newState;
+					} else { // Assume no user / blank / logged out
+						return null;
+					}
+				})
+				.then(async (rawUser) => { // Call optional onUpdate promise which is allowed to decorate the raw user before we use it
+					await this.onUpdate.call(this, rawUser);
+					return rawUser;
+				})
+				.then(user => { // Populate everything based on the given rawUser
+					if (!user) { // No user - logout
+						this.isLoggedIn = false;
+						this.state = 'guest';
+						this.user = null;
+						this.debug('Auth change to guest access');
+						this.$events.emit('$kinde:change');
+					} else { // User has state - login
+						this.isLoggedIn = true;
+						this.state = 'user';
+						this.user = user;
+						this.debug('Auth change', this.user);
+					}
+					this.$events.emit('$kinde:change');
+				});
 		},
 
 
