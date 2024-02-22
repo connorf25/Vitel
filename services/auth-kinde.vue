@@ -79,6 +79,13 @@ export default {
 		* @type {Function}
 		*/
 		onUpdate: {type: Function, default: ()=> ()=> {}},
+
+
+		/**
+		* Force using local storage instead of Cookies
+		* @type {Boolean}
+		*/
+		forceLocalStorage: {type: Boolean, default: false},
 	},
 	methods: {
 		/**
@@ -196,7 +203,7 @@ export default {
 							domain: this.domain,
 							redirect_uri: window.location.origin,
 							on_redirect_callback: this.refresh,
-							...(import.meta.env.DEV && {
+							...(this.forceLocalStorage && {
 								is_dangerously_use_local_storage: true,
 							}),
 						}))
