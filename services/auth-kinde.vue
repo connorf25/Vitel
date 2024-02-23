@@ -73,9 +73,17 @@ export default {
 
 
 		/**
+		* Async callback triggered before a refresh occurs
+		* Called as `()` with this service as its context. this function is not expected to return a response
+		* @type {Function}
+		*/
+		onRefresh: {type: Function, default: ()=> ()=> {}},
+
+
+		/**
 		* Async callback triggered after an update cycle
 		* This can be used to hook into the user fetcher and further decorate the fetched data
-		* Called as `(user:Object|null)` and not expected to return a response
+		* Called as `(user:Object|null)` with this service as its context. This function is not expected to return a response
 		* @type {Function}
 		*/
 		onUpdate: {type: Function, default: ()=> ()=> {}},
@@ -97,6 +105,7 @@ export default {
 		*/
 		refresh(newState) {
 			return Promise.resolve()
+				.then(()=> this.onRefresh.call(this))
 				.then(()=> { // Get new user state
 					if (this.bypassEmail) { // Bypass Kinde on dev instances
 						this.debug('Bypassing login');
