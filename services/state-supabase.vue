@@ -436,6 +436,7 @@ export default {
 		* @param {Boolean} [options.toast=true] Use $toast.loading to show progress while uploading the file
 		* @param {Function} [options.metaPath] Function, called as `(rawFile:File)` which returns the Path to use when setting meta data
 		* @param {Boolean} [options.transcoders=true] Apply transcoders to uploaded files
+		* @param {Number} [options.cacheControl=3600] Time the file should be cached within CDNs
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		fileUpload(path, options) {
@@ -450,6 +451,7 @@ export default {
 				toast: true,
 				metaPath: rawFile => `/fileMeta/${rawFile.id}`,
 				transcoders: true,
+				cacheControl: 3600,
 				...options,
 			};
 			let toastId; // Eventual toastID used to track the loading progress
@@ -571,6 +573,7 @@ export default {
 								.from(entity)
 								.upload(`${id}/${file.name}`, file, {
 									upsert: settings.overwrite,
+									cacheControl: settings.cacheControl,
 								})
 								.then(()=> ({file, meta})) // Pass result + meta to next .then block
 							)
