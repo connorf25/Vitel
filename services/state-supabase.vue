@@ -515,7 +515,8 @@ export default {
 								),
 							];
 						case 'encoded':
-							return Array.from(settings.file);
+							return settings.file instanceof Blob ? [new File([settings.file], this._parsePath(path).basename)] // Convert blobs into files
+								: Array.from(settings.file);
 						case 'prompt':
 							return this._uploadBlob({
 								multiple: settings.multiple,
