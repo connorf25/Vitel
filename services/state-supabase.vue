@@ -435,6 +435,7 @@ export default {
 		* @param {String} [options.accept] If prompting, Add additional file type restrictions
 		* @param {Boolean} [options.toast=true] Use $toast.loading to show progress while uploading the file
 		* @param {Function} [options.metaPath] Function, called as `(rawFile:File)` which returns the Path to use when setting meta data
+		* @param {Boolean} [options.transcoders=true] Apply transcoders to uploaded files
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		fileUpload(path, options) {
@@ -448,6 +449,7 @@ export default {
 				accept: null,
 				toast: true,
 				metaPath: rawFile => `/fileMeta/${rawFile.id}`,
+				transcoders: true,
 				...options,
 			};
 			let toastId; // Eventual toastID used to track the loading progress
@@ -550,6 +552,9 @@ export default {
 									file,
 									meta: {},
 								};
+
+								if (!settings.transcoders) return payload; // Skip transcoders
+
 								return Promise.resolve()
 									.then(()=> this.fileTranscoders.reduce((acc, cb) => acc
 										.then(()=> cb.call(this, payload))
