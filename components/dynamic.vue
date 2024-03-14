@@ -1,6 +1,5 @@
 <script>
 import {h, resolveComponent} from 'vue';
-import {startCase} from 'lodash-es';
 
 /**
 * Display component composed from a component name + object of props + object of events to respond to
