@@ -25,7 +25,7 @@ export default {
 				...Object.fromEntries( // Convert all event keys: `click` -> `onClick`
 					Object.entries(this.events || {})
 						.map(([event, cb]) => [
-							'on' + startCase(event),
+							'on' + event.substr(0, 1).toUpperCase() + event.substr(1),
 							cb,
 						])
 				)
