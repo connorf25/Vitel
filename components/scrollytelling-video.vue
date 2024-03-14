@@ -62,7 +62,7 @@ export default {
 </script>
 
 <template>
-	<div>
+	<div class="scrollytelling-video">
 		<video
 			ref="videoEl"
 			controlslist="nodownload nofullscreen noremoteplayback"
@@ -76,3 +76,10 @@ export default {
 		/>
 	</div>
 </template>
+
+<style lang="scss">
+.scrollytelling-video, .scrollytelling-video > video {
+	width: 100%;
+	height: 100%;
+}
+</style>
