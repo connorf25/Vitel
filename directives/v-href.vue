@@ -4,14 +4,15 @@
 *
 * @param {String|Object} location The URL to navigate to or the number of steps forward / backward to navigate
 * @see go() for other parameters
-* @param {String} [settings.location.path] Alternative method to set the location
+* @param {String} [settings.location] Alternative method to set the location
 * @param {Boolean} [settings.stop=true] Fire event.stopPropagation() on click
 * @param {Boolean} [settings.prevent=true] Fire event.preventDefault() on click, disabling this will likely cause the link to be clicked twice
 * @param {Boolean} [settings.allowTab=true] Allow middle clicking to open a new tab by adding a `href` attribute to `<a/>` tags
 * @param {String} [settings.method='push'] The router method to use
 * @param {String} [settings.class='v-href'] Class to append to handled objects
-* @param {Function} [settings.before] Function to run before navigating
-* @param {Function} [settings.after] Function to run after navigating
+* @param {Function} [settings.before] Function to run before navigating. Called as `(e:Event)`
+* @param {Function} [settings.handle] Function to actually handle the naivgation, if specified this disables the default router navigation. Called as `(e:Event, settings:Object)`
+* @param {Function} [settings.after] Function to run after navigating. Called as `(e:Event)`
 * @param {Object} [settings.router] The router instance to send the request via, defaults to `binding.instance.$router`
 *
 * @param {Boolean} [modifier.window] Sets `{target: '_blank'}` - i.e. open in a new tab / window
@@ -91,7 +92,10 @@ let clickListener = function vHrefClick(e) {
 	if (this.prevent) e.preventDefault();
 	return Promise.resolve()
 		.then(()=> this.before(e))
-		.then(()=> this.router[this.method](this.destination))
+		.then(()=> this.handle
+			? this.handle(e, this)
+			: this.router[this.method](this.destination)
+		)
 		.then(()=> this.after(e))
 }
 </script>
