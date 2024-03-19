@@ -480,6 +480,7 @@ export default {
 						&& !settings.multiple // ... and only one of it
 						&& ( // And its an accepted type
 							settings.file instanceof File
+							|| settings.file instanceof FileList
 							|| settings.file instanceof Blob
 							|| settings.file instanceof FormData
 						)
