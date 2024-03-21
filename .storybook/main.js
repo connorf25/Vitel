@@ -4,7 +4,6 @@ const config = {
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
 		'@storybook/addon-interactions',
-		// '@storybook/addon-styling',
 	],
 	core: {
 		disableWhatsNewNotifications: true,
@@ -15,7 +14,9 @@ const config = {
 	},
 	framework: {
 		name: '@storybook/vue3-vite',
-		options: {},
+		options: {
+			docgen: 'vue-component-meta',
+		},
 	},
 	stories: [
 		'../components/**/*.stories.js',
