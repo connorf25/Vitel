@@ -7,6 +7,11 @@ import '../node_modules/bootstrap/dist/js/bootstrap.js';
 
 // Initialize MSW
 initialize({
+	onUnhandledRequest({method, url}) { // Silently drop unknown requests
+		if (!url.pathname.startsWith("/api")) { // ... unless its prefixed wiith /api/
+			throw new Error(`Unhandled ${method} request to ${url}`);
+		}
+	},
 	serviceWorker: {
 		...(location.hostname === 'momsfriendlydevco.github.io' && {
 			// Override endpoint URL with GitHub pages
