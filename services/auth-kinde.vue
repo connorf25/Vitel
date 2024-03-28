@@ -217,14 +217,8 @@ export default {
 							}),
 						}))
 						.then(instance => this.kinde = instance)
-						.then(()=> this.kinde.getUserProfile() // Fetch user (if there is one)
-							.catch(e => {
-								if (e?.status == 403) {
-									return null;
-								} else {
-									throw e;
-								}
-							})
+						.then(()=> this.kinde.getIdToken()
+							.then(token => token ? this.kinde.getUserProfile() : null) // No token to log in user - assume no user to fetch
 						)
 						.then(state => this.refresh(state))
 						.catch(this.$toast.catch)
