@@ -94,6 +94,13 @@ export default {
 		* @type {Boolean}
 		*/
 		forceLocalStorage: {type: Boolean, default: false},
+
+
+		/**
+		* Try to restore an existing login on boot
+		* @type {Boolean}
+		*/
+		autoRestoreLogin: {type: Boolean, default: true},
 	},
 	methods: {
 		/**
@@ -196,6 +203,20 @@ export default {
 					}
 				})
 		},
+
+
+		/**
+		* Attempt to restore a login, if one is already present
+		* This function is auto-executed if `$props.autoRestoreLogin=true`
+		*/
+		restoreLogin() {
+			return Promise.resolve()
+				.then(()=> this.kinde.getUserProfile())
+				.then(state => this.refresh(state))
+				.catch(e => {
+					console.warn('Error when restoring login:', e);
+				})
+		},
 	},
 	created() {
 		return this.$services.require('$events')
@@ -217,10 +238,7 @@ export default {
 							}),
 						}))
 						.then(instance => this.kinde = instance)
-						.then(()=> this.kinde.getIdToken()
-							.then(token => token ? this.kinde.getUserProfile() : null) // No token to log in user - assume no user to fetch
-						)
-						.then(state => this.refresh(state))
+						.then(()=> this.autoRestoreLogin && this.restoreLogin())
 						.catch(this.$toast.catch)
 				}
 			})
