@@ -31,7 +31,7 @@ export default {
 		/**
 		* Steps used to resolve file-type information
 		* This is an array of different sync funciton operations to try, the first function to provide an object is used as the response
-		* Each function is called as `(file:StateFile)`
+		* Each function is called as `(file:SupabaseFile)`
 		*
 		* @type <Array<Function>>
 		*/
@@ -335,7 +335,7 @@ export default {
 		* Storage file schema
 		* Returned by `this.fileList()`
 		*
-		* @name StateFile
+		* @name SupabaseFile
 		* @property {String} id A UUID string representing the unique ID of the file
 		* @property {String} name Relative name path (can contain prefix directories) for the human readable file name
 		* @property {String} path Internal path to the file, used to pass the file onto other functions
@@ -370,7 +370,7 @@ export default {
 		* @param {Boolean} [options.meta=true] Pull meta information for each file entity
 		* @param {Function} [options.metaPath] Function, called as `(rawFile)` which returns the Path to use when fetching meta data
 		*
-		* @returns {Promise<Array<StateFile>>} List of found files for the given path
+		* @returns {Promise<Array<SupabaseFile>>} List of found files for the given path
 		*/
 		fileList(path, options = {}) {
 			let settings = {
@@ -605,7 +605,7 @@ export default {
 		/**
 		* Fetch a file from the server into a Blob
 		*
-		* @param {StateFile|String|Array<String>} input Either the StateFile entity or the StateFile name to fetch
+		* @param {SupabaseFile|String|Array<String>} input Either the SupabaseFile entity or the SupabaseFile name to fetch
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.json=false] Parse the file as JSON and return the decoded content
 		* @param {Boolean} [options.toast=true] Use $toast.loading to show progress while downloading
@@ -659,7 +659,7 @@ export default {
 		* Download a file for the user
 		* NOTE: This function presents a file to the user as a download, not retrieves its content like this.fileGet()
 		*
-		* @param {StateFile|String|Array<String>} input Either the StateFile entity or its name to download
+		* @param {SupabaseFile|String|Array<String>} input Either the SupabaseFile entity or its name to download
 		* @returns {Promise} A promise which resolves when the download operation has completed
 		*/
 		fileDownload(input) {
@@ -680,7 +680,7 @@ export default {
 		* @param {String|Array<String>} path The path to upload to (not the same as the file name)
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {String} [options.filename=Date] Filename for the Zip
-		* @param {Array<StateFile>} [options.list] Existing file list, if provided it will be used as the destination file array rather than fetching it fresh
+		* @param {Array<SupabaseFile>} [options.list] Existing file list, if provided it will be used as the destination file array rather than fetching it fresh
 		* @param {Function} [options.onProgress] Function to call on progress updates. Called as `({total:Number, pending:Number, fetching:Number, writing:Number, written:Number})`
 		* @param {Function} [options.onGeneratingZip] Function to call when building the final file. Called the same way as `options.onProgress()`
 		* @param {Function} [options.onDone] Function to call when the zip has been built, just before offering to the user. Called the same way as `options.onProgress()`
@@ -755,7 +755,7 @@ export default {
 		*
 		* @param {String|Array<String>} path The path to snapshot (not the same as the file name)
 		* @param {Object} [options] Additional options to mutate behaviour
-		* @param {Array<StateFile>} [options.list] Existing file list, if provided it will be used as the destination file array rather than fetching it fresh
+		* @param {Array<SupabaseFile>} [options.list] Existing file list, if provided it will be used as the destination file array rather than fetching it fresh
 		* @returns {Promise<String>} A promise which resolves with the eventual snapshot operand
 		*/
 		fileSnapshot(path, options) {
@@ -811,7 +811,7 @@ export default {
 		* Return various meta information for a given file
 		* This function processes all workers in `this.fileTypes` until one succeeds
 		*
-		* @param {StateFile} file The file object to return meta-data for
+		* @param {SupabaseFile} file The file object to return meta-data for
 		*
 		* @returns {Object} An object describing the file type
 		* @property {String} icon A Fontawesome compatible CSS class to use the icon of
