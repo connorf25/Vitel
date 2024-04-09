@@ -44,7 +44,6 @@ export default {
 			let settings = {
 				multiple: this.multiple,
 				accept: this.accept,
-				accept: this.accept,
 				...options,
 			};
 
