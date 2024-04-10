@@ -598,6 +598,7 @@ export default {
 					);
 				})
 				// }}}
+				.then(()=> null)
 				.finally(()=> toastId && this.$toast.close(toastId))
 		},
 
