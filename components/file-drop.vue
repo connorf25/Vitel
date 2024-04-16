@@ -117,7 +117,6 @@ export default {
 		* @param {'show'|'hide'|'create'|'destroy'} [show=true] Whether to show the droppable area
 		*/
 		showGlobalDropable(method) {
-			console.log('showGlobalDropable', method);
 			let globalParent = document.querySelector(this.globalSelector);
 
 			switch (method) {
