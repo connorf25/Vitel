@@ -94,11 +94,17 @@ export default {
 
 			// Create a get transaction to fetch data by the key
 			return new Promise((resolve, reject) => {
-				let transaction = this.databases[database].transaction(entity, 'readonly', {durability: this.defaultGetDurability})
+				let transaction = this.databases[database].transaction(
+					entity, // The entity we are planning to access
+					'readonly', // Mode
+					{
+						durability: this.defaultGetDurability,
+					},
+				)
 					.objectStore(entity)
 					.get(id);
 
-				transaction.onsuccess = e => resolve(e.result ?? fallback);
+				transaction.onsuccess = e => resolve(e.target?.result ?? fallback);
 				transaction.onerror = e => reject(e);
 			});
 		},
