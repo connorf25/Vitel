@@ -5,7 +5,8 @@
   "scripts": {
     "build-storybook": "storybook build",
     "dev": "storybook dev --port=32000 --no-open",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "release": "release-it --increment=patch"
   },
   "keywords": [
     "vite",
@@ -59,6 +60,7 @@
   },
   "devDependencies": {
     "@momsfriendlydevco/eslint-config": "^1.0.9",
+    "@release-it/conventional-changelog": "^8.0.1",
     "@storybook/addon-essentials": "^8.0.2",
     "@storybook/addon-interactions": "^8.0.2",
     "@storybook/addon-links": "^8.0.2",
@@ -71,6 +73,7 @@
     "eslint": "^8.54.0",
     "msw": "^1.3.0",
     "msw-storybook-addon": "^1.10.0",
+    "release-it": "^17.2.0",
     "sass": "^1.65.1",
     "storybook": "^8.0.2"
   },
@@ -87,5 +90,25 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "release-it": {
+    "git": {
+      "addUntrackedFiles": false,
+      "commit": true,
+      "commitMessage": "chore: release v${version}",
+      "push": true,
+      "requireCleanWorkingDir": false,
+      "tag": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md",
+        "header": "# Changelog"
+      }
+    },
+    "npm": {
+      "publish": true
+    }
   }
 }
