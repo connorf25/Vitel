@@ -1,3 +1,18 @@
+# Changelog
+
+## [1.1.53](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.52...v1.1.53) (2024-04-17)
+
+
+### Bug Fixes
+
+* **$stateIdb:** Fix for IndexedDB when accessing cache results ([738eaf6](https://github.com/MomsFriendlyDevCo/Vitel/commit/738eaf627df4f397b9f103fdf777f51ad10df1a9))
+* Debugging artefacts ([a582503](https://github.com/MomsFriendlyDevCo/Vitel/commit/a58250327f7b8422a2ed3e9f8963cfa8d3236f5e))
+
+
+### Features
+
+* **$stateIdb:** Added getAll() + clear() functionality ([3010d8e](https://github.com/MomsFriendlyDevCo/Vitel/commit/3010d8e18dcd27382a3889051568ed6a0b54b663))
+
 # [](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.52...v) (2024-04-17)
 
 
@@ -461,6 +476,3 @@
 * Loading widget ([8eabc54](https://github.com/MomsFriendlyDevCo/Vitel/commit/8eabc54214d520a890c56ab09da06ab4e7a60b67))
 * Ported v-href ([778b9d7](https://github.com/MomsFriendlyDevCo/Vitel/commit/778b9d721f8488fbf5f79023ef6a785f54e0dae4))
 * **v-href:** Added {before:Function, after:Function} handling to v-href ([af6aa55](https://github.com/MomsFriendlyDevCo/Vitel/commit/af6aa5509058bd60a619f20c89a8b120e9cb8278))
-
-
-
