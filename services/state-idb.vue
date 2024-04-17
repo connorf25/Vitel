@@ -111,6 +111,82 @@ export default {
 
 
 		/**
+		* Get all records within an entity
+		*
+		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY` / `/$ENTITY`, note that specifying an ID will throw
+		* @returns {Promise<Object>} The fetched collection of rows
+		*/
+		async getAll(path) {
+			let {database, entity, id} = this.splitPath(path, {requireId: false});
+			if (id) throw new Error('Only "database" + "entity" can be specified for getAll(), "id" is not supported');
+
+			debugger; // FIXME: Untested
+
+			if (!database) database = this.defaultDatabase;
+
+			// Load DB if not already present
+			await this.initDatabase(database);
+
+			// Load entity if its not already present
+			await this.initEntity(database, entity);
+
+			// Create a get transaction to fetch data by the key
+			return new Promise((resolve, reject) => {
+				let transaction = this.databases[database].transaction(
+					entity, // The entity we are planning to access
+					'readonly', // Mode
+					{
+						durability: this.defaultGetDurability,
+					},
+				)
+					.objectStore(entity)
+					.getAll();
+
+				transaction.onsuccess = e => resolve(e.target?.result);
+				transaction.onerror = e => reject(e);
+			});
+		},
+
+
+		/**
+		* Clear all records within an entity
+		*
+		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY` / `/$ENTITY`, note that specifying an ID will throw
+		* @returns {Promise} A promise which resolves when the operation has completed
+		*/
+		async clear(path) {
+			let {database, entity, id} = this.splitPath(path, {requireId: false});
+			if (id) throw new Error('Only "database" + "entity" can be specified for clear(), "id" is not supported');
+
+			debugger; // FIXME: Untested
+
+			if (!database) database = this.defaultDatabase;
+
+			// Load DB if not already present
+			await this.initDatabase(database);
+
+			// Load entity if its not already present
+			await this.initEntity(database, entity);
+
+			// Create a get transaction to fetch data by the key
+			return new Promise((resolve, reject) => {
+				let transaction = this.databases[database].transaction(
+					entity, // The entity we are planning to access
+					'readonly', // Mode
+					{
+						durability: this.defaultGetDurability,
+					},
+				)
+					.objectStore(entity)
+					.clear();
+
+				transaction.onsuccess = e => resolve();
+				transaction.onerror = e => reject(e);
+			});
+		},
+
+
+		/**
 		* Set the value of a path
 		*
 		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY/$ID` / `/$ENTITY/$ID`
