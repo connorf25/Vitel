@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.1.54](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.53...v1.1.54) (2024-04-18)
+
 ## [1.1.53](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.52...v1.1.53) (2024-04-17)
 
 
