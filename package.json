@@ -6,7 +6,7 @@
     "build-storybook": "storybook build",
     "dev": "storybook dev --port=32000 --no-open",
     "lint": "eslint .",
-    "release": "release-it --increment=patch"
+    "release": "release-it"
   },
   "keywords": [
     "vite",
