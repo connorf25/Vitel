@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.2.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.54...v1.2.0) (2024-04-30)
+
+
+### Bug Fixes
+
+* Let release-it figure out the release increment ([17c26d7](https://github.com/MomsFriendlyDevCo/Vitel/commit/17c26d716ed376a50ed8de35059318bb8fcfe41c))
+
+
+### Features
+
+* Added v-scrollable ([6af1951](https://github.com/MomsFriendlyDevCo/Vitel/commit/6af19516af5700aee3985856c9488561d633151b))
+
 ## [1.1.54](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.53...v1.1.54) (2024-04-18)
 
 ## [1.1.53](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.52...v1.1.53) (2024-04-17)
