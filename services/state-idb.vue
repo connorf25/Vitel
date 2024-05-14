@@ -259,6 +259,8 @@ export default {
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.overwrite=false] Overwrite an existing database handle if it already exists
 		* @param {'latest'|Number} [options.version='latest'] Version of the database to setup or 'latest' to use the registered version
+		* @param {Number} [options.retryLimit=10] Number of times to attempt to connect before giving up
+		* @param {Number} [options.retryDelay=100] Pause between connection retries
 		* @param {Function} [options.onUpgrade] Function to run when an upgrade is needed. Called as `(db:IDBDatabase, e:IDBVersionChangeEvent)` with the `IDBVersionChangeEvent` event as the context
 		*
 		* @returns {Promise} A promise which resolves when the operation has completed
@@ -269,6 +271,8 @@ export default {
 			let settings = {
 				overwrite: false,
 				version: 'latest',
+				retryLimit: 25,
+				retryDelay: 100,
 				onUpgrade: ()=> {},
 				...options,
 			};
@@ -283,27 +287,43 @@ export default {
 			}
 
 			this.debug('initDB', database);
+			let tryCount = 0;
 			return this.databasesInit[database] = Promise.resolve()
 				.then(()=> window.indexedDB.databases()) // Fetch the current version of the database
 				.then(dbs => dbs.find(db => db.name == database))
 				.then(dbInfo => new Promise((resolve, reject) => {
-					let dbRequest = window.indexedDB.open(
-						database,
-						settings.version == 'latest' && dbInfo?.version ? dbInfo.version
-						: isFinite(settings.version) ? settings.version
-						: this.defaultDatabaseVersion
-					);
+					let tryConnect = ()=> {
+						let dbRequest = window.indexedDB.open(
+							database,
+							settings.version == 'latest' && dbInfo?.version ? dbInfo.version
+							: isFinite(settings.version) ? settings.version
+							: this.defaultDatabaseVersion
+						);
 
-					dbRequest.onsuccess = e => {
-						this.databases[database] = e.target.result;
-						this.debug('Database', database, 'ready');
-						resolve();
+						dbRequest.onsuccess = e => {
+							this.databases[database] = e.target.result;
+							this.debug(...[
+								'Database', database, 'ready',
+								...(tryCount > 0 ? ['after', tryCount, 'tries'] : []),
+							]);
+							resolve();
+						};
+						dbRequest.onerror = e => {
+							debugger; // Untested behaviour
+							if (tryCount >= settings.retryLimit) { // Exhaused retries
+								reject(e);
+							} else {
+								this.debug('Connecting to', database, 'threw', e.toString(), 'on try', ++tryCount, '/', settings.retryLimit, '- will retry in', settings.retryDelay);
+								setTimeout(()=> tryConnect(), settings.retryDelay);
+							}
+						};
+						dbRequest.onupgradeneeded = e => {
+							this.debug('Upgrading database', database, 'from version', e.oldVersion, '->', e.newVersion);
+							settings.onUpgrade.call(e, e.target.result, e);
+						};
 					};
-					dbRequest.onerror = e => reject(e);
-					dbRequest.onupgradeneeded = e => {
-						this.debug('Upgrading database', database, 'from version', e.oldVersion, '->', e.newVersion);
-						settings.onUpgrade.call(e, e.target.result, e);
-					};
+
+					tryConnect(); // Kick off initial connection
 				}))
 		},
 
@@ -324,12 +344,25 @@ export default {
 			this.debug('Need to bump database', database, 'v', this.databases[database].version, 'to add new entity', entity);
 
 			return this.databasesInit[database] = Promise.resolve()
-				.then(()=> this.databases[database].close())
+				.then(()=> {
+					if (!this.databases[database]) return; // Database isn't present anyway
+
+					// Request database shutdown
+					console.log('Request DB shutdown', database);
+					this.databases[database].close();
+				})
 				.then(()=> this.initDatabase(database, {
 					overwrite: true,
 					version: this.databases[database].version + 1, // Purposely ask for next version up to force an upgrade
 					onUpgrade: db => {
-						this.debug('Appending new entity', `${database}/${entity}`, 'with index', this.defaultEntityKey ?? 'NONE');
+						this.debug(...[
+							'Appending new entity',
+							`${database}/${entity}`,
+							...(this.defaultEntityKey ? [
+								'with index',
+								this.defaultEntityKey ?? 'NONE'
+							] : []),
+						]);
 						db.createObjectStore(entity, {
 							...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
 						});
