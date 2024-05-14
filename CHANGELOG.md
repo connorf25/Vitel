@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.2.0...v1.2.1) (2024-05-14)
+
+
+### Bug Fixes
+
+* **$stateIdb:** Experimental close+rebuild functionality + retry-on-fail for DB connections ([4822d1b](https://github.com/MomsFriendlyDevCo/Vitel/commit/4822d1bb6cd96426d233cef3cd00a82a6ecce7e5))
+
 # [1.2.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.1.54...v1.2.0) (2024-04-30)
 
 
