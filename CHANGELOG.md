@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.2.1...v1.2.2) (2024-05-20)
+
+
+### Bug Fixes
+
+* **supabase:** Undo workaround for Supabase transport - now working correctly ([a2b367a](https://github.com/MomsFriendlyDevCo/Vitel/commit/a2b367a02838367f074df424c902328029650ee5))
+
 ## [1.2.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.2.0...v1.2.1) (2024-05-14)
 
 
