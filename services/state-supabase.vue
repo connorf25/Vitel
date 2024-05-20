@@ -961,11 +961,7 @@ export default {
 		if (!this.supabaseUrl || !this.supabaseKey) throw new Error('Cannot connect to Supabase without passing supabaseUrl + supabaseKey');
 
 		this.debug('Connecting to Supabase URL', this.supabaseUrl);
-		this.supabase = Supabase(this.supabaseUrl, this.supabaseKey, {
-			realtime: {
-				transport: window.WebSocket, // FIXME: Fix for https://github.com/supabase/realtime-js/issues/219#issuecomment-1387158074
-			},
-		});
+		this.supabase = Supabase(this.supabaseUrl, this.supabaseKey);
 
 		return this.$services.require('$toast');
 	},
