@@ -305,6 +305,7 @@ export default {
 		bindData(path, options) {
 			return SupabaseReactive(path, {
 				supabase: this.supabase,
+				debug: this.debug.bind(this, 'REACTIVE'),
 				...options,
 			});
 		},
