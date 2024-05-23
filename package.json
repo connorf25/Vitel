@@ -47,7 +47,7 @@
     "@faker-js/faker": "^8.2.0",
     "@kinde-oss/kinde-auth-pkce-js": "^3.1.0",
     "@momsfriendlydevco/formatters": "^1.2.3",
-    "@momsfriendlydevco/supabase-reactive": "^1.0.10",
+    "@momsfriendlydevco/supabase-reactive": "^1.0.11",
     "@supabase/supabase-js": "^2.43.2",
     "@teamhanko/hanko-elements": "^0.8.2",
     "@zip.js/zip.js": "^2.7.30",
