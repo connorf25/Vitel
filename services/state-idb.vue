@@ -80,6 +80,14 @@ export default {
 				&& /^(<database>.*?)\/(<entity>.+)$/.test(i)
 			),
 		},
+
+
+		/**
+		* Whether to dynamically bump+recycle the database to add new entities as needed
+		* If this is disabled all entities that are needed need to be declared in `defaultEntities` BEFORE use
+		* @type {Boolean}
+		*/
+		dynamicEntities: {type: Boolean, default: true},
 	},
 	methods: {
 
@@ -360,6 +368,7 @@ export default {
 			if (!this.databases[database]) throw new Error(`Cannot access entity on uninitalied database "${database}"`);
 
 			if (Array.from(this.databases[database].objectStoreNames).some(os => os == entity)) return; // Already set up within the database - do nothing
+			if (!this.dynamicEntities) throw new Error(`Dynamic entities are disabled - declare '${database}/${entity}' in defaultEntities before use!`);
 
 			this.debug('initEntity', `${database}/${entity}`);
 
