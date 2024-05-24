@@ -21,14 +21,6 @@ export default {
 
 
 		/**
-		* Lookup object of initalized entities
-		* Each key is `${database}/${entity}`
-		* @type {Object<IDBObjectStore>}
-		*/
-		entities: {},
-
-
-		/**
 		* RegExp to evaluate paths
 		* @type {RegExp}
 		*/
@@ -72,6 +64,22 @@ export default {
 		* @type {'default'|'strict'|'relaxed'}
 		*/
 		defaultSetDurability: {type: String, default: 'default'},
+
+
+		/**
+		* List of entities to populate on seeing the database for the first time
+		* This skips the need to dynamically create these entities
+		* Each array entry string should match the `$DATABASE/$ENTITY` / `/$ENTITY` format
+		* @type {Array<String>}
+		*/
+		defaultEntities: {
+			type: Array,
+			default: ()=> [],
+			validator: v => v.every(i =>
+				typeof i == 'string'
+				&& /^(<database>.*?)\/(<entity>.+)$/.test(i)
+			),
+		},
 	},
 	methods: {
 
@@ -262,6 +270,7 @@ export default {
 		* @param {Number} [options.retryLimit=10] Number of times to attempt to connect before giving up
 		* @param {Number} [options.retryDelay=100] Pause between connection retries
 		* @param {Function} [options.onUpgrade] Function to run when an upgrade is needed. Called as `(db:IDBDatabase, e:IDBVersionChangeEvent)` with the `IDBVersionChangeEvent` event as the context
+		* @param {Array<String>} [options.entities] Optional list of entities to always prime the database with, see `defaultEntities` to prime this
 		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
@@ -274,6 +283,7 @@ export default {
 				retryLimit: 25,
 				retryDelay: 100,
 				onUpgrade: ()=> {},
+				entities: [],
 				...options,
 			};
 
@@ -319,6 +329,17 @@ export default {
 						};
 						dbRequest.onupgradeneeded = e => {
 							this.debug('Upgrading database', database, 'from version', e.oldVersion, '->', e.newVersion);
+
+							// Do we have an entity list to pre-populate?
+							if (settings.entities.length > 0) {
+								this.debug('Creating default database entities:', settings.entities);
+								settings.entities.forEach(entity =>
+									db.createObjectStore(entity, {
+										...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
+									})
+								);
+							}
+
 							settings.onUpgrade.call(e, e.target.result, e);
 						};
 					};
@@ -339,6 +360,8 @@ export default {
 			if (!this.databases[database]) throw new Error(`Cannot access entity on uninitalied database "${database}"`);
 
 			if (Array.from(this.databases[database].objectStoreNames).some(os => os == entity)) return; // Already set up within the database - do nothing
+
+			this.debug('initEntity', `${database}/${entity}`);
 
 			// Force the database to bump to create the new IDBObjectStore
 			this.debug('Need to bump database', database, 'v', this.databases[database].version, 'to add new entity', entity);
@@ -407,6 +430,29 @@ export default {
 
 			return {database, entity, id, operand};
 		},
+	},
+	created() {
+		return Promise.resolve()
+			.then(()=> this.defaultEntities // Rewrite to: `[ {database:String, entity:String} ]`
+				.map(e => /^(?<database>.*?)\/(?<entity>.+)$/.exec(e)?.groups)
+				.filter(Boolean)
+				.map(e => ({
+					...e,
+					database: e.database || this.defaultDatabase,
+				}))
+			)
+			.then(entries => Object.groupBy(entries, e => e.database)) // Rewrite to: `{ [database:String]: {database:String, entity:String} }`
+			.then(dbs => Object.entries(dbs) // Rewrite to: `[ [database:String, entries:Array<String>] ]`
+				.map(([database, entities]) => [
+					database,
+					entities.map(e => e.entity)
+				])
+			)
+			.then(dbs => Promise.all(
+				dbs.map(([database, entities]) => this.initDatabase(database, {
+					entities,
+				}))
+			))
 	},
 }
 </script>
