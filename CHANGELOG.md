@@ -1,5 +1,18 @@
 # Changelog
 
+# [1.3.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.2.2...v1.3.0) (2024-05-24)
+
+
+### Bug Fixes
+
+* **$stateSupabase:** Bind debug chattyness of @mfdc/supabase-reactive to $stateSupabase ([3b4998a](https://github.com/MomsFriendlyDevCo/Vitel/commit/3b4998ac7def95f46f660d20864dea6499209c3e))
+
+
+### Features
+
+* **$stateIdb:** Can now disable dynamic entity creation ([c7ab968](https://github.com/MomsFriendlyDevCo/Vitel/commit/c7ab968b33ce77c57df3e287ff63c92426ea7acf))
+* **$stateIdb:** Can now specify default entities to create during boot ([57eb0c7](https://github.com/MomsFriendlyDevCo/Vitel/commit/57eb0c75af2188850f1989c0238692ba30a6e2c9))
+
 ## [1.2.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.2.1...v1.2.2) (2024-05-20)
 
 
