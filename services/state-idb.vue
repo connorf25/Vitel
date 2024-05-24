@@ -339,9 +339,28 @@ export default {
 							this.debug('Upgrading database', database, 'from version', e.oldVersion, '->', e.newVersion);
 
 							// Do we have an entity list to pre-populate?
-							if (settings.entities.length > 0) {
-								this.debug('Creating default database entities:', settings.entities);
-								settings.entities.forEach(entity =>
+							if (settings.entities.length > 0 || this.defaultEntities.length > 0) {
+								let db = e.target.result;
+								let existingEntities = new Set(db.objectStoreNames);
+
+								let baseEntities = [
+									...settings.entities,
+									...this.defaultEntities // Rewrite to: `[ {database:String, entity:String} ]`
+										.map(e => /^(?<database>.*?)\/(?<entity>.+)$/.exec(e)?.groups)
+										.map(e => ({
+											...e,
+											database: e.database || this.defaultDatabase, // Append default database if the path is missing that part
+										}))
+										.filter(e =>
+											e // Entity name is valid
+											&& e.database == database // The database we are creating/bumping is this one
+											&& !existingEntities.has(e.entity) // This entity doesn't already exist
+										)
+										.map(e => e.entity)
+								];
+								this.debug('Creating default database entities:', baseEntities);
+
+								baseEntities.forEach(entity =>
 									db.createObjectStore(entity, {
 										...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
 									})
@@ -439,29 +458,6 @@ export default {
 
 			return {database, entity, id, operand};
 		},
-	},
-	created() {
-		return Promise.resolve()
-			.then(()=> this.defaultEntities // Rewrite to: `[ {database:String, entity:String} ]`
-				.map(e => /^(?<database>.*?)\/(?<entity>.+)$/.exec(e)?.groups)
-				.filter(Boolean)
-				.map(e => ({
-					...e,
-					database: e.database || this.defaultDatabase,
-				}))
-			)
-			.then(entries => Object.groupBy(entries, e => e.database)) // Rewrite to: `{ [database:String]: {database:String, entity:String} }`
-			.then(dbs => Object.entries(dbs) // Rewrite to: `[ [database:String, entries:Array<String>] ]`
-				.map(([database, entities]) => [
-					database,
-					entities.map(e => e.entity)
-				])
-			)
-			.then(dbs => Promise.all(
-				dbs.map(([database, entities]) => this.initDatabase(database, {
-					entities,
-				}))
-			))
 	},
 }
 </script>
