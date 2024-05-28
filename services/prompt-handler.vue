@@ -147,6 +147,7 @@ export default {
 		align-items: center;
 		height: 50px;
 		width: 50px;
+		min-width: 50px;
 		aspect-ratio: 1/1;
 
 		padding: 0;
