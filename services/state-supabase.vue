@@ -798,6 +798,7 @@ export default {
 		* Remove a file
 		*
 		* @param {String|Array<String>} path The path to remove (not the same as the file name)
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		fileRemove(path) {
