@@ -77,7 +77,7 @@ export default {
 			default: ()=> [],
 			validator: v => v.every(i =>
 				typeof i == 'string'
-				&& /^(<database>.*?)\/(<entity>.+)$/.test(i)
+				&& /^(?<database>.*?)\/(?<entity>.+)$/.test(i)
 			),
 		},
 
