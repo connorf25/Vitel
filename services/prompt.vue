@@ -55,6 +55,8 @@ export default {
 		* @param {Object} [options.componentEvents] Event mappings to pass when initializing the component
 		* @param {Boolean} [options.stack=false] Allow model stacking. If false all other models are closed before showing this one
 		*
+		* @param {Boolean} [options.closable=false] If falsy implies `{closeButton: false, keyboard: false}`
+		* @param {Boolean} [options.closeButton=true] Show a dialog close button in the title @FIXME: Not-implemented
 		* @param {Boolean} [options.keyboard=true] Whether keyboard interaction should be allowed to dismiss the dialog
 		* @param {Boolean} [options.backdrop=true] Show a faded backdrop behind the model
 		*
@@ -90,6 +92,8 @@ export default {
 				modalDialogClass: '',
 				component: null,
 				componentProps: {},
+				closable: true,
+				closeButton: true,
 				keyboard: true,
 				backdrop: true,
 				dialogClose: 'reject',
@@ -107,6 +111,14 @@ export default {
 			};
 
 			// Settings mangling {{{
+			// Shorthand setters {{{
+			if (!settings.closable)
+				Object.assign(settings, {
+					closeButton: false,
+					keyboard: false,
+				});
+			// }}}
+
 			// Remap button shorthands {{{
 			if (settings.buttons) {
 				settings.buttons = settings.buttons.map(b =>

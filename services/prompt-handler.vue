@@ -99,6 +99,7 @@ export default {
 						<div v-if="prompt.title" :id="`${prompt.id}-header`" class="modal-header">
 							{{prompt.title}}
 							<a
+								v-if="$prompt.closeButton"
 								@click="$prompt.close(prompt.dialogClose == 'resolve')"
 								class="btn btn-link btn-close"
 								aria-label="Close"
