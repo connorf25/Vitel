@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.1...v1.4.2) (2024-06-08)
+
+
+### Bug Fixes
+
+* Better detection for "empty" file meta information to skip the meta update process ([d512f1a](https://github.com/MomsFriendlyDevCo/Vitel/commit/d512f1aa49f3a4a16bb1e7486a24508cbf31ac09))
+* Dont crash out when trying to parse file paths that dont have an apparent file ext ([df2c46b](https://github.com/MomsFriendlyDevCo/Vitel/commit/df2c46bbbb4bdda8e7adb95c1b998b540fbb0a8b))
+
 ## [1.4.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.0...v1.4.1) (2024-06-08)
 
 # [1.4.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.3.1...v1.4.0) (2024-06-08)
