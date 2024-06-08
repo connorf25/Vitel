@@ -913,7 +913,7 @@ export default {
 			if (!path.startsWith('/')) throw new Error(`All file paths must start with a slash. Given "${path}"`);
 			let {dirname, basename, filename, ext} = /^(?<dirname>.*\/)(?<basename>(?<filename>.+?)(?:\.(?<ext>.+?))?)$/.exec(path)?.groups || {};
 			if (!dirname || !filename) throw new Error('Unable to decode filename');
-			ext = ext.toLowerCase();
+			ext = ext ? ext.toLowerCase() : '';
 
 			return {dirname, basename, filename, ext};
 		},
