@@ -1,5 +1,5 @@
 <script>
-import {cloneDeepWith, isPlainObject} from 'lodash-es';
+import {cloneDeepWith, isEmpty, isPlainObject} from 'lodash-es';
 import {createClient as Supabase} from '@supabase/supabase-js'
 import SupabaseReactive from '@momsfriendlydevco/supabase-reactive';
 import {BlobWriter as ZipBlobWriter, BlobReader as ZipBlobReader, ZipWriter} from '@zip.js/zip.js';
@@ -580,7 +580,7 @@ export default {
 								.then(()=> ({file, meta})) // Pass result + meta to next .then block
 							)
 							.then(({file, meta}) => {
-								if (meta) { // If we also want to populate meta we need to refetch the uploaded file by its name
+								if (!isEmpty(meta)) { // If we also want to populate meta we need to refetch the uploaded file by its name
 									return this.fileList(`${entity}/${id}`, {
 										search: file.name,
 										meta: false,
