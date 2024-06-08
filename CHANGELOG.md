@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.4.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.3.1...v1.4.0) (2024-06-08)
+
+
+### Bug Fixes
+
+* **$stateIdb:** Typo ([99f9599](https://github.com/MomsFriendlyDevCo/Vitel/commit/99f9599a65761e2a8439254368eef0d08141da5f))
+
+
+### Features
+
+* **$prompt:** Added ability to hide the close button + disable closability alltogether ([27bb44b](https://github.com/MomsFriendlyDevCo/Vitel/commit/27bb44bea8109135a119932b65804d8ac86a0641))
+
 ## [1.3.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.3.0...v1.3.1) (2024-05-28)
 
 # [1.3.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.2.2...v1.3.0) (2024-05-24)
