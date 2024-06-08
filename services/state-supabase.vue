@@ -624,20 +624,19 @@ export default {
 			let toastId; // Eventual toastID used to track the loading progress
 			let {entity, id, operand} = this.splitPath(path, {requireEntity: true, requireId: true});
 
-			// FIXME: Need 404 here if needed
-
 			return Promise.resolve()
 				.then(()=> {
 					if (!settings.toast) return;
 					toastId = this.$toast.loading(`Downloading "${operand}"`);
 				})
 				.then(()=> this.supabase.storage
-				.from(entity)
-				.download(`${id}/${operand}`)
-				.then(({data}) => settings.json
-					? data.text().then(d => this._jsonToPojo(d))
-					: data
-				))
+					.from(entity)
+					.download(`${id}/${operand}`)
+					.then(({data}) => settings.json
+						? data.text().then(d => this._jsonToPojo(d))
+						: data
+					)
+				)
 				.finally(()=> toastId && this.$toast.close(toastId))
 		},
 
