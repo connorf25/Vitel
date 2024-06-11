@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.2...v1.4.3) (2024-06-11)
+
+
+### Bug Fixes
+
+* **$authKinde:** Added various sanity checks when trying to signup / logout when using the bypassEmail option ([823490a](https://github.com/MomsFriendlyDevCo/Vitel/commit/823490abad09d0ea9816f89a262b33f50da41aaf))
+
 ## [1.4.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.1...v1.4.2) (2024-06-08)
 
 
