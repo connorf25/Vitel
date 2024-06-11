@@ -153,7 +153,7 @@ export default {
 		*/
 		login() {
 			return this.promise()
-				.then(()=>  this.kinde.login());
+				.then(()=> this.kinde.login());
 		},
 
 
@@ -162,6 +162,7 @@ export default {
 		*/
 		signup() {
 			return this.promise()
+				.then(()=> this.bypassEmail && Promise.reject('Cannot trigger signup process if using bypassEmail'))
 				.then(()=> this.kinde.register());
 		},
 
@@ -172,6 +173,7 @@ export default {
 		*/
 		logout() {
 			return this.promise()
+				.then(()=> this.bypassEmail && Promise.reject('Cannot logout if using bypassEmail'))
 				.then(()=> this.kinde.logout());
 		},
 
