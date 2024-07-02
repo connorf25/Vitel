@@ -1,4 +1,6 @@
 <script>
+import {cloneDeep} from 'lodash-es';
+
 /**
 * Key/Val IndexedDB state handler that uses pathing + simple get/set
 */
@@ -25,6 +27,29 @@ export default {
 		* @type {RegExp}
 		*/
 		pathMatcher: /^(?<database>[a-z0-9\_]+)?\/(?<entity>[^\/]+)\/(?<id>[^\/]+)(\/(?<operand>.+))?$/i,
+
+
+		/**
+		* Async serializer for incoming values
+		* Set this to anything other than a pass-thru to deconstruct outer fluff like Vue / RxJS
+		* By default this function uses lodash.cloneDeep to deconstruct Vue values
+		*
+		* @type {Function}
+		*/
+		serialize(v) {
+			return cloneDeep(v);
+		},
+
+
+		/**
+		* Async deserializer for outgoing values
+		* By default this function is a simple pass-thru
+		*
+		* @type {Function}
+		*/
+		deserialize(v) {
+			return v;
+		},
 	}},
 	props: {
 		/**
@@ -122,7 +147,8 @@ export default {
 
 				transaction.onsuccess = e => resolve(e.target?.result ?? fallback);
 				transaction.onerror = e => reject(e);
-			});
+			})
+				.then(value => this.deserialize(value))
 		},
 
 
@@ -160,7 +186,10 @@ export default {
 
 				transaction.onsuccess = e => resolve(e.target?.result);
 				transaction.onerror = e => reject(e);
-			});
+			})
+				.then(values => values.map(v =>
+					this.deserialize(v)
+				))
 		},
 
 
@@ -229,14 +258,16 @@ export default {
 			await this.initEntity(database, entity);
 
 			// Create a set transaction to fetch data by the key
-			return new Promise((resolve, reject) => {
-				let transaction = this.databases[database].transaction(entity, 'readwrite', {durability: this.defaultSetDurability})
-					.objectStore(entity)
-					[settings.overwrite ? 'put' : 'add'](value, id);
+			return Promise.resolve()
+				.then(()=> this.serialize(value))
+				.then(value => new Promise((resolve, reject) => {
+					let transaction = this.databases[database].transaction(entity, 'readwrite', {durability: this.defaultSetDurability})
+						.objectStore(entity)
+						[settings.overwrite ? 'put' : 'add'](value, id);
 
-					transaction.onsuccess = ()=> resolve(value);
-					transaction.onerror = e => reject(e);
-			});
+						transaction.onsuccess = ()=> resolve(value);
+						transaction.onerror = e => reject(e);
+				}));
 		},
 
 
