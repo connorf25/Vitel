@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.3...v1.4.4) (2024-07-02)
+
+
+### Bug Fixes
+
+* **$idb:** Serialize via lodash.cloneDeep() by default to break apart weird objects ([6459b3e](https://github.com/MomsFriendlyDevCo/Vitel/commit/6459b3e05991cb8876ed2ea0314972b4e89f4fe3))
+
 ## [1.4.3](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.2...v1.4.3) (2024-06-11)
 
 
