@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.4...v1.4.5) (2024-07-09)
+
+
+### Bug Fixes
+
+* **$prompt:** Use raw button definitions if we have them rather than only shorthand strings ([50c49d6](https://github.com/MomsFriendlyDevCo/Vitel/commit/50c49d6fe2b676e65edc99a6085350dbfffbe3d8))
+
 ## [1.4.4](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.3...v1.4.4) (2024-07-02)
 
 
