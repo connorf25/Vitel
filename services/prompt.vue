@@ -122,7 +122,8 @@ export default {
 			// Remap button shorthands {{{
 			if (settings.buttons) {
 				settings.buttons = settings.buttons.map(b =>
-					['accept', 'close', 'confirm', 'ok', 'save'].includes(b) ? {
+					typeof b == 'object' ? b // Already an object definition
+					: ['accept', 'close', 'confirm', 'ok', 'save'].includes(b) ? {
 						click: 'resolve',
 						class: 'btn btn-success',
 						icon: 'fas fa-check',
