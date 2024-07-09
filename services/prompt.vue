@@ -55,7 +55,7 @@ export default {
 		* @param {Object} [options.componentEvents] Event mappings to pass when initializing the component
 		* @param {Boolean} [options.stack=false] Allow model stacking. If false all other models are closed before showing this one
 		*
-		* @param {Boolean} [options.closable=false] If falsy implies `{closeButton: false, keyboard: false}`
+		* @param {Boolean} [options.closable=true] If falsy implies `{closeButton: false, keyboard: false}`
 		* @param {Boolean} [options.closeButton=true] Show a dialog close button in the title @FIXME: Not-implemented
 		* @param {Boolean} [options.keyboard=true] Whether keyboard interaction should be allowed to dismiss the dialog
 		* @param {Boolean} [options.backdrop=true] Show a faded backdrop behind the model
