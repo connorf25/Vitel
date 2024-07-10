@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.5.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.5...v1.5.0) (2024-07-10)
+
+
+### Features
+
+* **v-focus:** Now correctly handles Bootstrap modal animations and sets focus after they complete ([4b79556](https://github.com/MomsFriendlyDevCo/Vitel/commit/4b7955646164cde8df7db948d64a8c3e3157411b))
+
 ## [1.4.5](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.4...v1.4.5) (2024-07-09)
 
 
