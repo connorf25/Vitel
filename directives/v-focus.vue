@@ -5,10 +5,12 @@ import {nextTick} from 'vue';
 * Simple directive to try and obtain focus when an element is mounted
 *
 * @param {Object} [options] Additional options to mutate behaviour
-* @param {Boolean} [options.aggressive=false] Shorthand property to `mount`, `intersect`, `visibility` options. Also settable via the `.aggressive` modifier
 * @param {Boolean} [options.mount=true] Try to set the focus on mount, can also be disabled via the `.noMount` modifier
 * @param {Boolean} [options.intersect=false] Also monitor via IntersectionObserver for when the component becomes intersect later, also settable via the `.intersect` modifier
 * @param {Function} [options.intersectionRoot] Function to determine the intersection root element. Defaults to finding the closest modal-body, dialog or document body. Called as `(el:DOMEelemnt)`
+* @param {Boolean} [options.modals=true] Listen for wrapping modal elements switching to show state and react to that also
+* @param {Function} [options.modalParent] Function to find the wrapping modal parent if `options.modals` is truthy
+* @param {Boolean} [options.aggressive=false] Shorthand property to `mount`, `intersect`, `visibility` options. Also settable via the `.aggressive` modifier
 * @param {Function} [options.handler] Actual function to run when focusing. Called as `(el:DOMElement, cause: 'mount'|'intersection'|'visibility')`
 * @param {Boolean} [options.visibility=false] Periodically checks the visibility of the element and tries to reclaim focus when transitioning from invisible to visible. Also settable via the `.visibility` modifier
 * @param {Object} [options.visibilityOptions] Options to pass to `El.checkVisibility()` when `visibility` is enabled. Defaults to all options enabled.
@@ -26,6 +28,8 @@ export default {
 			mount: true,
 			intersect: false,
 			intersectionRoot: el => el.closest('.modal-body, dialog, body'),
+			modals: true,
+			modalParent: el => el.closest('.modal'),
 			aggressive: false,
 			visibility: false,
 			visibilityOptions: {
@@ -69,6 +73,13 @@ export default {
 					lastVisible = false;
 				}
 			}, settings.visibilityInterval);
+		}
+
+		if (settings.modals) {
+			let modalParent = settings.modalParent(el);
+			if (modalParent) modalParent.addEventListener('shown.bs.modal', ()=>
+				settings.handler(el, 'modal-shown')
+			);
 		}
 	},
 }
