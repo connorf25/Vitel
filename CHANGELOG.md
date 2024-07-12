@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.6.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.5.0...v1.6.0) (2024-07-12)
+
+
+### Features
+
+* **$http:** New support for $http.lazyGet() ([0a3faaf](https://github.com/MomsFriendlyDevCo/Vitel/commit/0a3faafa94a12d5597f50f50d40e082fc2a1c207))
+
 # [1.5.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.4.5...v1.5.0) (2024-07-10)
 
 
