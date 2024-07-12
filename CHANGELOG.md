@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.7.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.6.0...v1.7.0) (2024-07-12)
+
+
+### Features
+
+* **$stateIdb:** Added automatic-retry to potencially error prone code blocks ([66b4c09](https://github.com/MomsFriendlyDevCo/Vitel/commit/66b4c0920c4d9d712b6b0487a047df4fb8ae23cb))
+
 # [1.6.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.5.0...v1.6.0) (2024-07-12)
 
 
