@@ -121,9 +121,15 @@ export default {
 		*
 		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY/$ID` / `/$ENTITY/$ID`
 		* @param {*} [fallback] Optional fallback to use if the value does not exist
+		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
+		* @param {Number} [options.retryWait=100] Time before retries
+		*
 		* @returns {Promise<*>} The fetched value or the fallback value if the item is not present
 		*/
-		async get(path, fallback) {
+		async get(path, fallback, options) {
+			let settings = options;
 			let {database, entity, id} = this.splitPath(path);
 			if (!database) database = this.defaultDatabase;
 
@@ -134,7 +140,7 @@ export default {
 			await this.initEntity(database, entity);
 
 			// Create a get transaction to fetch data by the key
-			return new Promise((resolve, reject) => {
+			return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 				let transaction = this.databases[database].transaction(
 					entity, // The entity we are planning to access
 					'readonly', // Mode
@@ -147,7 +153,7 @@ export default {
 
 				transaction.onsuccess = e => resolve(e.target?.result ?? fallback);
 				transaction.onerror = e => reject(e);
-			})
+			}))
 				.then(value => this.deserialize(value))
 		},
 
@@ -156,9 +162,15 @@ export default {
 		* Get all records within an entity
 		*
 		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY` / `/$ENTITY`, note that specifying an ID will throw
+		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
+		* @param {Number} [options.retryWait=100] Time before retries
+		*
 		* @returns {Promise<Object>} The fetched collection of rows
 		*/
-		async getAll(path) {
+		async getAll(path, options) {
+			let settings = options;
 			let {database, entity, id} = this.splitPath(path, {requireId: false});
 			if (id) throw new Error('Only "database" + "entity" can be specified for getAll(), "id" is not supported');
 
@@ -173,7 +185,7 @@ export default {
 			await this.initEntity(database, entity);
 
 			// Create a get transaction to fetch data by the key
-			return new Promise((resolve, reject) => {
+			return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 				let transaction = this.databases[database].transaction(
 					entity, // The entity we are planning to access
 					'readonly', // Mode
@@ -186,7 +198,7 @@ export default {
 
 				transaction.onsuccess = e => resolve(e.target?.result);
 				transaction.onerror = e => reject(e);
-			})
+			}))
 				.then(values => values.map(v =>
 					this.deserialize(v)
 				))
@@ -197,9 +209,15 @@ export default {
 		* Clear all records within an entity
 		*
 		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY` / `/$ENTITY`, note that specifying an ID will throw
+		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
+		* @param {Number} [options.retryWait=100] Time before retries
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
-		async clear(path) {
+		async clear(path, options) {
+			let settings = options;
 			let {database, entity, id} = this.splitPath(path, {requireId: false});
 			if (id) throw new Error('Only "database" + "entity" can be specified for clear(), "id" is not supported');
 
@@ -214,7 +232,7 @@ export default {
 			await this.initEntity(database, entity);
 
 			// Create a get transaction to fetch data by the key
-			return new Promise((resolve, reject) => {
+			return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 				let transaction = this.databases[database].transaction(
 					entity, // The entity we are planning to access
 					'readonly', // Mode
@@ -227,7 +245,7 @@ export default {
 
 				transaction.onsuccess = e => resolve();
 				transaction.onerror = e => reject(e);
-			});
+			}));
 		},
 
 
@@ -239,6 +257,8 @@ export default {
 		*
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.overwrite=true] Silently overwrite existing keys, if this is false and the key already exists this function will throw
+		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
+		* @param {Number} [options.retryWait=100] Time before retries
 		*
 		* @returns {Promise<*>} The eventual set value after it has been comitted
 		*/
@@ -260,14 +280,14 @@ export default {
 			// Create a set transaction to fetch data by the key
 			return Promise.resolve()
 				.then(()=> this.serialize(value))
-				.then(value => new Promise((resolve, reject) => {
+				.then(()=> this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 					let transaction = this.databases[database].transaction(entity, 'readwrite', {durability: this.defaultSetDurability})
 						.objectStore(entity)
 						[settings.overwrite ? 'put' : 'add'](value, id);
 
 						transaction.onsuccess = ()=> resolve(value);
 						transaction.onerror = e => reject(e);
-				}));
+				})))
 		},
 
 
@@ -276,9 +296,15 @@ export default {
 		*
 		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY/$ID` / `/$ENTITY/$ID`
 		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
+		* @param {Number} [options.retryWait=100] Time before retries
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
-		async unset(path) {
+		async unset(path, options) {
+			let settings = options;
+
 			let {database, entity, id} = this.splitPath(path);
 			if (!database) database = this.defaultDatabase;
 
@@ -289,14 +315,54 @@ export default {
 			await this.initEntity(database, entity);
 
 			// Create a set transaction to drop the key
-			return new Promise((resolve, reject) => {
+			return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 				let transaction = this.databases[database].transaction(entity, 'readwrite', {durability: this.defaultSetDurability})
 					.objectStore(entity)
 					.delete(id)
 
 					transaction.onsuccess = ()=> resolve(value);
 					transaction.onerror = e => reject(e);
+			}));
+		},
+
+
+		/**
+		* Attempt to run a callback, retrying if the operation failed
+		*
+		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Number} [options.retries=10] Retry the same command this number of times before giving up
+		* @param {Number} [options.retryWait=100] Time before retries
+		*
+		* @param {Function} Async function which is executed until the retry count is exhausted
+		*
+		* @returns {Promise<*>} The eventual promise return value of the callback
+		*/
+		tryAction(options, cb) {
+			let settings = {
+				retries: 10,
+				retryWait: 100,
+				...options,
+			};
+
+			let tryCount = 0;
+			return new Promise((resolve, reject) => {
+				let tryWorker = ()=> Promise.resolve()
+					.then(()=> cb())
+					.then(result => resolve(result))
+					.catch(e => {
+						if (++tryCount >= settings.retries) {
+							console.log('TRY-ACTION gave up -', e);
+							reject(e);
+						} else {
+							console.log('TRY-ACTION fail [', tryCount, '/', settings.retries, '] -', e);
+							setTimeout(tryWorker, settings.retryWait);
+						}
+					})
+
+				// Kick off initial action
+				tryWorker();
 			});
+
 		},
 
 
