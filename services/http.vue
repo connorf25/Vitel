@@ -1,7 +1,8 @@
 <script>
 import axios from 'axios';
 import hasher from 'object-hash';
-import {merge} from 'lodash-es';
+import {merge, omit} from 'lodash-es';
+import timestring from 'timestring';
 
 /**
 * Axios wrapper
@@ -60,6 +61,7 @@ export default {
 		put(...args) { return this.axios.put(...args) },
 		request(...args) { return this.axios.request(...args) },
 
+
 		/**
 		* Similar to a regular Axios.request() except that incoming requests are throttled if they match a given hash + expiry period
 		*
@@ -107,6 +109,99 @@ export default {
 						delete this.throttles[hash];
 					})
 			}
+		},
+
+
+		/**
+		* Try to fetch a remote resource but use a locally cached version, if it exists
+		*
+		* @param {String} [url] The URL to fetch
+		* @param {AxiosRequest|Object} [options] AxiosRequest config or POJO to transform into one
+		* @param {String} [options.url] The URL endpoint to access
+		* @param {String} [options.responseType='json'] The output data type expected
+		* @param {Object} [options.cache] Caching options
+		* @param {String} [options.cache.cacheName='FetchCache'] The name of the cache to read/write cached data from/to
+		* @param {String|Number|Date} [options.cache.expires='1d'] Either a timestring() compatible time to store the cache data, the time in milliseconds from now to store data or the Date of expiry
+		* @param {Function} [options.debug] Debug output function used to display messages back to the user, by default this function does nothing
+		* @param {Function} [options.hasher] Async function used to compute a valid URL to cache, by default this is the base URL + a hash of the method, params, headers and data
+		*
+		* @returns {Object} An AxiosResponse-a-like object which is composed the same way as a regular AxiosResponse but with the {data} object expanded to whatever the `responseType` was specified. This response is either from the cache (if its not expired) OR from a fresh request
+		*/
+		lazyGet(url, options) {
+			let settings = {
+				responseType: 'json',
+				...(
+					typeof url == 'string' ? {url, ...options}
+					: typeof url == 'object' ? url
+					: options
+				),
+				cache: {
+					cacheName: 'FetchCache',
+					expires: '1d',
+					checkExpiry: true,
+					debug(...msg) {
+						// console.info('[$http.lazyGet]', ...msg);
+					},
+					hasher(settings) {
+						return (
+							settings.url
+							+ '?'
+							+ hasher({
+								...(settings.method && {method: settings.method}),
+								...(settings.params && {params: settings.params}),
+								...(settings.headers && {headers: settings.headers}),
+								...(settings.data && {query: settings.data}),
+							})
+						)
+					},
+					...(url?.cache || options?.cache),
+				},
+			};
+
+			let cacheHandle, cacheKey;
+			return Promise.resolve()
+				.then(()=> Promise.all([
+					// Open cache + return handle
+					caches.open(settings.cache.cacheName)
+						.then(res => cacheHandle = res),
+
+					// Compute hash of URL
+					Promise.resolve(settings.cache.hasher(settings))
+						.then(res => cacheKey = res),
+				]))
+				.then(()=> cacheHandle.match(cacheKey))
+				.then(res =>
+					!res ? null // No response
+					: settings.checkExpiry && new Date(res.headers.get('Expires')) <= new Date() ? Promise.resolve() // Possible match but data has expired
+						.then(()=> settings.cache.debug(cacheKey, 'Cached content has expired - deleting'))
+						.then(()=> cacheHandle.delete(cacheKey))
+						.then(()=> null)
+					: settings.responseType == 'json' ? {...res, data: res.json()} // As JSON
+					: settings.responseType == 'blob' ? {...res, data: res.blob()} // As blob
+					: settings.responseType == 'text' ? {...res, data: res.text()} // As text
+					: (()=> { throw new Error(`Unsupported response type "${settings.responseType}"`) })()
+				)
+				.then(res => {
+					if (res) {
+						settings.cache.debug(cacheKey, 'Use cached resource', res);
+						return res;
+					}
+
+					// No cache or cache is empty - run the actual request
+					settings.cache.debug(cacheKey, 'Make fresh request');
+					return this.request(omit(settings, ['cache']))
+						.then(newRes => cacheHandle.put(cacheKey, new Response(newRes.data, {
+							headers: {
+								'Content-Type': 'application/json',
+								...newRes.headers,
+								Expires:
+									settings.cache.expires instanceof Date ? settings.cache.expires.toUTCString()
+									: typeof settings.cache.expires == 'string' ? new Date(Date.now() + timestring(settings.cache.expires, 'ms')).toUTCString()
+									: isFinite(settings.cache.expires) ? new Date(Date.now() + settings.cache.expires).toUTCString()
+									: (()=> { throw new Error(`Unknown expires type "${settings.cache.expires}" must be a string, Date or finite number`) })()
+							},
+						})).then(()=> newRes)) // Eventually return the input response
+				})
 		},
 	},
 
