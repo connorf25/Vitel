@@ -424,7 +424,6 @@ export default {
 							resolve();
 						};
 						dbRequest.onerror = e => {
-							debugger; // Untested behaviour
 							if (tryCount >= settings.retryLimit) { // Exhaused retries
 								reject(e);
 							} else {
