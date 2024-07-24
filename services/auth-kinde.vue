@@ -3,7 +3,7 @@ import createKindeClient from '@kinde-oss/kinde-auth-pkce-js';
 
 /**
 * Global $authKinde service
-* Available on all Vue models as `vm.$auth`
+* Available on all Vue models as `vm.$authKinde` (unless renamed)
 */
 export default {
 	name: '$authKinde',
@@ -106,8 +106,11 @@ export default {
 		/**
 		* Reloads local state from this.$authKinde
 		* This is an internal function to be called whenever Kinde messages that its state has changed
-		* @fires $kinde:change When the current user changes in any way
+		*
 		* @param {Object} [newState] The incoming new user state
+		*
+		* @emits $kinde:change When the current user changes in any way
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		refresh(newState) {
@@ -150,6 +153,8 @@ export default {
 
 		/**
 		* Try and register the user
+		*
+		* @returns {Promise} A promise which resolves when the operation has completed, although since this usually leads to a Kinde screen the original doc is often destroyed
 		*/
 		login() {
 			return this.promise()
@@ -159,6 +164,8 @@ export default {
 
 		/**
 		* Try and register a new user
+		*
+		* @returns {Promise} A promise which resolves when the operation has completed, although since this usually leads to a Kinde screen the original doc is often destroyed
 		*/
 		signup() {
 			return this.promise()
@@ -169,6 +176,7 @@ export default {
 
 		/**
 		* Try and logout of the current session
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		logout() {
@@ -180,11 +188,14 @@ export default {
 
 		/**
 		* Utility function to be used in the VueComponent.created() lifecycle hook which checks the user is logged in
+		*
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.silent=false] Disable all other options and just redirect
 		* @param {String} [options.notify='You need to be logged in to do that'] Message to show if the user is not logged in
 		* @param {String} [options.throw='User is not logged in'] Contents of thrown Error on fail, set to falsy to skip
 		* @param {String} [options.redirect='/'] Path to redirect to on fail, set to falsy to skip
+		*
+		* @returns {Promise} A promise which will try to verify the user, if it can OR throw
 		*/
 		requireLogin(options) {
 			let settings = {
@@ -210,6 +221,8 @@ export default {
 		/**
 		* Attempt to restore a login, if one is already present
 		* This function is auto-executed if `$props.autoRestoreLogin=true`
+		*
+		* @returns {Promise} A promise which will try to restore an active user login, if one exists
 		*/
 		restoreLogin() {
 			return Promise.resolve()
