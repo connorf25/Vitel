@@ -101,6 +101,14 @@ export default {
 		* @type {Boolean}
 		*/
 		autoRestoreLogin: {type: Boolean, default: true},
+
+
+		/**
+		* Tokens to automatically remove from the URL if they are detected in the page search string
+		* Set to falsy to disable
+		* @type {Boolean|Array<String>}
+		*/
+		autoClearTokens: {type: [Array, Boolean], default() { return ['code', 'scope', 'state'] }},
 	},
 	methods: {
 		/**
@@ -109,7 +117,7 @@ export default {
 		*
 		* @param {Object} [newState] The incoming new user state
 		*
-		* @emits $kinde:change When the current user changes in any way
+		* @emits '$kinde:change' When the current user changes in any way
 		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
@@ -147,7 +155,23 @@ export default {
 						this.debug('Auth change', this.user);
 					}
 					this.$events.emit('$kinde:change');
-				});
+				})
+				.then(()=> {
+					if (!this.autoClearTokens) return;
+
+					let url = new URL(window.location.href);
+					if (this.autoClearTokens.every(t => url.searchParams.has(t))) { // We have all tokens - clear them
+						this.autoClearTokens.forEach(t =>
+							url.searchParams.delete(t)
+						);
+
+						// Queue replacement in the future to keep anything else that ight be digesting this happy
+						setTimeout(()=> {
+							this.debug('Removing URL search tokens', this.autoClearTokens);
+							window.history.replaceState(null, '', url)
+						}, 1000);
+					}
+				})
 		},
 
 
