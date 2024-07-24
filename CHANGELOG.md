@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.7.0...v1.7.1) (2024-07-24)
+
+
+### Bug Fixes
+
+* **$auth:** Automatically clear login search tokens after auth ([f7f5af2](https://github.com/MomsFriendlyDevCo/Vitel/commit/f7f5af2a7473ffce71505f51ed1885a50e52f841))
+* **$authKinde:** Various JSDoc fixes ([832dda4](https://github.com/MomsFriendlyDevCo/Vitel/commit/832dda4a29aa33f13234aea4218066c4be4dbaea))
+* **$stateIdb:** Remove debugger marker for weird errors thrown in $idb ([f38a90d](https://github.com/MomsFriendlyDevCo/Vitel/commit/f38a90d681b41587aa9572698b15907720125095))
+
 # [1.7.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.6.0...v1.7.0) (2024-07-12)
 
 
