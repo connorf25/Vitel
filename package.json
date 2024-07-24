@@ -60,7 +60,7 @@
     "vue3-toastify": "^0.1.12"
   },
   "devDependencies": {
-    "@momsfriendlydevco/eslint-config": "^2.0.1",
+    "@momsfriendlydevco/eslint-config": "^2.0.2",
     "@release-it/conventional-changelog": "^8.0.1",
     "@storybook/addon-essentials": "^8.0.2",
     "@storybook/addon-interactions": "^8.0.2",
@@ -71,7 +71,7 @@
     "@storybook/vue3-vite": "^8.0.2",
     "@vitejs/plugin-vue": "^5.0.4",
     "bootstrap": "^5.3.3",
-    "eslint": "^9.6.0",
+    "eslint": "^9.7.0",
     "msw": "^1.3.0",
     "msw-storybook-addon": "^1.10.0",
     "release-it": "^17.2.0",
