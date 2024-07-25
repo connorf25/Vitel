@@ -87,8 +87,6 @@ export default {
 	overflow: hidden;
 	pointer-events: none;
 
-	border: 1px dashed red;
-
 	& .ripple {
 		position: absolute;
 		border-radius: 50%;
