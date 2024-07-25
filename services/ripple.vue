@@ -40,6 +40,7 @@ export default {
 			rippleBox.style.top = `${target.offsetTop}px`;
 			rippleBox.style.width = `${target.offsetWidth}px`;
 			rippleBox.style.height = `${target.offsetHeight}px`;
+			rippleBox.style.borderRadius = window.getComputedStyle(target).borderRadius;
 
 			// Create ripple DOM element
 			let ripple = document.createElement('div');
@@ -55,7 +56,7 @@ export default {
 			target.parentElement.appendChild(rippleBox);
 
 			// Clean up ripple effect circle when animated
-			ripple.addEventListener('animationend', ()=> target.removeChild(rippleBox));
+			ripple.addEventListener('animationend', ()=> target.parentElement.removeChild(rippleBox));
 		},
 
 
