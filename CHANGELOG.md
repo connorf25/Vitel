@@ -1,5 +1,18 @@
 # Changelog
 
+# [1.8.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.7.1...v1.8.0) (2024-07-25)
+
+
+### Bug Fixes
+
+* **$ripple:** Various debugging artefacts ([ba2c8e2](https://github.com/MomsFriendlyDevCo/Vitel/commit/ba2c8e211770e024bcd0bd387c212ba16dae97a2))
+* **$ripple:** Various style inheritence for ripple effect ([b1eb41a](https://github.com/MomsFriendlyDevCo/Vitel/commit/b1eb41ad34ed853e675affcd1ec60dd2528e6662))
+
+
+### Features
+
+* **$ripple:** Added $ripple UI effect service ([628b31e](https://github.com/MomsFriendlyDevCo/Vitel/commit/628b31e1e6e2f4facdc5f5e1d75900863d024116))
+
 ## [1.7.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.7.0...v1.7.1) (2024-07-24)
 
 
