@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.9.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.8.0...v1.9.0) (2024-07-30)
+
+
+### Features
+
+* **v-animate:** v-animate directive for simple animations ([5d67514](https://github.com/MomsFriendlyDevCo/Vitel/commit/5d675144ad2ad9100ce204c7740c1fa7391f7899))
+
 # [1.8.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.7.1...v1.8.0) (2024-07-25)
 
 
