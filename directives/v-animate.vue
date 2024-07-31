@@ -48,7 +48,7 @@ export default {
 		let intersectionObserver = new IntersectionObserver(async ([entry]) => {
 			if (!isSettled) {
 				clearTimeout(settleTimer);
-				settleTime = setTimeout(()=> isSettled = true, settings.settleTime);
+				settleTimer = setTimeout(()=> isSettled = true, settings.settleTime);
 				return;
 			}
 
