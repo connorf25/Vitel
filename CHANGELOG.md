@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.10.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.9.0...v1.10.0) (2024-07-31)
+
+
+### Bug Fixes
+
+* **v-animate:** Typo ([0f3d850](https://github.com/MomsFriendlyDevCo/Vitel/commit/0f3d8500939e4fb1eabf66e59126f9b2c68aad8b))
+
+
+### Features
+
+* **$stateSupabase:** Uploading files in Supabase now returns the raw Supabase result ([710a929](https://github.com/MomsFriendlyDevCo/Vitel/commit/710a9291c2bd29330275d548f9e70f9cbf7dbbe3))
+
 # [1.9.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.8.0...v1.9.0) (2024-07-30)
 
 
