@@ -438,7 +438,11 @@ export default {
 		* @param {Function} [options.metaPath] Function, called as `(rawFile:File)` which returns the Path to use when setting meta data
 		* @param {Boolean} [options.transcoders=true] Apply transcoders to uploaded files
 		* @param {Number} [options.cacheControl=3600] Time the file should be cached within CDNs
-		* @returns {Promise} A promise which resolves when the operation has completed
+		*
+		* @returns {Promise<Array<Object>>} A promise which resolves to raw Supabase return data for each file uploaded
+		* @property {String} id The ID of the uploaded file
+		* @property {String} fullPath The fully qualified, relative path within Supabase for the uploaded file
+		* @property {String} path The relative path within the Supabase bucket for the uploaded file
 		*/
 		fileUpload(path, options) {
 			let settings = {
@@ -577,9 +581,9 @@ export default {
 									upsert: settings.overwrite,
 									cacheControl: settings.cacheControl,
 								})
-								.then(()=> ({file, meta})) // Pass result + meta to next .then block
+								.then(({data: sbFile}) => ({file, meta, sbFile})) // Pass result + meta to next .then block
 							)
-							.then(({file, meta}) => {
+							.then(({sbFile, file, meta}) => {
 								if (!isEmpty(meta)) { // If we also want to populate meta we need to refetch the uploaded file by its name
 									return this.fileList(`${entity}/${id}`, {
 										search: file.name,
@@ -587,19 +591,22 @@ export default {
 										limit: 1,
 									})
 										.then(([newFile]) => this.replace(settings.metaPath(newFile), meta))
+										.then(()=> ({sbFile, file}))
+								} else {
+									return {sbFile, file};
 								}
 							})
-							.then(()=> {
+							.then(({sbFile, file}) => {
 								stats.uploaded += file.size;
 								if (toastId) this.$toast.update(toastId, {
 									progress: stats.uploaded / stats.totalSize,
 								});
+								return sbFile;
 							})
 						)
 					);
 				})
 				// }}}
-				.then(()=> null)
 				.finally(()=> toastId && this.$toast.close(toastId))
 		},
 
