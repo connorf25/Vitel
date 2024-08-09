@@ -463,7 +463,7 @@ export default {
 								this.debug('Creating default database entities:', baseEntities);
 
 								baseEntities.forEach(entity =>
-									tryAction({
+									this.tryAction({
 										skipError: e => /An object store with the specified name already exists/.test(e.toString()),
 									}, ()=> db.createObjectStore(entity, {
 										...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
@@ -521,7 +521,7 @@ export default {
 								this.defaultEntityKey ?? 'NONE'
 							] : []),
 						]);
-						tryAction({
+						this.tryAction({
 							skipError: e => /An object store with the specified name already exists/.test(e.toString()),
 						}, ()=>
 							db.createObjectStore(entity, {
