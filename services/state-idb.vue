@@ -243,7 +243,7 @@ export default {
 					.objectStore(entity)
 					.clear();
 
-				transaction.onsuccess = e => resolve();
+				transaction.onsuccess = ()=> resolve();
 				transaction.onerror = e => reject(e);
 			}));
 		},
@@ -332,8 +332,9 @@ export default {
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Number} [options.retries=10] Retry the same command this number of times before giving up
 		* @param {Number} [options.retryWait=100] Time before retries
+		* @param {Function} [options.skipError] Function which determines if a result is actually a failure error. If this function returns truthy the result is treated as successful
 		*
-		* @param {Function} Async function which is executed until the retry count is exhausted
+		* @param {Function} cb Async function which is executed until the retry count is exhausted
 		*
 		* @returns {Promise<*>} The eventual promise return value of the callback
 		*/
@@ -369,6 +370,8 @@ export default {
 		/**
 		* Setup a database connection for the database on its current version if it doesn't already exist
 		*
+		* @param {String} database Database name to create
+		*
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.overwrite=false] Overwrite an existing database handle if it already exists
 		* @param {'latest'|Number} [options.version='latest'] Version of the database to setup or 'latest' to use the registered version
@@ -395,7 +398,7 @@ export default {
 			// Check if we already have the database loaded + ready if we're not overwriting
 			if (!settings.overwrite) {
 				// Database already exists as a pointer
-				if (this.databases[database]) return;
+				if (this.databases[database]) return Promise.resolve();
 
 				// Database is current initalizing
 				if (this.databasesInit[database]) return this.databasesInit[database];
@@ -457,9 +460,11 @@ export default {
 								this.debug('Creating default database entities:', baseEntities);
 
 								baseEntities.forEach(entity =>
-									db.createObjectStore(entity, {
+									tryAction({
+										skipError: e => /An object store with the specified name already exists/.test(e.toString()),
+									}, ()=> db.createObjectStore(entity, {
 										...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
-									})
+									}))
 								);
 							}
 
@@ -476,13 +481,16 @@ export default {
 		* Initalize entities (IDObjectStore) against a database
 		* This will either resolved if the entity already exists or bump the database and create it
 		*
+		* @param {String} database Database name to create the new entry within
+		* @param {String} entity The entity name to create
+		*
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		initEntity(database, entity) {
 			// NOTE: Because of the way JavaScript returns deferred async functions, this function cannot be async - it has to exit immediatly OR return a promise
 			if (!this.databases[database]) throw new Error(`Cannot access entity on uninitalied database "${database}"`);
 
-			if (Array.from(this.databases[database].objectStoreNames).some(os => os == entity)) return; // Already set up within the database - do nothing
+			if (Array.from(this.databases[database].objectStoreNames).some(os => os == entity)) return Promise.resolve(); // Already set up within the database - do nothing
 			if (!this.dynamicEntities) throw new Error(`Dynamic entities are disabled - declare '${database}/${entity}' in defaultEntities before use!`);
 
 			this.debug('initEntity', `${database}/${entity}`);
@@ -510,9 +518,13 @@ export default {
 								this.defaultEntityKey ?? 'NONE'
 							] : []),
 						]);
-						db.createObjectStore(entity, {
-							...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
-						});
+						tryAction({
+							skipError: e => /An object store with the specified name already exists/.test(e.toString()),
+						}, ()=>
+							db.createObjectStore(entity, {
+								...(this.defaultEntityKey && {keyPath: this.defaultEntityKey}),
+							})
+						);
 					},
 				}))
 		},
@@ -520,7 +532,7 @@ export default {
 		/**
 		* Split a simple path into {database, entity, id, ...operand}
 		*
-		* @param {String} Path to seperate in slash notation or array form
+		* @param {String} path Path to seperate in slash notation or array form
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.requireDatabase=false] Throw if the path does not contain a qualified database name
 		* @param {Boolean} [options.requireEntity=true] Throw if a entity is not deteceted in the decoded output
