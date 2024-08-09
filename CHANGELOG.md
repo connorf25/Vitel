@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.10.0...v1.10.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* **$stateIdb:** More tolerence with "failed successfully" errors ([2954e99](https://github.com/MomsFriendlyDevCo/Vitel/commit/2954e994683928f950c2c5ce4141462ba9461c22))
+
 # [1.10.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.9.0...v1.10.0) (2024-07-31)
 
 
