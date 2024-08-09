@@ -342,6 +342,7 @@ export default {
 			let settings = {
 				retries: 10,
 				retryWait: 100,
+				isError: ()=> true,
 				...options,
 			};
 
@@ -351,7 +352,9 @@ export default {
 					.then(()=> cb())
 					.then(result => resolve(result))
 					.catch(e => {
-						if (++tryCount >= settings.retries) {
+						if (!settings.skipError(e)) { // Failed but we're considering it a success anyway
+							resolve();
+						} else if (++tryCount >= settings.retries) {
 							console.log('TRY-ACTION gave up -', e);
 							reject(e);
 						} else {
