@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.10.1...v1.10.2) (2024-08-09)
+
+
+### Bug Fixes
+
+* Typo ([051da37](https://github.com/MomsFriendlyDevCo/Vitel/commit/051da3712e897d2ce9c2fa3927441867d3589313))
+
 ## [1.10.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.10.0...v1.10.1) (2024-08-09)
 
 
