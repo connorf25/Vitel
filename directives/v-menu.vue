@@ -111,7 +111,7 @@ export default {
 
 							menuItem.innerText = item.title;
 
-							if (item.onClick) menuItem.addEventListener('click', async (e) => {
+							if (item.onClick) menuItem.addEventListener('click', async ()=> {
 								await close();
 								return item.onClick.call(settings.context);
 							});

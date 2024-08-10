@@ -132,6 +132,7 @@ export default {
 						: t + unit.name + 's' + suffix;
 				}
 			}
+			return '';
 		},
 
 

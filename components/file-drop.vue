@@ -20,6 +20,7 @@
 * </file-drop>
 */
 export default {
+	emits: ['change'],
 	data() { return {
 		globalEl: null, // global drop element if we have one
 

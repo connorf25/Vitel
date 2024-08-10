@@ -85,6 +85,7 @@ export function dateRelative(date, settings) {
 				: t + unit.name + 's' + suffix;
 		}
 	}
+	return '';
 }
 
 
