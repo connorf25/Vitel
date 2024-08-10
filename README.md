@@ -133,3 +133,8 @@ import Service from '@momsfriendlydevco/vitel/services/service';
 import Toast from '@momsfriendlydevco/vitel/services/toast';
 Service(Toast, {app}); // Toast now available in all components as `vm.$toast`
 ```
+
+
+Utils
+=====
+Various utility JavaScript files. These are generally used by other components but are exposed as imports if needed.

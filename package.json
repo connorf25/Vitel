@@ -27,7 +27,8 @@
     "./directives/*": "./directives/*.vue",
     "./filters/*": "./filters/*.js",
     "./service": "./lib/service.js",
-    "./services/*": "./services/*.vue"
+    "./services/*": "./services/*.vue",
+    "./utils/*": "./utils/*.js"
   },
   "repository": {
     "type": "git",
