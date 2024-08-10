@@ -2,16 +2,20 @@
 * Format a raw / string / JS-epoch date into a human readable value
 *
 * @param {String|Date|Number} value Date to parse + display
-* @param {String} [display='date'] How to display the value. ENUM: 'auto', 'relative', 'date'
-* @param {String} [locale=Intl.DateTimeFormat().resolvedOptions().locale] The locale to use when rendering formatted dates, defaults to the `navigator.language`
-* @param {String} [localeDateStyle='medium'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
-* @param {String} [localeTimeStyle='short'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
-* @param {String} [timezone=Intl.DateTimeFormat().resolvedOptions().timeZone] Which timezone the provided date is relative to, defaults to parsing the timezone from the Intl options
-* @param {Number} [relativeCutoff=24h] Time in milliseconds, beyond which we render full dates rather than relative times, defaults to 24 hours
-* @param {Array<Object>} [relativeUnits] Table of units broken down from least -> most to parse relative times
-* @param {String} [relativeUnitNow='just now'] How to refer to current dates
-* @param {String} [relativeUnitPast='ago'] Suffix to use for dates in the past
-* @param {String} [relativeUnitFuture='from now'] Suffix to use for dates in the future
+*
+* @param {String|Date} [options] Options to mutate behaviour
+* @param {String} [options.display='date'] How to display the value. ENUM: 'auto', 'relative', 'date'
+* @param {String} [options.locale=Intl.DateTimeFormat().resolvedOptions().locale] The locale to use when rendering formatted dates, defaults to the `navigator.language`
+* @param {String} [options.localeDateStyle='medium'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
+* @param {String} [options.localeTimeStyle='short'] How to render dates. ENUM: 'full', 'long', 'medium', 'short'
+* @param {String} [options.timezone=Intl.DateTimeFormat().resolvedOptions().timeZone] Which timezone the provided date is relative to, defaults to parsing the timezone from the Intl options
+* @param {Number} [options.relativeCutoff=24h] Time in milliseconds, beyond which we render full dates rather than relative times, defaults to 24 hours
+* @param {Array<Object>} [options.relativeUnits] Table of units broken down from least -> most to parse relative times
+* @param {String} [options.relativeUnitNow='just now'] How to refer to current dates
+* @param {String} [options.relativeUnitPast='ago'] Suffix to use for dates in the past
+* @param {String} [options.relativeUnitFuture='from now'] Suffix to use for dates in the future
+*
+* @returns {String} A formatted date output
 */
 export default function(value, options) {
 	let settings = {
@@ -58,8 +62,9 @@ export default function(value, options) {
 * This is the internal worker for the main function and assumes the date and settings have already been parsed
 *
 * @private
-* @param {Date} date
-* @param {Object} settings
+* @param {Date} date The input date to format
+* @param {Object} settings Additional settings to format the date
+* @returns {String} THe relative date string
 */
 export function dateRelative(date, settings) {
 	let diff = Date.now() - date.getTime();
@@ -88,8 +93,9 @@ export function dateRelative(date, settings) {
 * This is the internal worker for the main function and assumes the date and settings have already been parsed
 *
 * @private
-* @param {Date} date
-* @param {Object} settings
+* @param {Date} date The input date to format
+* @param {Object} settings Additional settings to format the date
+* @returns {String} The formatted absolute date
 */
 export function dateFormatted(date, settings) {
 	return new Intl.DateTimeFormat(settings.locale, {

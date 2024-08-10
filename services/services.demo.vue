@@ -1,5 +1,5 @@
 <script>
-import Events from './events.vue'; // eslint-disable-line no-unused-vars
+import Events from './events.vue';
 
 export default {
 	data() { return {

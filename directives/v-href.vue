@@ -86,6 +86,7 @@ let bindVHref = function vHrefBind(el, binding) {
 * Click handler for v-href bound items
 * @context The settings object passed to v-href
 * @param {Event} e The click event to respond to
+* @returns {Promise} A promise which resolves when the operation has completed
 */
 let clickListener = function vHrefClick(e) {
 	if (this.stop) e.stopPropagation();

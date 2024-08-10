@@ -91,9 +91,12 @@ export default {
 
 		/**
 		* Wrap a promise in a notification
+		*
 		* @param {String} text The toast message to show
 		* @param {Object} [options] Additional options for the toast
 		* @param {Promise} promise The promise to wait on
+		*
+		* @returns {Promise} A promise object which will resolve to the value of the inner promise
 		*/
 		promisify(text, options, promise) {
 			// Argument mangling {
@@ -132,9 +135,13 @@ export default {
 		/**
 		* Try to inteligently work out what to show when catching errors
 		*
+		* @param {*} obj The error to handle
+		*
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {String} [options.generic="An error has occured"] Generic error text
 		* @param {Array<*>} [options.ignore] Optional arguments to ignore silently, defaults to 'cancel' + 'SKIP'
+		*
+		* @returns {*} The result of the subequent `$toast.error()` call with the handled error
 		*
 		* @example Perform a server action and show errors if any
 		* this.$http.get('/api/something/complicated') // Make web request

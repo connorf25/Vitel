@@ -13,9 +13,7 @@
 * @slot [prompt] Prompt text to display
 *
 * @example Prompt for a file upload
-* <file-drop
-*   @change="handleUpload($event)"
-* >
+* <file-drop @change="handleUpload($event)">
 *   <template #prompt>
 *     Upload a file or drop a file here
 *   </template>
@@ -37,8 +35,9 @@ export default {
 	methods: {
 		/**
 		* Prompt the user to select a file(s) based on the component settings + optional overrides
+		*
 		* @param {Object} [options] Additional options if overriding the component properties
-		* @param {*} [*] Overriding properties to use, see main component properties
+		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		select(options) {
 			let settings = {
@@ -82,7 +81,6 @@ export default {
 
 		/**
 		* Process a drop event
-		* @param {Event} e Event
 		* @param {Event} e Event to handle
 		*/
 		dragDrop(e) {
@@ -105,7 +103,6 @@ export default {
 
 		/**
 		* Process a drag-leve event
-		* @param {Event} e Event to handle
 		*/
 		dragLeave() {
 			this.showGlobalDropable('hide');
@@ -114,7 +111,7 @@ export default {
 
 		/**
 		* Toggle whether to show the global file drop area
-		* @param {'show'|'hide'|'create'|'destroy'} [show=true] Whether to show the droppable area
+		* @param {'show'|'hide'|'create'|'destroy'} [method=true] Whether to show the droppable area
 		*/
 		showGlobalDropable(method) {
 			let globalParent = document.querySelector(this.globalSelector);

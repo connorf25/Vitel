@@ -1,7 +1,7 @@
 <script>
 import Dynamic from '../components/dynamic.vue';
 
-/* eslint-disable vue/no-v-html, vue/attributes-order */
+/* eslint-disable vue/attributes-order */
 
 /**
 * Prompt handler for the $prompt service

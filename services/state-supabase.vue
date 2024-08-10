@@ -33,7 +33,7 @@ export default {
 		* This is an array of different sync funciton operations to try, the first function to provide an object is used as the response
 		* Each function is called as `(file:SupabaseFile)`
 		*
-		* @type <Array<Function>>
+		* @type {Array<Function>}
 		*/
 		fileTypes: [
 			// Step - Simple `ext` matching
@@ -124,7 +124,7 @@ export default {
 		/**
 		* Split a simple path into Supabase compatible entity + filters
 		*
-		* @param {String|Array<String>|Object} Path to seperate in slash notation or array form
+		* @param {String|Array<String>|Object} path Path to seperate in slash notation or array form
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Boolean} [options.requireEntity=true] Throw if a entity is not deteceted in the decoded output
 		* @param {Boolean} [options.requireId=false] Throw if an ID is not detected in the decoded output
@@ -301,6 +301,10 @@ export default {
 		/**
 		* Return a Vue compatible reactive object which subscribes to read/write changes
 		* This is really just a wrapper for @MomsFriendlyDevCo/Supabase-Reactive
+		*
+		* @param {String|Array<String>} path The path to bind to
+		* @param {Object} [options] Additional options to mutate behaviour, see @MomsFriendlyDevCo/Supabase-Reactive for details
+		* @returns {VueObservable} The observable object
 		*/
 		bindData(path, options) {
 			return SupabaseReactive(path, {
@@ -314,7 +318,7 @@ export default {
 		/**
 		* Stop watching a remote path and release all local hooks
 		*
-		* @param {path} The path to stop watching
+		* @param {String|Array<String>} path The path to stop watching
 		* @returns {Promise<Boolean>} Boolean true if anything was actually released
 		*/
 		releasePath(path) {
@@ -654,6 +658,8 @@ export default {
 		* @param {String|Array<String>} path The path to upload to (not the same as the file name)
 		* @param {File|Blob|FormData|Object|Array} contents File contents to set
 		* @param {Object} [options] Additional options to mutate behaviour, see `fileUpload()` for more details
+		*
+		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		fileSet(path, contents, options) {
 			return this.fileUpload(path, {

@@ -32,7 +32,7 @@ export default {
 	}},
 	methods: {
 		/**
-		* @define DropdownItem
+		* @typedef DropdownItem
 		* @description A single dropdown-menu item
 		* @type {Object|String} Either a POJO defining behaiour or a single '-' string to define a divider
 		*
@@ -134,6 +134,7 @@ export default {
 		/**
 		* Replace menu items within a menu
 		*
+		* @param {String} menuId The menu identifier to update
 		* @param {Array<DropdownItem>} items Dropdown items to update
 		*/
 		updateItems(menuId, items) {
@@ -204,7 +205,7 @@ export default {
 		* Toggle the open status of a previously created menu by its ID
 		*
 		* @param {String} menuId The menuID to toggle
-		* @param {Boolean|'toggle'} [status='toggle'] Whether to toggle or force the state of the menu
+		* @param {Boolean|'toggle'} [state='toggle'] Whether to toggle or force the state of the menu
 		*/
 		toggle(menuId, state = 'toggle') {
 			if (!this.dropdowns[menuId]) throw new Error(`No Dropdown object present for ID "${menuId}"`);

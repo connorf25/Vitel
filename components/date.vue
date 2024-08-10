@@ -1,6 +1,4 @@
 <script>
-/* eslint-disable vue/return-in-computed-property */
-
 /**
 * Simple date view which displays a relative time, if its practical
 *
@@ -97,6 +95,8 @@ export default {
 
 		/**
 		* Parse the input value into a valid Date object
+		*
+		* @returns {String} The parsed date value
 		*/
 		valueParsed() {
 			if (this.value instanceof Date) { // Already a Date

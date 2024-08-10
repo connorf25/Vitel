@@ -30,7 +30,7 @@ export default {
 		* Services can be either a named of a service or a VueComponent
 		*
 		* A ready state is the execution of any and all init() functions and setting `{ready:true}` for each
-		* @param {String} service... Service names to wait for
+		* @param {...String} services Service names to wait for
 		* @returns {Promise} A promise when all named/specified services have become ready
 		*/
 		require(...services) {

@@ -7,7 +7,6 @@ import jsonMarkup from 'json-markup';
 * @param {Object|Array} value The value to output
 * @param {Boolean} [highlight=true] Whether to highlight the output
 */
-/* eslint-disable vue/html-indent */
 export default {
 	props: {
 		highlight: {type: Boolean, default: true},
