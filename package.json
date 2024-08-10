@@ -61,7 +61,7 @@
     "vue3-toastify": "^0.1.12"
   },
   "devDependencies": {
-    "@momsfriendlydevco/eslint-config": "^2.0.2",
+    "@momsfriendlydevco/eslint-config": "^2.0.4",
     "@release-it/conventional-changelog": "^8.0.1",
     "@storybook/addon-essentials": "^8.0.2",
     "@storybook/addon-interactions": "^8.0.2",
