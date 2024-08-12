@@ -185,8 +185,8 @@ export default {
 				.from(entity)
 				.select('id, data')
 				.limit(1)
-				.single()
 				.eq('id', id)
+				.maybeSingle() // Note we use maybeSingle() instead of single() as Supabase throws a 406 unless we're specific we could have no value
 				.then(payload => payload.data || fallback || Promise.reject(payload.error.message))
 				.then(row => row
 					? {
