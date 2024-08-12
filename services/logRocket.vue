@@ -81,7 +81,7 @@ export default {
 						}))
 						.then(()=> window.LogRocket || Promise.reject('Expected LogRocket to load but its not present! Adblock?'))
 						.then(()=> window.LogRocket.init(this.project)) // Bootstrap Logrocket for the first time
-						.then(()=> this.idenfity.call(this))
+						.then(()=> this.identify.call(this))
 						.then(ident => {
 							if (!ident) return; // Falsy ident - skip
 
