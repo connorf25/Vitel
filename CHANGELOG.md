@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.11.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.10.2...v1.11.0) (2024-08-12)
+
+
+### Bug Fixes
+
+* **$logRocket:** Typo ([cf74d42](https://github.com/MomsFriendlyDevCo/Vitel/commit/cf74d4255e9e6a53e6121e623bf5575c586d2ff8))
+
+
+### Features
+
+* **$logRocket:** LogRocket service ([b2d2be3](https://github.com/MomsFriendlyDevCo/Vitel/commit/b2d2be32ddbb3698dfab3d081609e93a5198f1ec))
+* Expose utilities scripts via import alias ([898098c](https://github.com/MomsFriendlyDevCo/Vitel/commit/898098c5283a57764b7d4e57ca04ca97426f041a))
+* utils/retry ([f2fe919](https://github.com/MomsFriendlyDevCo/Vitel/commit/f2fe919d00cc1e1d02f7a9a598aa082fd1435211))
+
 ## [1.10.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.10.1...v1.10.2) (2024-08-09)
 
 
