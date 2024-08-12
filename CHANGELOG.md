@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.11.0...v1.11.1) (2024-08-12)
+
+
+### Bug Fixes
+
+* **$supabase:** Tell Supabase not to throw 406s when we are optionally expecting rows ([9410b5d](https://github.com/MomsFriendlyDevCo/Vitel/commit/9410b5d1ed73011f4b88415750f3d5f4c74b3d5f))
+
 # [1.11.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.10.2...v1.11.0) (2024-08-12)
 
 
