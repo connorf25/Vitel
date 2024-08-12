@@ -98,6 +98,10 @@ export default {
 						// Pass
 					} else if (/ERR_BLOCKED_BY_CLIENT/.test(e.toString())) {
 						console.warn('LogRocket failed to load - likely due to AdBlocker');
+						this.enabled = false;
+					} else if (/Session quota exceeded/.test(e.toString())) {
+						console.warn('LogRocket disabled - session quota exceeded');
+						this.enabled = false;
 					} else {
 						throw e;
 					}
