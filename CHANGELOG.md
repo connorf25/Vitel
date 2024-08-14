@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.12.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.11.1...v1.12.0) (2024-08-14)
+
+
+### Features
+
+* **$stateIdb:** $idb.clear() method now supports dropping the entire database ([d7b8b86](https://github.com/MomsFriendlyDevCo/Vitel/commit/d7b8b8660d633358952cfbcc2aff536c2d817cfa))
+
 ## [1.11.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.11.0...v1.11.1) (2024-08-12)
 
 
