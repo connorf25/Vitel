@@ -206,9 +206,9 @@ export default {
 
 
 		/**
-		* Clear all records within an entity
+		* Clear all records within an entity or an entire database
 		*
-		* @param {String} path A parsable path of the form `$DATABASE/$ENTITY` / `/$ENTITY`, note that specifying an ID will throw
+		* @param {String} path A parsable path of the form `$DATABASE` OR `$DATABASE/$ENTITY` OR `/$ENTITY`, note that specifying an ID will throw
 		*
 		* @param {Object} [options] Additional options to mutate behaviour
 		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
@@ -218,34 +218,43 @@ export default {
 		*/
 		async clear(path, options) {
 			let settings = options;
-			let {database, entity, id} = this.splitPath(path, {requireId: false});
+			let {database, entity, id} = this.splitPath(path, {requireId: false, requireEntity: false});
 			if (id) throw new Error('Only "database" + "entity" can be specified for clear(), "id" is not supported');
-
-			debugger; // FIXME: Untested
 
 			if (!database) database = this.defaultDatabase;
 
 			// Load DB if not already present
 			await this.initDatabase(database);
 
-			// Load entity if its not already present
-			await this.initEntity(database, entity);
+			if (!entity) { // Clear the entire named database
+				return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
+					let transaction = window.indexedDB.deleteDatabase(database);
 
-			// Create a get transaction to fetch data by the key
-			return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
-				let transaction = this.databases[database].transaction(
-					entity, // The entity we are planning to access
-					'readonly', // Mode
-					{
-						durability: this.defaultGetDurability,
-					},
-				)
-					.objectStore(entity)
-					.clear();
+					transaction.onsuccess = ()=> resolve();
+					transaction.onerror = e => reject(e);
+				}));
+			} else { // Clear an entity
+				// Load entity if its not already present
+				await this.initEntity(database, entity);
 
-				transaction.onsuccess = ()=> resolve();
-				transaction.onerror = e => reject(e);
-			}));
+				debugger; // FIXME: Untested
+
+				// Create a get transaction to clear data by the key
+				return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
+					let transaction = this.databases[database].transaction(
+						entity, // The entity we are planning to access
+						'readonly', // Mode
+						{
+							durability: this.defaultGetDurability,
+						},
+					)
+						.objectStore(entity)
+						.clear();
+
+					transaction.onsuccess = ()=> resolve();
+					transaction.onerror = e => reject(e);
+				}));
+			}
 		},
 
 
