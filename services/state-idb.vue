@@ -230,9 +230,16 @@ export default {
 				return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 					let transaction = window.indexedDB.deleteDatabase(database);
 
+					debugger;
 					transaction.onsuccess = ()=> resolve();
+					transaction.onblocked = ()=> {
+						this.debug('Cannot clear database', database, '- blocked, trying to close and retry');
+						this.databases[database].close();
+						reject(`Database "${database}" clear blocked`);
+					};
 					transaction.onerror = e => reject(e);
-				}));
+				}))
+					.then(()=> console.log('$idb.deleteDB done'))
 			} else { // Clear an entity
 				// Load entity if its not already present
 				await this.initEntity(database, entity);
@@ -351,7 +358,7 @@ export default {
 			let settings = {
 				retries: 10,
 				retryWait: 100,
-				isError: ()=> true,
+				skipError: ()=> false,
 				...options,
 			};
 
