@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.0...v1.12.1) (2024-08-14)
+
+
+### Bug Fixes
+
+* **$stateIdb:** Transaction support + block detection for $stateIdb.clear() ([383bea7](https://github.com/MomsFriendlyDevCo/Vitel/commit/383bea7d6e6f1bbf06c04b9c29fc478931adf860))
+
 # [1.12.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.11.1...v1.12.0) (2024-08-14)
 
 
