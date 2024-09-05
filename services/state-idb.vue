@@ -429,7 +429,7 @@ export default {
 				.then(()=> window.indexedDB.databases // Fetch the current version of the database
 					? window.indexedDB.databases() // Can use databases() wrapper - doesn't work on Firefix<126
 						.then(dbs => dbs.find(db => db.name == database))
-						.then(dbInfo => dbInfo.version)
+						.then(dbInfo => dbInfo?.version)
 					: new Promise((resolve, reject) => { // Have to open, scoop version then close again
 						let openReq = window.indexedDB.open(database);
 						openReq.onsuccess = e => {
