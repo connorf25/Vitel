@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.1...v1.12.2) (2024-09-05)
+
+
+### Bug Fixes
+
+* Wrap indexedDB.databases() in case Firefox version is <126 ([beec1d5](https://github.com/MomsFriendlyDevCo/Vitel/commit/beec1d50d02fc4b9061b07e7124c86ce80ee3390))
+
 ## [1.12.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.0...v1.12.1) (2024-08-14)
 
 
