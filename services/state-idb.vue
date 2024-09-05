@@ -426,16 +426,30 @@ export default {
 			this.debug('initDB', database);
 			let tryCount = 0;
 			return this.databasesInit[database] = Promise.resolve()
-				.then(()=> window.indexedDB.databases()) // Fetch the current version of the database
-				.then(dbs => dbs.find(db => db.name == database))
-				.then(dbInfo => new Promise((resolve, reject) => {
+				.then(()=> window.indexedDB.databases // Fetch the current version of the database
+					? window.indexedDB.databases() // Can use databases() wrapper - doesn't work on Firefix<126
+						.then(dbs => dbs.find(db => db.name == database))
+						.then(dbInfo => dbInfo.version)
+					: new Promise((resolve, reject) => { // Have to open, scoop version then close again
+						let openReq = window.indexedDB.open(database);
+						openReq.onsuccess = e => {
+							let db = e.target.result;
+							let dbVersion = db.version;
+							db.close();
+							resolve(dbVersion);
+						};
+						openReq.onerror = e => reject(e);
+					})
+				)
+				.then(existingDBVersion => new Promise((resolve, reject) => {
 					let tryConnect = ()=> {
-						let dbRequest = window.indexedDB.open(
-							database,
-							settings.version == 'latest' && dbInfo?.version ? dbInfo.version
+						let databaseVersion = settings.version == 'latest' && existingDBVersion > 0 ? existingDBVersion
 							: isFinite(settings.version) ? settings.version
-							: this.defaultDatabaseVersion
-						);
+							: this.defaultDatabaseVersion;
+
+						this.debug('Establishing connection to', database, 'version', databaseVersion);
+
+						let dbRequest = window.indexedDB.open(database, databaseVersion);
 
 						dbRequest.onsuccess = e => {
 							this.databases[database] = e.target.result;
