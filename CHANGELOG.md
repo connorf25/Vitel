@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.3](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.2...v1.12.3) (2024-09-05)
+
+
+### Bug Fixes
+
+* **$stateIdb:** Wrong version extraction with .databases() API and DB doesnt exist yet ([20b2725](https://github.com/MomsFriendlyDevCo/Vitel/commit/20b272570532baf09fb613c0d40cf45249c19f5c))
+
 ## [1.12.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.1...v1.12.2) (2024-09-05)
 
 
