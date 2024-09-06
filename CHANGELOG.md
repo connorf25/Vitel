@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.4](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.3...v1.12.4) (2024-09-06)
+
+
+### Bug Fixes
+
+* **$stateIdb:** Deep clone values (if they are a proxy) before saving via $set ([d30af9a](https://github.com/MomsFriendlyDevCo/Vitel/commit/d30af9adffe3a7fce2a17972a579846c4c8c24d3))
+* Debugging services now auto-clones proxy objects for better output ([8a38180](https://github.com/MomsFriendlyDevCo/Vitel/commit/8a38180964fa18bb431dfcb0556bcadaaa871949))
+
 ## [1.12.3](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.2...v1.12.3) (2024-09-05)
 
 
