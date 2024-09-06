@@ -1,5 +1,6 @@
 <script>
 import {cloneDeep} from 'lodash-es';
+import {isProxy} from 'vue';
 
 /**
 * Key/Val IndexedDB state handler that uses pathing + simple get/set
@@ -272,6 +273,7 @@ export default {
 		* @param {*} value Any valid POJO value to set
 		*
 		* @param {Object} [options] Additional options to mutate behaviour
+		* @param {Boolean|'auto'} [options.clone='auto'] Clone the value before setting. 'auto' determines if the value is a proxy and clones if true
 		* @param {Boolean} [options.overwrite=true] Silently overwrite existing keys, if this is false and the key already exists this function will throw
 		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
 		* @param {Number} [options.retryWait=100] Time before retries
@@ -280,6 +282,7 @@ export default {
 		*/
 		async set(path, value, options) {
 			let settings = {
+				clone: 'auto',
 				overwrite: true,
 				...options,
 			};
@@ -293,15 +296,21 @@ export default {
 			// Load entity if its not already present
 			await this.initEntity(database, entity);
 
+			// Compute the value to save
+			let saveValue = (
+				(settings.clone == 'auto' && isProxy(value))
+				|| settings.clone
+			) ? cloneDeep(value) : value;
+
 			// Create a set transaction to fetch data by the key
 			return Promise.resolve()
-				.then(()=> this.serialize(value))
+				.then(()=> this.serialize(saveValue))
 				.then(()=> this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 					let transaction = this.databases[database].transaction(entity, 'readwrite', {durability: this.defaultSetDurability})
 						.objectStore(entity)
-						[settings.overwrite ? 'put' : 'add'](value, id);
+						[settings.overwrite ? 'put' : 'add'](saveValue, id);
 
-						transaction.onsuccess = ()=> resolve(value);
+						transaction.onsuccess = ()=> resolve(saveValue);
 						transaction.onerror = e => reject(e);
 				})))
 		},
