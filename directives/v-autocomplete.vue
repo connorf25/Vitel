@@ -228,8 +228,6 @@ let updateAutocomplete = function updateAutocomplete(el, binding) {
 		},
 	};
 
-	console.log('Update autocomplete', {el, binding, settings});
-
 	// Create missing dropdown element + add bindings (if needed) {{{
 	state.dropdownMenuEl = el.parentElement.querySelector('.dropdown-menu');
 	if (!state.dropdownMenuEl) { // This node has a parent?
