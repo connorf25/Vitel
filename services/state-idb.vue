@@ -231,7 +231,6 @@ export default {
 				return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
 					let transaction = window.indexedDB.deleteDatabase(database);
 
-					debugger;
 					transaction.onsuccess = ()=> resolve();
 					transaction.onblocked = ()=> {
 						this.debug('Cannot clear database', database, '- blocked, trying to close and retry');
@@ -244,8 +243,6 @@ export default {
 			} else { // Clear an entity
 				// Load entity if its not already present
 				await this.initEntity(database, entity);
-
-				debugger; // FIXME: Untested
 
 				// Create a get transaction to clear data by the key
 				return this.tryAction(settings, ()=> new Promise((resolve, reject) => {
