@@ -26,7 +26,7 @@ export default {
 			settleTime: 1000,
 			onShow: ()=> {},
 			onHide: ()=> {},
-			debug: true,
+			debug: false,
 			...(
 				typeof binding.value == 'string' ? {classShow: binding.value} // Passed a post-processed string
 				: binding.value
