@@ -4,11 +4,13 @@
 * Note that this doesn't have any outer structure like a card
 *
 * @param {String} [text='Loading...'] Optional text to display, set to `false` to disable
-* @param {String} [size='md'] Size to draw the element, ENUM: 'md', 'lg', 'xl'
+* @param {String} [subtitle] Optional secondary text to display
+* @param {String} [size='md'] Size to draw the element, ENUM: 'sm', 'md', 'lg', 'xl'
 */
 export default {
 	props: {
 		text: {type: [String, Boolean], default: 'Loading...'},
+		subtitle: {type: String},
 		size: {type: String, default: 'md'},
 	},
 }
@@ -27,8 +29,13 @@ export default {
 			<div class="spinner-ring"/>
 			<div class="spinner-ring"/>
 		</div>
-		<div v-if="text">
-			{{text}}
+		<div class="spinner-textarea">
+			<div v-if="text" class="spinner-text">
+				{{text}}
+			</div>
+			<div v-if="subtitle" class="spinner-subtitle">
+				{{subtitle}}
+			</div>
 		</div>
 	</div>
 </template>
@@ -42,10 +49,24 @@ export default {
 	min-width: 300px;
 	user-select: none;
 
+	&.size-sm {scale: 0.75}
+	&.size-md {scale: 1}
 	&.size-lg {scale: 2}
 	&.size-xl {scale: 3}
 
-	/* Fingerprint spinner CSS - taken from https://epic-spinners.epicmax.co/ */
+	& .spinner-text, & .spinner-subtitle {
+		display: flex;
+	}
+
+	& .spinner-text {
+		font-size: normal;
+	}
+
+	& .spinner-subtitle {
+		font-size: x-small;
+	}
+
+	/* Fingerprint spinner CSS - taken from https://epic-spinners.epicmax.co/ {{{ */
 	& .fingerprint-spinner, .fingerprint-spinner * {
 		box-sizing: border-box;
 	}
@@ -132,5 +153,6 @@ export default {
 			transform: rotate(360deg);
 		}
 	}
+	/* }}} */
 }
 </style>
