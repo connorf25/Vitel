@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.13.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.4...v1.13.0) (2024-09-25)
+
+
+### Bug Fixes
+
+* **$idb:** Remove debugger stop when calling $idb.clear() ([f91d03a](https://github.com/MomsFriendlyDevCo/Vitel/commit/f91d03afe2c47997a0b253548faba3cf40649c80))
+* Less chatter with v-autocomplete changes ([b5f93e6](https://github.com/MomsFriendlyDevCo/Vitel/commit/b5f93e6974271724582d0dd89c358347e97e0913))
+* **v-animate:** Debug should default to off ([e853f00](https://github.com/MomsFriendlyDevCo/Vitel/commit/e853f001e969a793b7334573bd30496b72615312))
+
+
+### Features
+
+* **<loading>:** Added subtitle display ([8100b6c](https://github.com/MomsFriendlyDevCo/Vitel/commit/8100b6c30f35d44c1eea0652f2fae022124cd866))
+
 ## [1.12.4](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.3...v1.12.4) (2024-09-06)
 
 
