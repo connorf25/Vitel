@@ -1,5 +1,13 @@
 # Changelog
 
+# [1.14.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.13.1...v1.14.0) (2024-10-24)
+
+
+### Features
+
+* **<select-icon>:** Basic implementation of the icon selector component ([de3f780](https://github.com/MomsFriendlyDevCo/Vitel/commit/de3f780aaf005dfd636aec55f645519c604217ab))
+* **<select-icon>:** Misc fixes to tooltip handling ([d256a43](https://github.com/MomsFriendlyDevCo/Vitel/commit/d256a43fc1f986d5b2e821b001f115b37f5cbb4d))
+
 # [1.13.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.12.4...v1.13.0) (2024-09-25)
 
 
