@@ -111,17 +111,19 @@ export default {
 		* React to the icon picker being shown
 		* @param {Event} e The event emitted by Vue-Tippy when the tooltip area is shown
 		*/
-		handlePickerShown(e) {
-			chainable(e.popper)
-				.set('style.pointerEvents', 'auto') // Make tooltip interactive
-				.set('style.maxWidth', '370px')
-				// .method('classList.add', 'select-icon-panel-root') // Set manging CSS class
+		handlePickerShow(e) {
+			setTimeout(()=> { // Wait for UI to catch up
+				chainable(e.popper)
+					.set('style.pointerEvents', 'auto') // Make tooltip interactive
+					.set('style.maxWidth', '370px')
+					// .method('classList.add', 'select-icon-panel-root') // Set manging CSS class
 
-			// FIXME: The above chainable method doens't get called so we do it manually
-			e.popper.classList.add('select-icon-panel-root');
+				// FIXME: The above chainable method doens't get called so we do it manually
+				e.popper.classList.add('select-icon-panel-root');
 
-			// Focus search area
-			e.popper.querySelector('[type=search]').focus();
+				// Focus search area
+				e.popper.querySelector('[type=search]').focus();
+			});
 		},
 	},
 	watch: {
@@ -129,7 +131,6 @@ export default {
 		value: {
 			immediate: true,
 			handler(v) {
-				console.log('ADOPT VALUE', v);
 				this.selected = v;
 			},
 		},
@@ -145,7 +146,7 @@ export default {
 			placement="bottom"
 			trigger="manual"
 			:on-hidden="()=> isPicking = false"
-			:on-shown="handlePickerShown"
+			:on-show="handlePickerShow"
 			:on-click-outside="()=> showPicker(false)"
 		>
 			<template #default>
