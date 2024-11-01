@@ -1,6 +1,6 @@
 {
   "name": "@momsfriendlydevco/vitel",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "description": "Various, pickable Vue@3 / Vite modules and components",
   "scripts": {
     "build-storybook": "storybook build",
