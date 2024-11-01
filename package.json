@@ -52,7 +52,7 @@
     "@momsfriendlydevco/chainable": "^1.1.0",
     "@momsfriendlydevco/formatters": "^1.2.3",
     "@momsfriendlydevco/supabase-reactive": "^1.0.12",
-    "@supabase/supabase-js": "^2.45.6",
+    "@supabase/supabase-js": "^2.46.1",
     "@teamhanko/hanko-elements": "^0.8.2",
     "@zip.js/zip.js": "^2.7.30",
     "axios": "^1.7.7",
