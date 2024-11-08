@@ -150,7 +150,7 @@ export default {
 		catch(obj, options) {
 			let settings = {
 				generic: 'An error has occured',
-				ignore: ['cancel', 'SKIP'],
+				ignore: ['cancel', 'CANCEL', 'SKIP'],
 				...options,
 			};
 			console.warn('$toast.catch(', obj, ')');
