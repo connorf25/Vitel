@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.15.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.14.1...v1.15.0) (2024-11-10)
+
+
+### Bug Fixes
+
+* **$toast:** Also ignore "CANCEL" response codes within $toast.catch ([c57fd93](https://github.com/MomsFriendlyDevCo/Vitel/commit/c57fd93dae3b2c2b0b8519bdcf461ffb2935b568))
+
+
+### Features
+
+* **btn-promise:** <btn-promise :action="cb"/> component ([4cf9c3b](https://github.com/MomsFriendlyDevCo/Vitel/commit/4cf9c3b7adeb28fa3f66077291f360a41e41a909))
+
 ## [1.14.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.14.0...v1.14.1) (2024-11-01)
 
 # [1.14.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.13.1...v1.14.0) (2024-10-24)
