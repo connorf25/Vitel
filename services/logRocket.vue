@@ -47,13 +47,21 @@ export default {
 
 
 		/**
-		* Function to optionally return additional context information about the session
-		* This funciton is expected to return either falsy or an object with at least `{id:String}` with optional additional fields
+		* Function used to update LogRockets user information
+		* This should set up a watcher, emit listener or other Vue function to eventually call the identify function
+		*
+		* Called as `(updateIdentify:Function)` which should eventually be called with a user identity
 		*
 		* @type {Function}
+		*
+		* @example Watch a Vue binding and update the user info when it succeeds
+		* {
+		*  identify(updateIdentity) {
+		*    this.$watch('$auth.user', ()=> updateIdentity(this.$auth.user), {immediate: true})
+		*  }
+		* }
 		*/
-		identify: {type: Function, default: ()=> ()=> false},
-
+		identify: {type: Function},
 	},
 	methods: {
 
@@ -81,17 +89,7 @@ export default {
 						}))
 						.then(()=> window.LogRocket || Promise.reject('Expected LogRocket to load but its not present! Adblock?'))
 						.then(()=> window.LogRocket.init(this.project)) // Bootstrap Logrocket for the first time
-						.then(()=> this.identify.call(this))
-						.then(ident => {
-							if (!ident) return; // Falsy ident - skip
-
-							if (!ident.id) throw new Error('Return object of LogRocket.$props.identify() should contain at least `{id:String}`');
-
-							// If we got here we have a valid identity - extract the ID + glue the rest in as misc data
-							return window.LogRocket.identify(ident.id, { // Tell LogRocket about who is logged in
-								...omit(ident, 'id'),
-							});
-						})
+						.then(()=> this.identify && this.identify.call(this, this.updateIdentify)) // Run the identify() callback if its specified
 				})
 				.catch(e => {
 					if (e === 'DISABLED') {
@@ -106,6 +104,25 @@ export default {
 						throw e;
 					}
 				})
+		},
+
+		/**
+		* Update what LogRocket knows about this user
+		* This is really just a wrapper around `window.LogRocket.identify()`
+		* Note that the `id` is extracted from `data.id`
+		*
+		* @param {Object} ident Extended user data, if omitted no action is taken
+		* @param {String} ident.id The user ID to identify by, must be specified
+		*/
+		updateIdentity(ident) {
+			if (!ident) return; // Falsy ident - skip
+
+			if (!ident.id) throw new Error('Return object of LogRocket.$props.identify() should contain at least `{id:String}`');
+
+			// If we got here we have a valid identity - extract the ID + glue the rest in as misc data
+			return window.LogRocket.identify(ident.id, { // Tell LogRocket about who is logged in
+				...omit(ident, 'id'),
+			});
 		},
 
 	},
