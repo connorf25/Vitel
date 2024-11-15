@@ -115,6 +115,7 @@ export default {
 		* @param {String} ident.id The user ID to identify by, must be specified
 		*/
 		updateIdentity(ident) {
+			this.debug('Update user identity', ident);
 			if (!ident) return; // Falsy ident - skip
 
 			if (!ident.id) throw new Error('Return object of LogRocket.$props.identify() should contain at least `{id:String}`');
