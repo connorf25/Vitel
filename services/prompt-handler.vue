@@ -62,6 +62,29 @@ export default {
 				return dialog.promiseReject(payload);
 			}
 		},
+
+
+		/**
+		* Handle dialog button clicks
+		*
+		* @param {Object} button The button object used in the $prompt settings
+		*
+		* @returns {Promise} A promise which resolves when the operation has completed
+		*/
+		triggerButton(button) {
+			if (!button?.click) {
+				throw new Error('Invalid button spec');
+			} else if (button.click == 'resolve') {
+				return this.$prompt.close(true);
+			} else if (button.click == 'reject') {
+				return this.$prompt.close(false);
+			} else if (typeof button.click == 'function') {
+				let embed = this.$refs.dynamicOuter[0].$refs.dynamicInner; // Reach into dynamic component
+				return Promise.resolve(button.click.call(embed, embed, button));
+			} else {
+				throw new Error('No click handler set up on button');
+			}
+		},
 	},
 	created() {
 		if (!this.$prompt) throw new Error('$prompt service not found - check the service has been installed correctly');
@@ -112,6 +135,8 @@ export default {
 							<div v-else v-text="prompt.body"/>
 
 							<dynamic
+								ref="dynamicOuter"
+								ref-handle="dynamicInner"
 								v-if="prompt.component"
 								:component="prompt.component"
 								:props="prompt.componentProps"
@@ -122,11 +147,7 @@ export default {
 							<a
 								v-for="button in prompt.buttons"
 								:key="button"
-								@click="
-									button.click == 'resolve' ? $prompt.close(true)
-									: button.click == 'reject' ? $prompt.close(false)
-									: button.click()
-								"
+								@click="triggerButton(button)"
 								:class="button.class || 'btn btn-light'"
 							>
 								<i v-if="button.icon" :class="button.icon"/>

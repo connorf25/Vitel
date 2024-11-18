@@ -66,7 +66,7 @@ export default {
 		* @param {String} [options.buttons.title] The text to display on the button
 		* @param {String} [options.buttons.class='btn btn-light'] The button class to apply (default is 'btn btn-success' for buttons that resolve, 'btn btn-danger' for ones that reject and 'btn btn-default' otherwise)
 		* @param {String} [options.buttons.icon] Optional icon to show on the button
-		* @param {Function|String} [options.buttons.click] Function to run when the button is clicked or 'resolve', 'reject'
+		* @param {Function|String} [options.buttons.click] Function to run when the button is clicked or 'resolve', 'reject'. If a function this is called as `(component:VueComponent, buttonSpec:Object)`
 		*
 		* @param {String} [options.id] Optional ID to identify this dialog, must be DOM compatible. Allocated automatically if omitted
 		* @param {BootstrapModel} [options.modelEl] The DOM element representing the mode, allocated during creation
@@ -200,7 +200,7 @@ export default {
 		* @returns {Promise} A promise which resolves when the dialog has closed
 		*/
 		close(success = true, payload) {
-			// Glue in payload if non provided
+			// Glue in payload if not provided
 			if (
 				payload === undefined
 				&& this.active?.[success ? 'payloadResolve' : 'payloadReject'] !== undefined
