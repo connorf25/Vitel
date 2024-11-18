@@ -89,7 +89,7 @@ export default {
 						}))
 						.then(()=> window.LogRocket || Promise.reject('Expected LogRocket to load but its not present! Adblock?'))
 						.then(()=> window.LogRocket.init(this.project)) // Bootstrap Logrocket for the first time
-						.then(()=> this.identify && this.identify.call(this, this.updateIdentify)) // Run the identify() callback if its specified
+						.then(()=> this.identify && this.identify.call(this, this.updateIdentity)) // Run the identify() callback if its specified
 				})
 				.catch(e => {
 					if (e === 'DISABLED') {
