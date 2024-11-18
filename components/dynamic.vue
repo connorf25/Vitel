@@ -7,12 +7,14 @@ import {h, resolveComponent} from 'vue';
 * @param {String|Object} component The string name of a component or the object definition
 * @param {Object<*>} [props] Prop bindings as an object lookup
 * @param {Object<Function>} [events] Event bindings as an object lookup
+* @param {String} [refHandle] Setup an inner reference for the custom component
 */
 export default {
 	props: {
 		component: {type: [String, Object], required: true},
 		props: {type: Object},
 		events: {type: Object},
+		refHandle: {type: String},
 	},
 	render() {
 		return h(
@@ -20,6 +22,7 @@ export default {
 				? resolveComponent(this.component) // Resolve component if string
 				: this.component, // OR use prototype if given one
 			{
+				...(this.refHandle && {ref: this.refHandle}), // Copy ref if we have one
 				...this.props, // Splat props directly
 				...Object.fromEntries( // Convert all event keys: `click` -> `onClick`
 					Object.entries(this.events || {})
