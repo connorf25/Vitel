@@ -1,5 +1,20 @@
 # Changelog
 
+# [1.16.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.15.0...v1.16.0) (2024-11-18)
+
+
+### Bug Fixes
+
+* **$lockRocket:** Make the identify function use a callback method to identify the user to prevent race conditions ([7e33966](https://github.com/MomsFriendlyDevCo/Vitel/commit/7e339667df551b08629c8684c4fe5fb99a9043e0))
+* **$logrocket:** Typo ([61a99e4](https://github.com/MomsFriendlyDevCo/Vitel/commit/61a99e4e388ec02446a454b5134e94b9fbaad380))
+* **LogRocket:** Debug log user ident updates ([58d7f9b](https://github.com/MomsFriendlyDevCo/Vitel/commit/58d7f9b4c77c798de653648190bcdf6658d4944e))
+
+
+### Features
+
+* **<dynamic>:** <Dynamic> now supports :ref-handle as a means to refer to the inner component ([bc0b031](https://github.com/MomsFriendlyDevCo/Vitel/commit/bc0b03163b087133e86aa37e23ef01bd09310319))
+* **$prompt:** $prompt click handlers now pass context + arg of the dynamic element being used ([4cc8dfa](https://github.com/MomsFriendlyDevCo/Vitel/commit/4cc8dfa733cde34aa097d55f15c89aa8277864e4))
+
 # [1.15.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.14.1...v1.15.0) (2024-11-10)
 
 
