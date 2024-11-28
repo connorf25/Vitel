@@ -179,7 +179,7 @@ export default {
 						this.debug('.dialog()', 'Closing all dialogs due to no-stacking option');
 
 						// Close all dialogs from highest to lowest, waiting on each
-						return this.stack.toReversed().reduce((acc, dialog) => {
+						return [...this.stack].reverse().reduce((acc, dialog) => {
 							this.dialog('Close (no-stacking)', dialog.id);
 							return this.close(false, 'CLOSE-NOSTACKING');
 						}, Promise.resolve())
