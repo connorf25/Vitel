@@ -1,0 +1,1 @@
+function c(e,t){var r={locale:Intl.DateTimeFormat().resolvedOptions().locale,currency:"AUD",...t};return new Intl.NumberFormat(r.locale,{style:"currency",currency:r.currency}).format(e)}export{c as F};
