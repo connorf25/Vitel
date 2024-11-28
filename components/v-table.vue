@@ -98,7 +98,7 @@ export default {
 	}},
 	props: {
 		url: {type: [String, Object], required: true},
-		baseUrl: {type: String, default: ()=> {
+		baseUrl: {type: String, default() {
 			return this?.$http?.config?.baseURL
 				|| window.location.origin;
 		}},
