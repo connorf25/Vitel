@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.1...v1.16.2) (2024-11-28)
+
+
+### Bug Fixes
+
+* **$prompt:** Rewrite $prompt dialog stacking to work without .toReversed() as this doenst always seem to be available ([7e4636a](https://github.com/MomsFriendlyDevCo/Vitel/commit/7e4636aab46f326e7374c5ca91d2831dc92657ad))
+* **v-table:** Incorrect contexting when computing the baseUrl ([8573d96](https://github.com/MomsFriendlyDevCo/Vitel/commit/8573d96ec209ea18fe7f3e837a2aa09993e561b3))
+
 ## [1.16.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.0...v1.16.1) (2024-11-19)
 
 # [1.16.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.15.0...v1.16.0) (2024-11-18)
