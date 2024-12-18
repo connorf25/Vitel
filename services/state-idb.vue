@@ -275,7 +275,7 @@ export default {
 		* @param {Number} [options.retries=5] Retry the same command this number of times before giving up
 		* @param {Number} [options.retryWait=100] Time before retries
 		*
-		* @returns {Promise<*>} The eventual set value after it has been comitted
+		* @returns {Promise<*>} The eventual set value after it has been committed
 		*/
 		async set(path, value, options) {
 			let settings = {
@@ -342,7 +342,7 @@ export default {
 					.objectStore(entity)
 					.delete(id)
 
-					transaction.onsuccess = ()=> resolve(value);
+					transaction.onsuccess = ()=> resolve();
 					transaction.onerror = e => reject(e);
 			}));
 		},
