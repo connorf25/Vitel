@@ -187,18 +187,21 @@ export default {
 				.limit(1)
 				.eq('id', id)
 				.maybeSingle() // Note we use maybeSingle() instead of single() as Supabase throws a 406 unless we're specific we could have no value
-				.then(payload => payload.data || fallback || Promise.reject(payload.error.message))
-				.then(row => row
-					? {
-						...(settings.id && {
-							id: row.id,
-						}),
-						...row.data,
+				.then(payload => {
+					if (payload.error) {
+						return Promise.reject(payload.error.message);
+					} else if (payload.data) {
+						return {
+							...(settings.id && {
+								id: payload.data.id,
+							}),
+							...payload.data.data,
+						};
+					} else {
+						return fallback;
 					}
-					: fallback
-				)
+				});
 		},
-
 
 		/**
 		* Set a snapshot of a Supabase path
@@ -224,6 +227,10 @@ export default {
 					.eq('id', id)
 					.select('id')
 				)
+				.catch(error => {
+						console.error("Error fetching existing data:", error);
+						return Promise.reject(error);
+				})
 				.then(payload => payload.error?.message && Promise.reject(payload.error.message))
 		},
 
