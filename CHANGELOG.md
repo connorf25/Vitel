@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.4](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.3...v1.16.4) (2024-12-18)
+
+
+### Bug Fixes
+
+* **$idb:** Dont try and return a non-existant value when calling unset() ([93bb3ae](https://github.com/MomsFriendlyDevCo/Vitel/commit/93bb3aec36ae4af003ed5fdc916a5071bb58a9c9))
+
 ## [1.16.3](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.2...v1.16.3) (2024-12-18)
 
 ## [1.16.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.1...v1.16.2) (2024-11-28)
