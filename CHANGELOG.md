@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.17.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.4...v1.17.0) (2024-12-19)
+
+
+### Features
+
+* Added <avatar-gravatar/> ([d131df5](https://github.com/MomsFriendlyDevCo/Vitel/commit/d131df58b91eb45da9cafe786ccd811c2f623efd))
+
 ## [1.16.4](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.3...v1.16.4) (2024-12-18)
 
 
