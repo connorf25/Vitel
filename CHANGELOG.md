@@ -1,5 +1,20 @@
 # Changelog
 
+# [1.19.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.18.0...v1.19.0) (2025-01-15)
+
+
+### Features
+
+* **<btn-promise>:** Added $props.minTime ([461f3eb](https://github.com/MomsFriendlyDevCo/Vitel/commit/461f3eb425bc4e8d6dbf19d6fd7c9089cc71d026))
+* **$supabase:** Added $supabase.rpc() wrapper for RPC calls ([fa196af](https://github.com/MomsFriendlyDevCo/Vitel/commit/fa196af705fb76966cae690d085e66229430db8f))
+
+# [1.18.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.17.0...v1.18.0) (2025-01-09)
+
+
+### Features
+
+* <btn-states/> component ([c13881a](https://github.com/MomsFriendlyDevCo/Vitel/commit/c13881a68b6b5f12ab2681e6f25b99365714e75d))
+
 # [1.17.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.4...v1.17.0) (2024-12-19)
 
 
