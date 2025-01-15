@@ -54,6 +54,13 @@ export default {
 		activeText: {type: String, default: ''},
 
 		/**
+		* Minimum amount of time the button should stay in its active state
+		* This is really to prevent the user thinking nothing has happened for especially short-lived promises
+		* @type {Number} Time in milliseconds before resolving the active state
+		*/
+		minTime: {type: Number, default: 500},
+
+		/**
 		* Optional toast text to display on completion
 		* @type {String}
 		*/
@@ -73,9 +80,11 @@ export default {
 		* @returns {Promise} A promise which resolves when the operation has completed
 		*/
 		click(e) {
+			let startTime = Date.now();
 			return Promise.resolve()
 				.then(()=> this.isActive = true)
 				.then(()=> this.action(e))
+				.then(()=> this.minTime > 0 && new Promise(resolve => setTimeout(resolve, this.minTime - (Date.now() - startTime))))
 				.then(()=> this.toast && this.$toast[this.toastType](this.toast))
 				.finally(()=> this.isActive = false)
 		},

@@ -1,12 +1,5 @@
 # Changelog
 
-# [1.18.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.17.0...v1.18.0) (2025-01-09)
-
-
-### Features
-
-* <btn-states/> component ([c13881a](https://github.com/MomsFriendlyDevCo/Vitel/commit/c13881a68b6b5f12ab2681e6f25b99365714e75d))
-
 # [1.17.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.16.4...v1.17.0) (2024-12-19)
 
 
