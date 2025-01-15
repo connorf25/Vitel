@@ -120,6 +120,7 @@ export default {
 		supabaseKey: {type: String, required: true},
 	},
 	methods: {
+
 		// Pathing utilities - splitPath() {{{
 		/**
 		* Split a simple path into Supabase compatible entity + filters
@@ -848,6 +849,24 @@ export default {
 		},
 		// }}}
 
+		// RPC - rpc() {{{
+		/**
+		* Wrap the Supabase RPC function to return results or throw promises on failure
+		*
+		* @param {String} fn The function name to run
+		* @param {Object} [args] Optional, named function arguments
+		*
+		* @returns {Promise<*>} The eventual RPC response (or a thrown promise on fail)
+		*/
+		rpc(fn, args) {
+			return this.supabase.rpc(fn, args)
+				.then(({data, error}) => { // Force RPC() to act as a promise by calling `then` (otherwise it acts as a query)
+					if (error) throw new Error(`${error.code} - ${error.message}`);
+					return data;
+				})
+		},
+		// }}}
+
 		// Helper functions - _downloadBlob(), _uploadBlob(), _parsePath(), _pojoToJson(), _jsonToPojo() {{{
 		/**
 		* Internal function to provide a blob as a downloadable file
@@ -977,6 +996,7 @@ export default {
 			+ candidate.substr(20, 12);
 		},
 		// }}}
+
 	},
 	created() {
 		if (!this.supabaseUrl || !this.supabaseKey) throw new Error('Cannot connect to Supabase without passing supabaseUrl + supabaseKey');
