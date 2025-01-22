@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.20.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.19.0...v1.20.0) (2025-01-22)
+
+
+### Features
+
+* **<btn-states>:** <btn-states> now supports tooltips ([6d4ff36](https://github.com/MomsFriendlyDevCo/Vitel/commit/6d4ff36fd27fca6b742f6668cfb224bec35cc399))
+
 # [1.19.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.18.0...v1.19.0) (2025-01-15)
 
 
