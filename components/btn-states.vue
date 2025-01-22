@@ -40,6 +40,7 @@ export default {
 		* @property {String} [icon] Optional icon to display when in this state
 		* @property {String} [text] Optional text to display when in this state
 		* @property {*} [value] Value to emit when changing to this state
+		* @property {String|Object} [tooltip] Optional tooltip string / object to bind
 		*/
 		states: {type: Array, default: ()=> [
 			{
@@ -99,6 +100,7 @@ export default {
 		<a
 			:class="activeState.class"
 			@click="advance()"
+			v-tooltip="activeState.tooltip"
 		>
 			<i v-if="activeState.icon" :class="activeState.icon"/>
 			{{activeState.text ? activeState.text : ''}}
