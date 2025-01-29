@@ -84,8 +84,10 @@ export default {
 			handler(v) {
 				let vState = this.states.findIndex(s => s.value === v);
 				if (vState < 0) {
-					console.error('<btn-states :value=', this.value, '/> - given a value which does not correspond to any state value - using first state instead');
 					this.state = 0;
+
+					if (this.value !== undefined)
+						console.error('<btn-states :value=', this.value, '/> - given a value which does not correspond to any state value - assuming first state instead');
 				} else {
 					this.state = vState;
 				}
