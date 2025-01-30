@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.20.0...v1.20.1) (2025-01-30)
+
+
+### Bug Fixes
+
+* **<btn-states>:** STFU when complaining about undefined values and always assume first state ([fc4fcbe](https://github.com/MomsFriendlyDevCo/Vitel/commit/fc4fcbe2095c2738b8f58a26f7ab5d1d77d3faef))
+
 # [1.20.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.19.0...v1.20.0) (2025-01-22)
 
 
