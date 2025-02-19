@@ -105,8 +105,8 @@ export default {
 				payloadResolve: undefined,
 				payloadReject: undefined,
 				promise: null,
-				promiseResolve: null,
-				promiseReject: null,
+				promiseResolve: ()=> {},
+				promiseReject: ()=> {},
 				...options,
 			};
 
