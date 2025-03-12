@@ -53,8 +53,12 @@ export default {
 			let dialog = this.$prompt.stack.pop();
 			if (!dialog) return; // Overpoped the stack - probably because two things called close() at the same time
 
-			// Close UI element in background
-			dialog.modelBS.hide();
+			// Close UI element (in background)
+			if (dialog.modelBS._isTransitioning) { // Model still being shown - set an event watcher on that and THEN hide it
+				dialog.modelEl.addEventListener('shown.bs.modal', ()=> dialog.modelBS.hide(), {once: true});
+			} else { // Model is already shown - just hide
+				dialog.modelBS.hide();
+			}
 
 			if (success) {
 				return dialog.promiseResolve(payload);
