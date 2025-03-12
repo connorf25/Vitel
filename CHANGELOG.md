@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.20.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.20.1...v1.20.2) (2025-03-12)
+
+
+### Bug Fixes
+
+* **$prompt:** Always default promise{Resolve,Reject}() to a No-op function as it makes handling closing nested models easier ([968a4c0](https://github.com/MomsFriendlyDevCo/Vitel/commit/968a4c053333e7853809f3a02758a4c6ad2c3867))
+* **$prompt:** Correctly hide dialogs that are in the middle of animating open ([3422906](https://github.com/MomsFriendlyDevCo/Vitel/commit/3422906a155e681e6fc86ae8b393502bb85296cc))
+
 ## [1.20.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.20.0...v1.20.1) (2025-01-30)
 
 
