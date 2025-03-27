@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.21.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.20.2...v1.21.0) (2025-03-27)
+
+
+### Features
+
+* Service({debugTiming:Boolean}) ([50d9841](https://github.com/MomsFriendlyDevCo/Vitel/commit/50d98415ac9537819e6a2b88126e3fde958648f0))
+
 ## [1.20.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.20.1...v1.20.2) (2025-03-12)
 
 
