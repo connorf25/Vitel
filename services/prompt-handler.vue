@@ -51,7 +51,7 @@ export default {
 		*/
 		pop(success = true, payload) {
 			let dialog = this.$prompt.stack.pop();
-			if (!dialog) return; // Overpoped the stack - probably because two things called close() at the same time
+			if (!dialog) return Promise.resolve(); // Overpoped the stack - probably because two things called close() at the same time
 
 			// Close UI element (in background)
 			if (dialog.modelBS._isTransitioning) { // Model still being shown - set an event watcher on that and THEN hide it
@@ -61,9 +61,9 @@ export default {
 			}
 
 			if (success) {
-				return dialog.promiseResolve(payload);
+				return Promise.resolve(dialog.promiseResolve(payload));
 			} else {
-				return dialog.promiseReject(payload);
+				return Promise.resolve(dialog.promiseReject(payload));
 			}
 		},
 
