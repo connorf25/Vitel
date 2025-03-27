@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.21.0...v1.21.1) (2025-03-27)
+
+
+### Bug Fixes
+
+* $prompt.pop() should always return a promise ([229f4ea](https://github.com/MomsFriendlyDevCo/Vitel/commit/229f4eae2c12319f57e9fa517fbb1e430438a4ea))
+
 # [1.21.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.20.2...v1.21.0) (2025-03-27)
 
 
