@@ -382,25 +382,46 @@ export default {
 		* @param {String} [options.search] Optional search string to filter by
 		* @param {Boolean} [options.meta=true] Pull meta information for each file entity
 		* @param {Function} [options.metaPath] Function, called as `(rawFile)` which returns the Path to use when fetching meta data
+		* @param {Number} [options.maxDepth=50] Maximum recursion depth for folders. 0 means no recursion.
+		* @param {Number} [options._currentDepth=0] Internal: Tracks current recursion depth.
 		*
 		* @returns {Promise<Array<SupabaseFile>>} List of found files for the given path
 		*/
 		fileList(path, options = {}) {
-			let settings = {
+			let defaultSettings = {
 				limit: 0,
 				offset: 0,
 				sort: 'name',
 				search: null,
 				meta: true,
 				metaPath: rawFile => `/fileMeta/${rawFile.id}`,
+				maxDepth: 50,
+				_currentDepth: 0,
 				...options,
 			};
-			let {entity, id} = this.splitPath(path, {requireEntity: true, requireId: true});
+
+			// Ensure options for recursive calls don't accidentally inherit _currentDepth from a manual call
+			let settings = { ...defaultSettings, ...options };
+			if (options._currentDepth === undefined) {
+				settings._currentDepth = 0;
+			}
+
+			let {entity, id: firstPartOfPath, operand: restOfPath } = this.splitPath(path, {requireEntity: true, requireId: true});
+
+			// Construct path from segments returned from splitPath
+			let pathWithinBucket = firstPartOfPath || '';
+			if (restOfPath) {
+				pathWithinBucket = pathWithinBucket ? `${pathWithinBucket}/${restOfPath}` : restOfPath;
+			}
+			// Ensure pathWithinBucket does not have a leading slash for Supabase `list` method,
+			// and is empty string for root.
+			if (pathWithinBucket.startsWith('/')) pathWithinBucket = pathWithinBucket.substring(1);
+			if (pathWithinBucket === '/') pathWithinBucket = '';
 
 			this.debug('fileList(', path, options, ')');
 			return this.supabase.storage
 				.from(entity)
-				.list(id, {
+				.list(pathWithinBucket, {
 					...(settings.search && {search: settings.search}),
 					...(settings.limit && {limit: settings.limit}),
 					...(settings.offset && {offset: settings.offset}),
@@ -410,28 +431,74 @@ export default {
 							: {column: settings.sort, order: 'asc'}
 					}),
 				})
-				.then(({data}) => Promise.all((data || []).map(rawFile => Promise.resolve()
-					.then(()=> settings.meta && rawFile.id !== null // id is null for folders
-						? this.get(settings.metaPath(rawFile), {}, {id: false})
-						: false
-					)
-					.then((meta) => {
-						let baseFile = {
-							id: rawFile.id,
-							name: rawFile.name,
-							path: `/${entity}/${id}/${rawFile.name}`,
-							parsedName: this._parsePath('/' + rawFile.name),
+				.then(({data, error}) => {
+					if (error) {
+						console.error(`Error listing storage at path "${path}" (bucket: ${entity}, pathInBucket: ${pathWithinBucket}):`, error);
+						return Promise.reject(error.message || 'Error listing files');
+					}
+					if (!data) return Promise.resolve([]); // No data or empty folder
+
+					return Promise.all((data).map(rawFile => {
+						const isFolder = rawFile.id === null;
+						const itemName = rawFile.name;
+						const currentBasePath = path.replace(/\/$/, ''); // Remove trailing slash from current path if any
+						const itemFullPath = `${currentBasePath}/${itemName}`;
+
+						// Base structure for both files and folders
+						let itemStructure = {
+							id: rawFile.id, // Will be null for folders
+							name: itemName,
+							path: itemFullPath,
+							parsedName: this._parsePath('/' + itemName),
 							created: rawFile.created_at ? new Date(rawFile.created_at) : null,
 							modified: rawFile.updated_at ? new Date(rawFile.updated_at) : null,
 							accessed: rawFile.last_accessed_at ? new Date(rawFile.last_accessed_at) : null,
-							size: rawFile.metadata?.size,
-							mime: rawFile.metadata?.mimetype,
-							meta,
+							size: !isFolder ? rawFile.metadata?.size : null,
+							mime: !isFolder ? rawFile.metadata?.mimetype : null,
+							isFolder: isFolder,
 						};
-						// Merge in output of this.fileType()
-						return Object.assign(baseFile, this.fileType(baseFile));
-					})
-				)))
+
+						if (isFolder) {
+							// It's a folder
+							itemStructure.meta = {}; // Folders don't have 'fileMeta' in the same way
+							itemStructure.files = []; // Initialize files array for the folder
+
+							// Apply fileType (might give a generic folder icon)
+							Object.assign(itemStructure, this.fileType(itemStructure));
+
+
+							if (settings._currentDepth < settings.maxDepth) {
+								// Recursively call fileList for the subdirectory
+								const subFolderOptions = {
+									...settings, // Pass along original options
+									_currentDepth: settings._currentDepth + 1, // Increment depth
+								};
+								return this.fileList(itemFullPath, subFolderOptions)
+									.then(subFiles => {
+										itemStructure.files = subFiles;
+										return itemStructure;
+									});
+							} else {
+								// Max depth reached, don't recurse further
+								console.warn('[fileList] Max depth reached while recursively searching folders, current depth:', settings._currentDepth);
+								return Promise.resolve(itemStructure);
+							}
+
+						} else {
+							// It's a file, fetch metadata if enabled
+							return Promise.resolve()
+								.then(() => settings.meta
+									? this.get(settings.metaPath(rawFile), {}, {id: false})
+									: Promise.resolve({})
+								)
+								.then(meta => {
+									itemStructure.meta = meta;
+									// Merge in output of this.fileType() for the file
+									return Object.assign(itemStructure, this.fileType(itemStructure));
+								});
+						}
+					}));
+				});
 		},
 
 
