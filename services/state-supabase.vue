@@ -411,7 +411,7 @@ export default {
 					}),
 				})
 				.then(({data}) => Promise.all((data || []).map(rawFile => Promise.resolve()
-					.then(()=> settings.meta
+					.then(()=> settings.meta && rawFile.id !== null // id is null for folders
 						? this.get(settings.metaPath(rawFile), {}, {id: false})
 						: false
 					)
@@ -421,11 +421,11 @@ export default {
 							name: rawFile.name,
 							path: `/${entity}/${id}/${rawFile.name}`,
 							parsedName: this._parsePath('/' + rawFile.name),
-							created: new Date(rawFile.created_at),
-							modified: new Date(rawFile.updated_at),
-							accessed: new Date(rawFile.last_accessed_at),
-							size: rawFile.metadata.size,
-							mime: rawFile.metadata.mimetype,
+							created: rawFile.created_at ? new Date(rawFile.created_at) : null,
+							modified: rawFile.updated_at ? new Date(rawFile.updated_at) : null,
+							accessed: rawFile.last_accessed_at ? new Date(rawFile.last_accessed_at) : null,
+							size: rawFile.metadata?.size,
+							mime: rawFile.metadata?.mimetype,
 							meta,
 						};
 						// Merge in output of this.fileType()
