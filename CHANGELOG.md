@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.21.1...v1.21.2) (2025-05-08)
+
+
+### Bug Fixes
+
+* `fileList()` to be compatible with folders ([7dcc072](https://github.com/MomsFriendlyDevCo/Vitel/commit/7dcc0727b0c1a17ea09ab6ccc2cc091e517add04))
+
 ## [1.21.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.21.0...v1.21.1) (2025-03-27)
 
 
