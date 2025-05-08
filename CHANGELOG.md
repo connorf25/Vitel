@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.22.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.21.2...v1.22.0) (2025-05-08)
+
+
+### Features
+
+* Recursively search folders in `fileList()` and populate 'files' field ([fad7b93](https://github.com/MomsFriendlyDevCo/Vitel/commit/fad7b93772a9ea64616fb7ee0ec844a1f0539f2d))
+
 ## [1.21.2](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.21.1...v1.21.2) (2025-05-08)
 
 
