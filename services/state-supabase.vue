@@ -836,7 +836,7 @@ export default {
 					// Fetch + append all files into the zip
 					return Promise.all(files.map(file => Promise.resolve()
 						.then(()=> updateStats({fetching: stats.fetching + 1}))
-						.then(()=> this.fileGet({entity, id, operand: file.name}))
+						.then(()=> this.fileGet({entity, id, operand: file.path}))
 						.then(blob => updateStats({fetching: stats.fetching - 1, writing: stats.writing + 1})
 							.then(()=> blob)
 						)
