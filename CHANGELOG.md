@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.1](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.23.0...v1.23.1) (2025-05-15)
+
+
+### Bug Fixes
+
+* Zip file downloading works for embedded files ([1bdac83](https://github.com/MomsFriendlyDevCo/Vitel/commit/1bdac8330b9ae02068808b5dd5a5580d2eb46017))
+
 # [1.23.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.22.0...v1.23.0) (2025-05-15)
 
 
