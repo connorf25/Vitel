@@ -147,20 +147,37 @@ export default {
 				...options,
 			};
 
-			let [entity, id, operand] =
-				Array.isArray(path) ? path // Split array from form: `[$entity, $ID, $operand]`
-				: typeof path == 'object' ? [path.entity, path.id, path.operand]
-				: typeof path == 'string' ? path // Split string from form: `/$entity/$ID`
+			let entity, id, operand;
+
+			if (Array.isArray(path)) { // Split array from form: `[$entity, $ID, $operand]`
+				[entity, id, operand] = path;
+			} else if (typeof path == 'object' && path !== null) { // path could be an object literal, also check for null
+				entity = path.entity;
+				id = path.id;
+				operand = path.operand;
+			} else if (typeof path == 'string') { // Split string
+				const parts = path
 					.replace(/^\//, '') // Remove root slash
-					.split('/', 3)
-				: (()=> { throw new Error('Unknown input type to splitPath') })();
+					.split('/');
+
+				entity = parts[0];
+				id = parts[1]; // Will be undefined if parts.length < 2
+
+				if (parts.length > 2) {
+					operand = parts.slice(2).join('/'); // Join all remaining parts for the operand
+				} else {
+					operand = undefined;
+				}
+			} else {
+				throw new Error('Unknown input type to splitPath');
+			}
 
 			if (settings.requireEntity && !entity) throw new Error(`Could not extract entity from path "${path}"`);
 			if (settings.requireId && (!id || id == 'undefined')) throw new Error(`Could not extract ID from path "${path}"`);
-			if (settings.requireOperand && (!id || id == 'undefined')) throw new Error(`Could not extract operand from path "${path}"`);
+			if (settings.requireOperand && (!operand || operand == 'undefined')) throw new Error(`Could not extract operand from path "${path}"`);
 
 			return {entity, id, operand};
-		},
+	},
 		// }}}
 
 		// Record / Row handling - get(), set(), create() {{{
