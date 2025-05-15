@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.23.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.22.0...v1.23.0) (2025-05-15)
+
+
+### Features
+
+* splitPath handles if there is a folder in the operand ([29b1be5](https://github.com/MomsFriendlyDevCo/Vitel/commit/29b1be5757689bd5b09b50d2177cb6db2d5e1a55))
+
 # [1.22.0](https://github.com/MomsFriendlyDevCo/Vitel/compare/v1.21.2...v1.22.0) (2025-05-08)
 
 
